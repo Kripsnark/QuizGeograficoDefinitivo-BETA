@@ -1,0 +1,708 @@
+// === COSTANTI DOM ===
+const heartsEl = document.getElementById("hearts");
+const esatteEl = document.getElementById("esatte-counter");
+const puntiEl = document.getElementById("punti-counter");
+const questionEl = document.getElementById("question");
+const inputEl = document.getElementById("answer-input");
+const eventBadge = document.getElementById("event-badge");
+const submitBtn = document.getElementById("submit-btn");
+const nextBtn = document.getElementById("next-btn");
+const surrenderBtn = document.getElementById("surrender-btn");
+const gameOverScreen = document.getElementById("game-over-screen");
+const errorLogEl = document.getElementById("error-log");
+const bandieraContainer = document.getElementById("bandiera-container");
+const bandieraImg = document.getElementById("bandiera-img");
+const homeBtn = document.getElementById("home-btn");
+const timerContainer = document.getElementById("timer-container");
+const timerBar = document.getElementById("timer-bar");
+const timerStatus = document.getElementById("timer-status");
+const comboTracker = document.getElementById("combo-tracker");
+const modalOverlay = document.getElementById("modal-overlay");
+const modalTitle = document.getElementById("modal-title");
+const modalBody = document.getElementById("modal-body");
+const errPanel = document.getElementById("error-feedback-panel");
+const errTitle = document.getElementById("error-feedback-title");
+const errText = document.getElementById("error-feedback-text");
+
+// === GEOQUIZ UI MANAGER ===
+const UI = {
+    aggiornaHeader: function(vite, customVite, maxVite, esatte, punteggio, currentLevel, totaleNazioni) {
+        if (puntiEl.parentNode.childNodes[0].nodeType === 3) {
+            puntiEl.parentNode.childNodes[0].nodeValue = (currentLevel === 6) ? "Progresso: " : "Punti: ";
+        }
+
+        if (currentLevel === 6) {
+            heartsEl.style.fontSize = "16px";
+            heartsEl.innerText = "💀 MORTE IMPROVVISA";
+            esatteEl.innerText = esatte + " / " + totaleNazioni;
+            let pct = totaleNazioni > 0 ? ((esatte / totaleNazioni) * 100).toFixed(1) : 0;
+            puntiEl.innerText = pct + "%";
+            return;
+        }
+
+        let cuoriStringa = "";
+        let currentMaxVite = customVite > 5 ? customVite : maxVite;
+        
+        heartsEl.style.fontSize = vite > 5 ? "16px" : "26px";
+
+        let loopCount = Math.max(vite, currentMaxVite);
+        for(let i=0; i<vite; i++) cuoriStringa += "❤️";
+        for(let i=vite; i<loopCount; i++) cuoriStringa += "🖤";
+        
+        heartsEl.innerText = cuoriStringa;
+        esatteEl.innerText = esatte;
+        puntiEl.innerText = punteggio;
+    },
+
+    mostraSuccesso: function(puntiGuadagnati, nomeInserito, badgeText, badgeBorder, badgeBg = "#2a2a2a", badgeTxtColor = "#fff") {
+        inputEl.classList.remove("shake", "wrong-flash", "warning-flash");
+        inputEl.classList.add("correct-flash");
+        inputEl.disabled = true;
+        submitBtn.disabled = true;
+        surrenderBtn.style.display = "none";
+
+        if (puntiGuadagnati !== null && puntiGuadagnati !== undefined) {
+            inputEl.value = `Corretto! +${puntiGuadagnati}pt - ${nomeInserito}`;
+        } else {
+            inputEl.value = `Esatto! - ${nomeInserito}`;
+        }
+        
+        if (badgeText && badgeText !== "") {
+            eventBadge.innerHTML = badgeText; 
+            eventBadge.style.backgroundColor = badgeBg;
+            eventBadge.style.color = badgeTxtColor; 
+            eventBadge.style.borderColor = badgeBorder;
+            eventBadge.style.display = "block";
+        } else {
+            eventBadge.style.display = "none";
+        }
+
+        submitBtn.style.display = "none";
+        nextBtn.innerText = "PROSSIMA DOMANDA ➔";
+        nextBtn.style.display = "block";
+    },
+
+    mostraErrore: function(titolo, testoCorretto, isLevelZero) {
+        inputEl.value = "";
+        inputEl.classList.add("shake", "wrong-flash");
+        inputEl.disabled = true;
+        submitBtn.style.display = "none"; 
+        surrenderBtn.style.display = "none";
+        comboTracker.style.display = "none";
+
+        errTitle.innerText = titolo;
+        errText.innerText = "Le risposte corrette erano: " + testoCorretto;
+        if (!isLevelZero) errPanel.style.display = "flex";
+        
+        nextBtn.style.display = "block";
+    },
+
+    resetTurno: function() {
+        inputEl.classList.remove("correct-flash", "wrong-flash", "shake", "warning-flash");
+        inputEl.value = "";
+        inputEl.disabled = false;
+        inputEl.style.color = "";
+        
+        eventBadge.style.display = "none";
+        eventBadge.innerHTML = "";
+        eventBadge.style.backgroundColor = "#2a2a2a";
+        eventBadge.style.color = "#fff";
+        
+        errPanel.style.display = "none";
+        nextBtn.style.display = "none";
+        submitBtn.style.display = "block";
+        submitBtn.disabled = false;
+    }
+};
+
+function openModal(title, htmlContent) {
+    document.getElementById("modal-title").innerText = title;
+    document.getElementById("modal-body").innerHTML = htmlContent;
+    document.getElementById("modal-overlay").style.display = "flex";
+}
+
+function closeModal() { 
+    document.getElementById("modal-overlay").style.display = "none"; 
+    document.getElementById("modal-body").innerHTML = ""; 
+}
+
+window.openSettings = function() {
+    let html = `
+    <div class="settings-container">
+        <div class="menu-btn-group" style="margin-bottom: 0;">
+            <button onclick="toggleVibration(); document.getElementById('btn-vibe-ui').innerText = vibrationEnabled ? '📳 VIBRAZIONE: ON' : '📴 VIBRAZIONE: OFF';" id="btn-vibe-ui" class="menu-btn" style="margin:0;">${vibrationEnabled ? '📳 VIBRAZIONE: ON' : '📴 VIBRAZIONE: OFF'}</button>
+            <button onclick="toggleSuoni(); document.getElementById('btn-sound-ui').innerText = suoniAttivi ? '🔊 SUONI: ON' : '🔇 SUONI: OFF';" id="btn-sound-ui" class="menu-btn" style="margin:0;">${suoniAttivi ? '🔊 SUONI: ON' : '🔇 SUONI: OFF'}</button>
+        </div>
+        
+        <div style="background:#2a2a2a; border:1px solid #444; border-radius:6px; padding:15px; margin-top:5px; text-align:left;">
+            <label style="color:#ffd700; font-size:12px; font-weight:bold; display:block; margin-bottom:12px;">VELOCITÀ ASSISTENTE VOCALE: <span id="voice-speed-label" style="color:#fff;">${voiceSpeed.toFixed(1)}x</span></label>
+            <input type="range" min="0.8" max="1.5" step="0.1" value="${voiceSpeed}" onchange="updateVoiceSpeed(this.value)" oninput="document.getElementById('voice-speed-label').innerText = parseFloat(this.value).toFixed(1) + 'x'" style="width:100%; cursor:pointer;">
+        </div>
+        
+        <h3 class="settings-title">Gestione Dati Avanzata</h3>
+        
+        <div class="menu-btn-group" style="margin-bottom: 0;">
+            <button onclick="exportBackup()" class="menu-btn">💾 ESPORTA</button>
+            <label class="menu-btn btn-import">
+                📂 IMPORTA <input type='file' accept='.json' style='display:none;' onchange='importBackup(event)'>
+            </label>
+        </div>
+        
+        <button onclick="clearAllData()" class="menu-btn btn-danger">🗑️ CANCELLA TUTTI I DATI</button>
+    </div>
+    `;
+    openModal("⚙️ IMPOSTAZIONI", html);
+}
+
+function openRules() {
+    let html = `
+        <div style="font-size: 14px; line-height: 1.6; color: #ddd;">
+            <p style="font-size: 15px; margin-top: 0;">Benvenuto nel <strong>Quiz Geografico Definitivo</strong>. Il tuo obiettivo è uno solo: dimostrare una padronanza geografica assoluta, gestire la pressione del tempo e sopravvivere al motore logico. Il database comprende fino a <strong>253</strong> tra Stati indipendenti, territori d'oltremare e dipendenze.</p>
+            
+            <h3 style="color:#f44336; margin: 20px 0 10px 0; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 5px; text-transform: uppercase;">❤️ Vite, Sopravvivenza e Punteggio</h3>
+            <ul style="margin:0; padding-left:20px; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Cuori e Cure:</strong> Inizi la partita standard con <strong>3 vite</strong>. Ottieni un cuore extra ogni <strong>750 punti</strong> accumulati.</li>
+                <li><strong>Logica Punteggi - Domande Singole:</strong> Per le domande classiche, il punteggio varia in base alla difficoltà logica della domanda, non alla risposta che inserisci. Una domanda con una sola soluzione possibile (es. "Qual è la capitale dell'Italia?") ti premia con <strong>150 punti</strong>. Se la domanda è molto ampia e ha più di 5 soluzioni valide (es. "Nomina uno stato con il rosso nella bandiera"), prenderai un punteggio base di consolazione (<strong>30 punti</strong>). Più la domanda stringe il cerchio delle risposte corrette, più punti otterrai.</li>
+                <li><strong>Logica Punteggi - Domande Combo:</strong> Nelle combo (es. "Nomina 3 Stati..."), il punteggio abbandona gli scaglioni fissi e usa una proporzione matematica pura, calcolando esattamente quanto è raro trovare la combinazione che ti ha proposto. Per questo motivo, rispondere a una domanda con un'infinità di opzioni ti garantirà pochissimi punti, mentre azzeccare una combo stretta su un bacino minuscolo ti coprirà d'oro.</li>
+                <li><strong>Bonus Audacia (x2):</strong> Se nei livelli a bassa difficoltà (L1 e L2) utilizzi come risposte nazioni non indipendenti o complesse (appartenenti a tier superiori), il punteggio guadagnato su quella risposta viene raddoppiato. Osa con l'esotico!</li>
+                <li><strong>Malus Pigrizia (-50%):</strong> Il motore punisce la ripetitività. Se inserisci nazioni che avevi già nominato in precedenza durante la stessa partita e la domanda offriva svariate alternative in cui pescare, subirai un taglio del 50% al punteggio ottenuto. Cerca di variare il tuo arsenale geografico. (Disattivato solo nei livelli con timer, non serve che ci ringrazi!).</li>
+                <li><strong>Grazia Ricevuta:</strong> Nelle modalità a Combo (L4 e L5), se scade il timer implacabile ma sei riuscito a inserire correttamente almeno due delle risposte richieste, il motore è clemente: ti salvi dalla perdita della vita (niente Game Over!), ma il tuo punteggio verrà dimezzato per ognuna delle risposte mancanti.</li>
+                <li><strong>Salvataggio al Fotofinish:</strong> Inserire l'ultima risposta corretta nell'ultimo 25% del tempo disponibile conferisce un salvataggio in extremis (registrato nelle statistiche finali).</li>
+            </ul>
+
+            <h3 style="color:#2196f3; margin: 25px 0 10px 0; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 5px; text-transform: uppercase;">🗺️ Terminologia e Definizioni Geografiche</h3>
+            <p style="margin-top: 0; font-size: 13px; color: #aaa;">Presta estrema attenzione alle definizioni fornite dai modificatori di livello. Il motore logico distingue rigorosamente le categorie costiere:</p>
+            <ul style="margin:0; padding-left:20px; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Stato Insulare:</strong> Accetta ESCLUSIVAMENTE nazioni composte unicamente da isole (es. Giappone, Nuova Zelanda, Cuba).</li>
+                <li><strong>Stato Continentale Costiero:</strong> Esclude categoricamente le isole. Valgono SOLO i paesi situati su una massa continentale e bagnati dal mare (es. Italia, Brasile, Sudafrica).</li>
+                <li><strong>Con Sbocco sul Mare:</strong> Parametro inclusivo. Accetta indifferentemente ENTRAMBI i casi precedenti (Isole + Costieri).</li>
+                <li><strong>Stato Interno (senza sbocco sul mare):</strong> Nazioni completamente circondate da terraferma, senza alcun accesso diretto agli oceani (es. Svizzera, Ciad, Mongolia).</li>
+            </ul>
+
+            <h3 style="color:#ffd700; margin: 25px 0 10px 0; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 5px; text-transform: uppercase;">🌍 Livelli di Sfida e Traguardi di Vittoria</h3>
+            <ul style="margin:0; padding-left:20px; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong style="color:#4caf50;">0. Cucciolo Spaesato:</strong> Modalità allenamento a scelta multipla visiva. Perfetta per prendere confidenza con bandiere e capitali.</li>
+                <li><strong>1. Bestia Apolide:</strong> Include solo Nazioni Indipendenti di dominio comune. <em>(Vittoria standard: 2.500 pt)</em></li>
+                <li><strong>2. Animale Accasato:</strong> Estende il bacino a tutti i 193 membri ONU (inclusi i micro-stati) e introduce i Modificatori Negativi ("che NON confina con..."). <em>(Vittoria standard: 3.500 pt)</em></li>
+                <li><strong>3. Creatura Cosmopolita:</strong> Nessuna pietà, né nelle domande né nelle richieste. Sblocca il database assoluto, includendo territori d'oltremare e colonie (fino a 253).</li>
+                <li><strong>4. Divinità Geografa:</strong> Modalità estrema con Timer implacabile. Fino a 5 risposte richieste a raffica per singolo turno.</li>
+                <li><strong style="color:#2196f3;">5. Partita Personalizzata:</strong> Sandbox totale. Scegli bacino, continenti ammessi, numero di vite, formato del timer e tetto massimo delle combo. Creata per testare le tue difese in specifici ambiti geografici.</li>
+                <li><strong style="color:#9c27b0;">6. Morte Improvvisa:</strong> Una singola vita. 10 secondi netti a domanda. Nessuna cura, nessun bonus. Scegli il bacino (Sprint 50, ONU 193 o Totale 253) e sopravvivi fino all'ultima nazione o capitale rimasta nel database.</li>
+            </ul>
+
+             <h3 style="color:#4caf50; margin: 25px 0 10px 0; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 5px; text-transform: uppercase;">🎙️ Modalità Assistente Vocale (Sperimentale)</h3>
+            <p style="margin-top: 0; font-size: 13px; color: #aaa;">Premi l'icona del microfono in alto a sinistra per attivare l'inserimento vocale e farti leggere le domande. Una modalità essenziale per giocare <strong>"Senza Mani"</strong>.</p>
+            <ul style="margin:0; padding-left:20px; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Limiti Tecnologici:</strong> Il riconoscimento vocale si affida ai server di Google. Questi server spesso "italianizzano" o traducono i nomi geografici esotici in parole di uso comune (es. "Roseau" capita venga trascritto come "Rousseau" o "Mata-Utu" come "Mad a u2").</li>
+                <li><strong>Nomi Composti e Inizio Turno:</strong> Cerca di pronunciare i nomi composti o stranieri in modo fluido e compatto, senza lunghe pause in mezzo, per evitare che la frase venga spezzata. Attendi sempre che il sistema abbia terminato di parlare prima di rispondere, altrimenti non sentirà la prima sillaba della tua parola.</li>
+                <li><strong>Il Nostro Impegno:</strong> Il database del gioco possiede uno scudo anti-fraintendimenti ("Alias Maccheronici") in continua espansione. Raccogliamo dai Log gli errori di trascrizione più frequenti e li inseriamo come risposte segretamente valide. Pertanto, se il sistema sbaglia a capire "Kirghizistan", non disperare: probabilmente l'aggiornamento successivo lo sistemerà. Tu impara la geografia, agli alias ci pensiamo noi.</li>
+                <li><strong>Comandi Vocali Speciali in partita:</strong> Oltre ai nomi delle nazioni e delle capitali, puoi esclamare: <em>"Ripeti", "Ripeti domanda", "Mi arrendo", "Termina partita"</em>. Nel menu puoi invece chiamare l'apertura rapida di un livello dicendo: <em>"Livello zero", "Livello Uno", "Livello Morte Improvvisa"</em> ecc. 😉</li>
+            </ul>
+
+            <div style="margin-top: 25px; background: rgba(255, 215, 0, 0.1); border-left: 4px solid #ffd700; padding: 12px;">
+                <strong style="color: #ffd700; font-size: 16px; text-transform: uppercase;">🏆 Vittoria Leggendaria</strong><br>
+                Raggiungere quota <strong>10.000 punti</strong> nei Livelli 3 e 4 sblocca lo status di Vittoria Leggendaria. A quel punto, il giocatore è chiamato a compiere una scelta: ritirarsi da eroe consacrando il punteggio, oppure continuare ad oltranza per frantumare ogni record assoluto e sfidare il Limite.
+            </div>
+        </div>
+    `;
+    openModal("📜 REGOLAMENTO UFFICIALE", html);
+}
+
+// --- VARIABILE DI STATO PER L'ORDINAMENTO ---
+let statoOrdinamento = {
+    colonna: null, // 'paese' o 'capitale'
+    isAsc: true    // true = A-Z, false = Z-A
+};
+
+// --- FUNZIONE DI ORDINAMENTO ---
+window.ordinaEnciclopedia = function(colonnaRichiesta) {
+    if (statoOrdinamento.colonna === colonnaRichiesta) {
+        statoOrdinamento.isAsc = !statoOrdinamento.isAsc; // Inverte l'ordine se clicchi la stessa
+    } else {
+        statoOrdinamento.colonna = colonnaRichiesta;
+        statoOrdinamento.isAsc = true; // Nuova colonna, parte sempre da A-Z
+    }
+
+    globalDb.sort((a, b) => {
+        let valA = "";
+        let valB = "";
+
+        if (colonnaRichiesta === 'paese') {
+            valA = a.nome;
+            valB = b.nome;
+        } else if (colonnaRichiesta === 'capitale') {
+            // Se la nazione non ha capitale, la sbatte sempre in fondo con ZZZ o stringa vuota
+            valA = a.capitale ? a.capitale : (statoOrdinamento.isAsc ? "ZZZ" : "");
+            valB = b.capitale ? b.capitale : (statoOrdinamento.isAsc ? "ZZZ" : "");
+        }
+
+        // Normalizzazione spietata: toglie gli asterischi e passa al minuscolo per un confronto puro
+        valA = valA.replace(/\*/g, '').toLowerCase();
+        valB = valB.replace(/\*/g, '').toLowerCase();
+
+        if (valA < valB) return statoOrdinamento.isAsc ? -1 : 1;
+        if (valA > valB) return statoOrdinamento.isAsc ? 1 : -1;
+        return 0;
+    });
+
+    openDB(); // Ridisegna la tabella con il nuovo ordine
+};
+
+// --- FUNZIONE OPEN DB AGGIORNATA ---
+function openDB() {
+    // Gestione grafica delle freccette
+    let iconaPaese = "⇕"; // Simbolo neutro
+    let iconaCapitale = "⇕";
+
+    if (statoOrdinamento.colonna === 'paese') {
+        iconaPaese = statoOrdinamento.isAsc ? "▲" : "▼";
+    } else if (statoOrdinamento.colonna === 'capitale') {
+        iconaCapitale = statoOrdinamento.isAsc ? "▲" : "▼";
+    }
+
+    let thPaese = `<th class="sticky-col" onclick="window.ordinaEnciclopedia('paese')" style="cursor: pointer; user-select: none; color: #ffd700;" title="Clicca per ordinare">Paese <span style="font-size: 12px; margin-left: 5px;">${iconaPaese}</span></th>`;
+    let thCapitale = `<th onclick="window.ordinaEnciclopedia('capitale')" style="cursor: pointer; user-select: none; color: #ffd700;" title="Clicca per ordinare">Capitale <span style="font-size: 12px; margin-left: 5px;">${iconaCapitale}</span></th>`;
+
+    let tableHTML = `
+    <!-- 🧪 LABORATORIO FONETICO (Nascosto) -->
+    <div style="display: none; margin: 0 auto 20px auto; padding: 15px; background: #1a1a1a; border: 2px dashed #4caf50; border-radius: 8px; max-width: 400px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.5);">
+        <h3 style="color: #4caf50; margin-top: 0;">🧪 Laboratorio Fonetico</h3>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Prova la pronuncia maccheronica in tempo reale sul telefono.</p>
+        
+        <input type="text" id="test-pronuncia-input" placeholder="Es: Pnom Pèn..." 
+               style="width: 85%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: none; font-size: 16px; text-align: center; color: #000; outline: none;">
+               
+        <button onclick="parla(document.getElementById('test-pronuncia-input').value, null, true)" 
+                style="background: #4caf50; color: white; padding: 12px; width: 85%; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer;">
+            🔊 Ascolta Prova
+        </button>
+    </div>
+
+    <div class="db-table-container"><table class="db-table">
+        <thead>
+            <tr>
+                <th>Bandiera</th>
+                <th>Sigla</th>
+                ${thPaese}
+                ${thCapitale}
+                <th>Confini</th>
+                <th>Aree</th>
+                <th>Colori Base</th>
+                <th>Colori Emblema</th>
+                <th>Simboli</th>
+                <th>Formati</th>
+                <th>Tipo Geo</th>
+                <th>Indipendente</th>
+                <th>Livello</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    
+    globalDb.forEach(n => {
+        let nCapitale = n.capitale ? capitalize(n.capitale.replace(/\*/g, '')) : "-";
+        let nConfini = n.confini && n.confini.length > 0 ? n.confini.map(b => capitalize(b)).join(', ') : "Nessuno";
+        let nAree = n.aree && n.aree.length > 0 ? n.aree.map(a => capitalize(a)).join(', ') : "-";
+        let nColB = n.colori_base && n.colori_base.length > 0 ? n.colori_base.map(c => capitalize(c)).join(', ') : "-";
+        let nColE = n.colori_emblema && n.colori_emblema.length > 0 ? n.colori_emblema.map(c => capitalize(c)).join(', ') : "-";
+        let nSim = n.simboli && n.simboli.length > 0 ? n.simboli.map(s => capitalize(s)).join(', ') : "-";
+        let nForm = n.formati_bandiera && n.formati_bandiera.length > 0 ? n.formati_bandiera.map(f => capitalize(f)).join(', ') : "-";
+        let nInd = n.indipendente ? "Sì" : "No";
+
+        let cellaPaese = `<td class="sticky-col" onclick="parla(this.innerText, null, true)" style="cursor:pointer; font-weight:bold; color:#ffd700;" title="Ascolta la pronuncia">${capitalize(n.nome.replace(/\*/g, ''))}</td>`;
+        
+        let cellaCapitale = nCapitale !== "-" 
+            ? `<td onclick="parla(this.innerText, null, true)" style="cursor:pointer; color:#ffd700;" title="Ascolta la pronuncia">${nCapitale}</td>` 
+            : `<td>-</td>`;
+
+        tableHTML += `<tr>
+            <td style="text-align:center;"><img src="GIF/${n.sigla.toLowerCase()}.jpg" onclick="window.openFlagModal(this.src)" style="width:40px; border-radius:2px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.5);" onerror="this.style.display='none'"></td>
+            <td>${n.sigla.toUpperCase()}</td>
+            ${cellaPaese}
+            ${cellaCapitale}
+            <td>${nConfini}</td><td>${nAree}</td><td>${nColB}</td><td>${nColE}</td><td>${nSim}</td><td>${nForm}</td><td>${capitalize(n.tipoGeo)}</td><td>${nInd}</td><td style="text-align:center;">L${n.livello}</td>
+        </tr>`;
+    });
+    
+    tableHTML += `</tbody></table></div>`;
+    openModal("📚 ENCICLOPEDIA", tableHTML);
+}
+
+function openCustomSetup() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("custom-setup-screen").style.display = "flex";
+}
+
+function closeCustomSetup() {
+    document.getElementById("custom-setup-screen").style.display = "none";
+    document.getElementById("start-screen").style.display = "flex";
+}
+
+window.openL6Setup = function() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("l6-setup-screen").style.display = "flex";
+};
+
+window.closeL6Setup = function() {
+    document.getElementById("l6-setup-screen").style.display = "none";
+    document.getElementById("start-screen").style.display = "flex";
+};
+
+window.setL6Bacino = function(val) {
+    configL6.bacino = val;
+    ['sprint', 'onu', 'totale'].forEach(b => {
+        document.getElementById(`opt-l6-${b}`).classList.remove('selected');
+    });
+    document.getElementById(`opt-l6-${val}`).classList.add('selected');
+};
+
+window.setL6Argomento = function(val) {
+    configL6.argomento = val;
+    ['bandiere', 'stati', 'capitali'].forEach(a => {
+        document.getElementById(`opt-l6-${a}`).classList.remove('selected');
+    });
+    document.getElementById(`opt-l6-${val}`).classList.add('selected');
+};
+
+window.openRecords = function(defaultTab = 'global') {
+    let html = `
+    <div style="display:flex; gap:10px; margin-bottom:15px; width:100%;">
+        <button onclick="renderRecordTab('global')" class="ui-tab-btn ${defaultTab==='global'?'active':''}" id="tab-btn-global">🌍 GLOBALE</button>
+        <button onclick="renderRecordTab('levels')" class="ui-tab-btn ${defaultTab==='levels'?'active':''}" id="tab-btn-levels">📊 LIVELLI</button>
+        <button onclick="renderRecordTab('logs')" class="ui-tab-btn ${defaultTab==='logs'?'active':''}" id="tab-btn-logs">📜 LOG</button>
+    </div>
+    <div id="record-tab-content"></div>
+    `;
+    openModal("🏆 STORICO E RECORD", html);
+    renderRecordTab(defaultTab);
+}
+
+window.renderRecordTab = function(tabName) {
+    ['global', 'levels', 'logs'].forEach(t => document.getElementById(`tab-btn-${t}`).classList.remove('active'));
+    document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+    
+    let container = document.getElementById("record-tab-content");
+    let html = "";
+
+    if (tabName === 'global') {
+        let sortedUsate = Object.keys(allTimeNazioniCount).map(sigla => {
+            let n = globalDb.find(c => c.sigla === sigla);
+            return { nome: n ? n.nome : sigla, count: allTimeNazioniCount[sigla], sigla: sigla };
+        }).sort((a, b) => b.count - a.count).slice(0, 10);
+
+        let sortedIgnorate = Object.keys(allTimeNazioniIgnorate).map(sigla => {
+            let n = globalDb.find(c => c.sigla === sigla);
+            return { nome: n ? n.nome : sigla, count: allTimeNazioniIgnorate[sigla], sigla: sigla };
+        }).sort((a, b) => b.count - a.count).slice(0, 10);
+
+        const buildList10 = (arr, color) => {
+            if (arr.length === 0) return "<p style='color:#888; font-size:12px;'>Nessun dato</p>";
+            let h = "<div style='display:flex; flex-direction:column;'>";
+            arr.forEach((sn, idx) => {
+                h += `<div style='display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding:4px 0;'>
+                        <div style='display:flex; align-items:center; gap:5px;'>
+                            <span style='color:#777; font-size:11px; width:15px;'>${idx+1}.</span>
+                            <img src='GIF/${sn.sigla.toLowerCase()}.jpg' style='width:18px; border-radius:2px;' onerror='this.style.display="none"'>
+                            <span style='color:#ccc; font-size:11px; font-weight:bold;'>${sn.nome.toUpperCase()}</span>
+                        </div>
+                        <span style='color:${color}; font-weight:bold; font-size:12px;'>${sn.count}</span>
+                      </div>`;
+            });
+            return h + "</div>";
+        };
+
+        html += `
+        <div style="background:#1e1e1e; border:1px solid #ffd700; border-radius:6px; padding:10px; margin-bottom:15px; text-align:center;">
+            <div style="display:flex; justify-content:space-around; font-size:11px; color:#aaa;">
+                <div style="display:flex; flex-direction:column;"><span>Partite</span><strong style="font-size:16px; color:#fff;">${globalPlays}</strong></div>
+                <div style="display:flex; flex-direction:column;"><span>Record Assoluto</span><strong style="font-size:16px; color:#fff;">${allTimeBestScore}</strong></div>
+                <div style="display:flex; flex-direction:column;"><span>Serie Max</span><strong style="font-size:16px; color:#fff;">${allTimeBestStreak}</strong></div>
+                <div style="display:flex; flex-direction:column;"><span>Tempo Medio</span><strong style="font-size:16px; color:#fff;">${allTimeBestAvgTime > 0 ? allTimeBestAvgTime + "s" : "-"}</strong></div>
+            </div>
+        </div>
+        <div style="display:flex; gap:15px;">
+            <div style="flex:1;"><h3 style="color:#4caf50; font-size:12px; text-align:center;">TOP 10 USATE</h3>${buildList10(sortedUsate, '#4caf50')}</div>
+            <div style="flex:1;"><h3 style="color:#f44336; font-size:12px; text-align:center;">TOP 10 IGNORATE</h3>${buildList10(sortedIgnorate, '#f44336')}</div>
+        </div>`;
+    } 
+    else if (tabName === 'levels') {
+        // Mostra il Livello 7 solo se è stato giocato almeno una volta
+        let visibleLevels = [0, 1, 2, 3, 4, 5, 6];
+        if (statsByLevel[7] && statsByLevel[7].plays > 0) {
+            visibleLevels.push(7);
+        }
+
+        html += `
+        <div style="display:flex; gap:5px; margin-bottom:10px; flex-wrap:wrap; justify-content:center;">
+            ${visibleLevels.map(l => `<button onclick="switchLevelTab(${l})" class="ui-tab-btn" id="lvl-btn-${l}" style="padding:6px; font-size:11px;">${l===5?'CUST':l===6?'SUDDEN':(l===7?'L7':'L'+l)}</button>`).join('')}
+        </div>
+        <div id="level-detail-container" style="background:#2a2a2a; border:1px solid #444; border-radius:6px; padding:15px; text-align:center;">
+            <!-- Contenuto dinamico -->
+        </div>`;
+        container.innerHTML = html;
+        switchLevelTab(1); 
+        return;
+    }
+    else if (tabName === 'logs') {
+        html += "<div style='max-height: 55vh; overflow-y: auto; padding-right: 5px;'>";
+        
+        let visibleLogs = [0, 1, 2, 3, 4, 5, 6];
+        if (recentGamesHistory[7] && recentGamesHistory[7].length > 0) {
+            visibleLogs.push(7);
+        }
+
+        visibleLogs.forEach(lvl => {
+            let lvlName = lvl === 0 ? "Livello 0" : (lvl === 5 ? "Personalizzata" : (lvl === 6 ? "Morte Improvvisa" : (lvl === 7 ? "Livello 7 (Segreto)" : "Livello " + lvl)));
+            html += `<h3 style='color:#ffd700; border-bottom:1px solid #444; padding-bottom:3px; margin-top:10px; font-size:14px;'>${lvlName}</h3>`;
+            
+            if (!recentGamesHistory[lvl] || recentGamesHistory[lvl].length === 0) {
+                html += "<p style='color:#888; font-size:12px; font-style:italic;'>Nessuna partita registrata.</p>";
+            } else {
+                recentGamesHistory[lvl].forEach((game, idx) => {
+                    html += `
+                    <div style='display:flex; justify-content:space-between; align-items:center; background:#2a2a2a; margin-bottom:6px; padding:8px 12px; border-radius:6px; border:1px solid #444;'>
+                        <div style='display:flex; flex-direction:column; gap:2px;'>
+                            <span style='color:#ccc; font-size:11px;'>${game.date}</span>`;
+                    if (lvl === 6) {
+                        let totalTarget = 193; 
+                        if (game.log) { let match = game.log.match(/su (\d+)/); if (match) totalTarget = parseInt(match[1]); }
+                        let pctProgresso = ((game.esatte / totalTarget) * 100).toFixed(1);
+                        html += `<span style='color:#fff; font-size:13px; font-weight:bold;'>Progresso: <span style='color:#ffd700;'>${pctProgresso}%</span> | Esatte: <span style='color:#4caf50;'>${game.esatte}</span></span>`;
+                    } else {
+                        html += `<span style='color:#fff; font-size:13px; font-weight:bold;'>Punti: <span style='color:#4caf50;'>${game.punteggio}</span> | Esatte: ${game.esatte}</span>`;
+                    }
+                    html += `</div>
+                        <button onclick='downloadSpecificLog(${lvl}, ${idx})' style='background:#2196f3; color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer;'>📥</button>
+                    </div>`;
+                });
+            }
+        });
+        html += "</div>";
+    }
+
+    container.innerHTML = html;
+}
+
+window.switchLevelTab = function(lvl) {
+    // 1. Accensione pulsanti in alto
+    for(let i=0; i<=7; i++) {
+        let btn = document.getElementById(`lvl-btn-${i}`);
+        if(btn) { btn.style.background = (i===lvl) ? "#ffd700" : "#2a2a2a"; btn.style.color = (i===lvl) ? "#121212" : "#ccc"; }
+    }
+    
+    // Inizializza statistiche mancanti
+    if (!statsByLevel[lvl]) statsByLevel[lvl] = { plays: 0, bestScore: 0, bestStreak: 0, bestAvgTime: 0 };
+    let s = statsByLevel[lvl];
+    let html = ``;
+
+    if (lvl === 6) {
+        // ==========================================
+        // LAYOUT LIVELLO 6 (MORTE IMPROVVISA)
+        // ==========================================
+        let p = s.progress || {};
+        
+        const buildL6Bar = (label, current, max) => {
+            current = current || 0;
+            let pct = max > 0 ? (current / max) * 100 : 0;
+            if (pct > 100) pct = 100;
+            
+            let color = "#f44336"; 
+            if (pct >= 100) color = "#ffd700"; 
+            else if (pct >= 75) color = "#4caf50"; 
+            else if (pct >= 40) color = "#ff9800"; 
+            
+            let glow = pct >= 100 ? `box-shadow: 0 0 8px ${color};` : "";
+            
+            return `
+            <div style="margin-bottom: 12px; text-align: left;">
+                <div style="font-size:10px; color:#ccc; display:flex; justify-content:space-between; margin-bottom:4px; text-transform: uppercase;">
+                    <span>${label}</span>
+                    <span style="color:${color}; font-weight:bold;">${current} / ${max}</span>
+                </div>
+                <div style="width:100%; height:8px; background:#222; border-radius:4px; overflow:hidden; border: 1px solid #333;">
+                    <div style="height:100%; width:${pct}%; background:${color}; transition: width 0.5s ease; ${glow}"></div>
+                </div>
+            </div>`;
+        };
+
+        // Riquadro a larghezza piena (Simile al Grado di L1)
+        html += `
+        <div style="background:#1a1a1a; padding:15px; border-radius:6px; border:1px solid #444; margin-bottom:15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+            <div style="font-size:11px; color:#aaa; margin-bottom:15px; text-transform:uppercase; text-align:center; font-weight:bold; letter-spacing:1px;">Progressi Morte Improvvisa</div>
+            
+            <div style="display:flex; gap: 20px; width: 100%;">
+                <div style="flex:1;">
+                    <div style="font-size:11px; color:#4caf50; text-align:center; margin-bottom:10px; font-weight:bold;">ONU (193)</div>
+                    ${buildL6Bar("Bandiere", p.onu_bandiere, 193)}
+                    ${buildL6Bar("Stati", p.onu_stati, 193)}
+                    ${buildL6Bar("Capitali", p.onu_capitali, 193)}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:11px; color:#2196f3; text-align:center; margin-bottom:10px; font-weight:bold;">GLOBALE (253)</div>
+                    ${buildL6Bar("Bandiere", p.totale_bandiere, 253)}
+                    ${buildL6Bar("Stati", p.totale_stati, 253)}
+                    ${buildL6Bar("Capitali", p.totale_capitali, 253)}
+                </div>
+            </div>
+        </div>`;
+
+        // Statistiche sottostanti (in riga, come gli altri livelli)
+        html += `<div style="display:flex; justify-content:space-around; font-size:12px; color:#aaa; margin-bottom:10px;">`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Partite</span><strong style="font-size:18px; color:#fff;">${s.plays}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Sopravvivenza Max</span><strong style="font-size:18px; color:#fff;">${s.bestStreak} Naz.</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Medio</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
+        html += `</div>`;
+
+    } else {
+        // ==========================================
+        // LAYOUT LIVELLI NORMALI (L0, L1, L2, L3, L4, L5, L7)
+        // ==========================================
+        if (lvl > 0 && lvl !== 5) {
+            let maxTarget = 10000;
+            let targetLabel = "Leggenda (10.000 pt)";
+            
+            // Limiti dinamici per L1 e L2
+            if (lvl === 1) { maxTarget = 2500; targetLabel = "Vittoria (2.500 pt)"; } 
+            else if (lvl === 2) { maxTarget = 3500; targetLabel = "Vittoria (3.500 pt)"; }
+            
+            let rankColor = "#aaa"; let rankName = "Nessun Grado";
+            
+            if (lvl === 1 || lvl === 2) {
+                // Gradi scalati su 2500 e 3500
+                if (s.bestScore >= maxTarget) { rankColor = "#ffd700"; rankName = "CAMPIONE"; }
+                else if (s.bestScore >= maxTarget * 0.7) { rankColor = "#e5e4e2"; rankName = "PLATINO"; }
+                else if (s.bestScore >= maxTarget * 0.4) { rankColor = "#ffeb3b"; rankName = "ORO"; }
+                else if (s.bestScore >= maxTarget * 0.15) { rankColor = "#c0c0c0"; rankName = "ARGENTO"; }
+                else if (s.bestScore > 0) { rankColor = "#cd7f32"; rankName = "BRONZO"; }
+            } else {
+                // Gradi classici su 10000
+                if (s.bestScore >= 10000) { rankColor = "#ffd700"; rankName = "LEGGENDA"; }
+                else if (s.bestScore >= 5000) { rankColor = "#e5e4e2"; rankName = "PLATINO"; }
+                else if (s.bestScore >= 2500) { rankColor = "#ffeb3b"; rankName = "ORO"; }
+                else if (s.bestScore >= 1000) { rankColor = "#c0c0c0"; rankName = "ARGENTO"; }
+                else if (s.bestScore > 0) { rankColor = "#cd7f32"; rankName = "BRONZO"; }
+            }
+            
+            let pctBarra = s.bestScore >= maxTarget ? 100 : ((s.bestScore / maxTarget) * 100).toFixed(1);
+
+            html += `
+            <div style="background:#1a1a1a; padding:15px; border-radius:6px; border:2px solid ${rankColor}; margin-bottom:15px; text-align:center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+                <div style="font-size:11px; color:#aaa; text-transform:uppercase; letter-spacing:1px;">Grado Attuale</div>
+                <div style="font-size:24px; font-weight:bold; color:${rankColor}; margin-bottom:8px; text-shadow: 0 0 5px ${rankColor}40;">${rankName}</div>
+                
+                <div style="font-size:10px; color:#888; text-align:left; margin-bottom:4px;">Progresso verso ${targetLabel}</div>
+                <div style="width:100%; height:8px; background:#222; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${pctBarra}%; background: linear-gradient(90deg, #4caf50, ${rankColor});"></div>
+                </div>
+                <div style="font-size:11px; color:#ccc; margin-top:4px; text-align:right;">${s.bestScore} / ${maxTarget.toLocaleString('it-IT')}</div>
+            </div>`;
+        }
+
+        // Statistiche sottostanti comuni
+        html += `<div style="display:flex; justify-content:space-around; font-size:12px; color:#aaa; margin-bottom:10px;">`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Partite</span><strong style="font-size:18px; color:#fff;">${s.plays}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Record</span><strong style="font-size:18px; color:#fff;">${s.plays > 0 ? s.bestScore : '-'}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Serie Max</span><strong style="font-size:18px; color:#fff;">${s.bestStreak}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Medio</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
+        html += `</div>`;
+
+        // Modificatori L4 / L5
+        if (lvl === 4 || lvl === 5) {
+            html += `<div style="display:flex; justify-content:center; gap:20px; font-size:12px; color:#888; border-top:1px dashed #444; padding-top:10px;">`;
+            html += `<span>Fotofinish: <strong style="color:#2196f3;">${s.fotofinish || 0}</strong></span>`;
+            html += `<span>Grazie: <strong style="color:#ffd700;">${s.grazie || 0}</strong></span>`;
+            html += `</div>`;
+        }
+    }
+    
+    document.getElementById("level-detail-container").innerHTML = html;
+}
+
+// --- FIX GLOBALI BANDIERE E LOG ---
+window.openFlagModal = function(src) {
+    let lightbox = document.getElementById("flag-lightbox");
+    let lightboxImg = document.getElementById("flag-lightbox-img");
+    
+    // Se il lightbox non esiste nel DOM, lo crea al volo
+    if (!lightbox) {
+        lightbox = document.createElement("div");
+        lightbox.id = "flag-lightbox";
+        lightbox.style.cssText = "display: flex; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 1; transition: opacity 0.2s;";
+        
+        lightboxImg = document.createElement("img");
+        lightboxImg.id = "flag-lightbox-img";
+        lightboxImg.style.cssText = "max-width: 90%; max-height: 80%; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.7) 0px 4px 15px; border: 2px solid rgb(255, 255, 255); transform: scale(1); transition: transform 0.2s;";
+        
+        lightbox.appendChild(lightboxImg);
+        document.body.appendChild(lightbox);
+        
+        // Chiudi al clic
+        lightbox.onclick = function() {
+            this.style.display = "none";
+        };
+    }
+    
+    lightboxImg.src = src;
+    lightbox.style.display = "flex";
+};
+
+// Forza l'aggancio del click sulla bandiera principale durante il gioco
+if (typeof bandieraImg !== 'undefined' && bandieraImg) {
+    bandieraImg.style.cursor = "pointer";
+    bandieraImg.addEventListener("click", function() {
+        if (this.src) window.openFlagModal(this.src);
+    });
+}
+window.scaricaLog = function() {
+    let testo = typeof debugGameLog !== 'undefined' ? debugGameLog : "Nessun dato registrato.";
+    
+    // Crea la data: sostituisce la virgola/spazio centrale con "_" e barre/due punti con "-"
+    let dataAttuale = new Date().toLocaleString();
+    let dataPulita = dataAttuale.replace(", ", "_").replace(" ", "_").replace(/[\/:]/g, "-");
+    
+    // Recupera il livello appena giocato
+    let livelloLog = typeof currentLevel !== 'undefined' ? currentLevel : "X";
+    
+    let nomeFile = `GeoQuiz_Log_L${livelloLog}_${dataPulita}.txt`;
+
+    let blob = new Blob([testo], { type: "text/plain;charset=utf-8" });
+    let url = URL.createObjectURL(blob);
+    
+    let a = document.createElement('a');
+    a.style.display = "none";
+    a.href = url;
+    a.download = nomeFile;
+    document.body.appendChild(a);
+    a.click();
+    
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100);
+};
+
+window.downloadSpecificLog = function(livello, indice) {
+    let record = recentGamesHistory[livello][indice];
+    if (!record || !record.log) {
+        alert("Impossibile recuperare il log.");
+        return;
+    }
+
+    // Applica la stessa formattazione (Data_Ora) per i file dello storico
+    let dataPulita = record.date.replace(", ", "_").replace(" ", "_").replace(/[\/:]/g, "-");
+    let nomeFile = `GeoQuiz_Log_L${livello}_${dataPulita}.txt`;
+
+    let blob = new Blob([record.log], { type: "text/plain;charset=utf-8" });
+    let url = URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = nomeFile;
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100);
+};
