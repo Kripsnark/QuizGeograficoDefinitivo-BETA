@@ -98,7 +98,7 @@ function ModuloIdentita(nazione, livello, db, config) {
         td.numVariables++;
     }
 
-    if (livello === 4 || livello === 5) {
+    if ((td.format === 0 || td.format === 1) && (livello === 4 || livello === 5)) {
         let validBordersCount = 0;
         let targetConfini = nazione.confini || [];
         for (let c of db) {
@@ -408,7 +408,7 @@ function applicaVincoliNegativi(td, livello, config, tempValid) {
     let maxNegs = 0;
     let negProb = 0;
     if (livello === 2 || livello === 7) { maxNegs = 1; negProb = 0.40; } 
-    else if (isCecchino || isMitragliatrice) { maxNegs = 3; negProb = 0.85; }
+    else if (isCecchino || isMitragliatrice) { maxNegs = 2; negProb = 0.85; }
     
     td.negBorders = []; 
     let lvlCheckNeg = (livello === 5 && config.difficolta !== 'facile') ? true : (livello >= 2 && livello !== 5);

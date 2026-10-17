@@ -605,10 +605,12 @@ window.checkAutoSave = function() {
                 let sT_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span>`;
                 let sTI = "<span class='target-highlight'>STATO O TERRITORIO</span> <strong>INSULARE</strong>";
                 let sTI_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span> <strong>INSULARI</strong>`;
-                
-                // ECCO LE DUE RIGHE MODIFICATE CON L'AZZURRO:
                 let cS = "<span class='target-highlight' style='color:#2196f3;'>CAPITALE</span>";
                 let cS_p = `<span class='target-highlight' style='color:#2196f3;'>${num} CAPITALI</span>`;
+
+                // Funzioni grammaticali intelligenti
+                const artCol = (c) => ['a','e','i','o','u'].includes(c.charAt(0).toLowerCase()) ? "l'" + c.toUpperCase() : "il colore " + c.toUpperCase();
+                const unisci = (arr) => arr.length > 1 ? arr.slice(0, -1).map(x=>`<strong>${x.toUpperCase()}</strong>`).join(', ') + " e <strong>" + arr[arr.length - 1].toUpperCase() + "</strong>" : `<strong>${arr[0].toUpperCase()}</strong>`;
 
                 let cloneHint = "";
                 if (format === 9 || format === 10) {
@@ -617,7 +619,6 @@ window.checkAutoSave = function() {
                     if (cloniSempre.includes(td.targetNode.sigla) || (currentLevel === 2 && cloniLvl2.includes(td.targetNode.sigla))) {
                         let areaPrincipale = td.targetNode.aree[0] || "";
                         if (areaPrincipale) {
-                            // Usa la funzione corretta, toglie i tag in grassetto e la mette in minuscolo
                             let areaCorretta = getPreposizioneArea(areaPrincipale).replace(/<\/?strong>/g, '').toLowerCase();
                             cloneHint = ` (${areaCorretta})`;
                         }
@@ -628,45 +629,22 @@ window.checkAutoSave = function() {
 
                 switch(format) {
                     case 0:
-                        if (num === 1) {
-                            finalQ = td.isComboInception 
-                                ? `Nomina 1 ${cS} di uno <strong>STATO INDIPENDENTE</strong> che confina via terra con la nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>.` 
-                                : `Qual è la ${cS} della nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>?`;
-                        } else {
-                            finalQ = td.isComboInception 
-                                ? `Nomina ${cS_p} di altrettanti <strong>STATI INDIPENDENTI</strong> che confinano via terra con la nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>.` 
-                                : "";
-                        }
+                        if (num === 1) finalQ = td.isComboInception ? `Nomina 1 ${cS} di uno <strong>STATO INDIPENDENTE</strong> che confina via terra con la nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>.` : `Qual è la ${cS} della nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>?`;
+                        else finalQ = td.isComboInception ? `Nomina ${cS_p} di altrettanti <strong>STATI INDIPENDENTI</strong> che confinano via terra con la nazione <strong>${td.targetNode.nome.toUpperCase()}</strong>.` : "";
                         break;
-                    
                     case 1:
-                        if (num === 1) {
-                            finalQ = td.isComboInception 
-                                ? `Nomina 1 ${nI} che confina via terra con lo Stato la cui capitale è <strong>${td.targetNode.capitale.toUpperCase()}</strong>.` 
-                                : `Di quale ${sT} è capitale la città di <strong>${td.targetNode.capitale.toUpperCase()}</strong>?`;
-                        } else {
-                            finalQ = td.isComboInception 
-                                ? `Nomina ${nI_p} che confinano via terra con lo Stato la cui capitale è <strong>${td.targetNode.capitale.toUpperCase()}</strong>.` 
-                                : "";
-                        }
+                        if (num === 1) finalQ = td.isComboInception ? `Nomina 1 ${nI} che confina via terra con lo Stato la cui capitale è <strong>${td.targetNode.capitale.toUpperCase()}</strong>.` : `Di quale ${sT} è capitale la città di <strong>${td.targetNode.capitale.toUpperCase()}</strong>?`;
+                        else finalQ = td.isComboInception ? `Nomina ${nI_p} che confinano via terra con lo Stato la cui capitale è <strong>${td.targetNode.capitale.toUpperCase()}</strong>.` : "";
                         break;
-                    
                     case 2:
                         if (num === 1) {
-                            if (td.f2RequiresSymbol) {
-                                finalQ = `Nomina 1 ${sT} la cui bandiera ha come <strong>COLORE DI BASE</strong> il <strong>${td.targetNode.colori_base[0].toUpperCase()}</strong> e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
-                            } else {
-                                finalQ = `Nomina 1 ${sT} la cui bandiera ha come UNICI colori di BASE <strong>${td.targetNode.colori_base.join(', ').toUpperCase()}</strong>.`;
-                            }
+                            if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha come <strong>COLORE DI BASE</strong> ${artCol(td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            else finalQ = `Nomina 1 ${sT} la cui bandiera ha come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         } else {
-                            if (td.f2RequiresSymbol) {
-                                finalQ = `Nomina ${sT_p} le cui bandiere hanno come <strong>COLORE DI BASE</strong> il <strong>${td.targetNode.colori_base[0].toUpperCase()}</strong> e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
-                            } else {
-                                finalQ = `Nomina ${sT_p} le cui bandiere hanno come UNICI colori di BASE <strong>${td.targetNode.colori_base.join(', ').toUpperCase()}</strong>.`;
-                            }
+                            if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno come <strong>COLORE DI BASE</strong> ${artCol(td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            else finalQ = `Nomina ${sT_p} le cui bandiere hanno come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         }
                         break;
-                    
                     case 3:
                         let f3P = num > 1;
                         let bT = f3P ? `Nomina ${sT_p}` : `Nomina 1 ${sT}`;
@@ -683,43 +661,43 @@ window.checkAutoSave = function() {
                         let azioni = [];
                         if (td.exactBaseColors) azioni.push(`${ha} ESATTAMENTE <strong>${td.exactBaseColors}</strong> colori di BASE`);
                         if (td.minBaseColors) azioni.push(`${ha} ALMENO <strong>${td.minBaseColors}</strong> colori di BASE`);
-                        if (td.reqColor) azioni.push(`${vInc} il <strong>${td.reqColor.toUpperCase()}</strong>`);
+                        if (td.reqColor) azioni.push(`${vInc} ${artCol(td.reqColor)}`);
 
-                        if (td.isColoreEmblema) azioni.push(`${vRaff} un elemento grafico di colore <strong>${td.elemScelto.toUpperCase()}</strong>`);
-                        else azioni.push(`${vRaff} l'elemento grafico <strong>${td.elemScelto.toUpperCase()}</strong>`);
+                        let raffText = td.isColoreEmblema ? `${vRaff} un elemento grafico di colore <strong>${td.elemScelto.toUpperCase()}</strong>` : `${vRaff} l'elemento grafico <strong>${td.elemScelto.toUpperCase()}</strong>`;
 
-                        let actionsText = azioni.slice(0, -1).join(", ") + " e " + azioni[azioni.length - 1];
-                        bT += actionsText;
+                        if (azioni.length > 0) {
+                            bT += azioni.join(", ") + " e " + raffText;
+                        } else {
+                            bT += raffText;
+                        }
 
-                        if (td.negColor) bT += f3P ? ` ma <span class='negative-constraint'>NON</span> contengono il colore <strong>${td.negColor.toUpperCase()}</strong>` : ` ma <span class='negative-constraint'>NON</span> contiene il colore <strong>${td.negColor.toUpperCase()}</strong>`;
+                        if (td.negColor) bT += f3P ? ` ma <span class='negative-constraint'>NON</span> contengono ${artCol(td.negColor)}` : ` ma <span class='negative-constraint'>NON</span> contiene ${artCol(td.negColor)}`;
 
                         finalQ = bT + ".";
                         break;
-                    
                     case 4:
                         let f4t = (num === 1) ? `Nomina 1 ${nI} che confina via terra SIA con <strong>${td.reqConf1.toUpperCase()}</strong> SIA con <strong>${td.reqConf2.toUpperCase()}</strong>` : `Nomina ${nI_p} che confinano via terra SIA con <strong>${td.reqConf1.toUpperCase()}</strong> SIA con <strong>${td.reqConf2.toUpperCase()}</strong>`;
                         if (td.negBorders && td.negBorders.length > 0) {
                             let negB = td.negBorders.map(b => `<strong>${b.toUpperCase()}</strong>`);
                             if (negB.length === 1) f4t += ` ma <span class='negative-constraint'>NON</span> con ${negB[0]}`;
-                            else f4t += ` ma <span class='negative-constraint'>NON</span> con ${negB.join(" e <span class='negative-constraint'>NON</span> con ")}`;
+                            else f4t += ` ma <span class='negative-constraint'>NON</span> con ${negB.slice(0, -1).join(", <span class='negative-constraint'>NON</span> con ")} e <span class='negative-constraint'>NON</span> con ${negB[negB.length - 1]}`;
                         }
                         finalQ = f4t + ".";
                         break;
-                    
                     case 5:
+                        let confTesto1 = td.targetNode.confini.length === 1 ? "ESATTAMENTE <strong>1</strong> stato" : `ESATTAMENTE <strong>${td.targetNode.confini.length}</strong> stati`;
                         if (num === 1) {
                             let t5 = `Nomina 1 ${nI}`;
                             if (td.reqArea) t5 += ` ${areaP}`;
-                            t5 += ` che confina via terra con ESATTAMENTE <strong>${td.targetNode.confini.length}</strong> stati.`;
+                            t5 += ` che confina via terra con ${confTesto1}.`;
                             finalQ = t5;
                         } else {
                             let t5 = `Nomina ${nI_p}`;
                             if (td.reqArea) t5 += ` ${areaP}`;
-                            t5 += ` che confinano via terra con ESATTAMENTE <strong>${td.targetNode.confini.length}</strong> stati.`;
+                            t5 += ` che confinano via terra con ${confTesto1}.`;
                             finalQ = t5;
                         }
                         break;
-                    
                     case 6:
                         if (num === 1) {
                             if (td.varEnigmistica === 0) finalQ = `Nomina 1 ${cS} ${areaP} che inizia con la lettera <strong>${td.reqCapInit.toUpperCase()}</strong>.`;
@@ -731,15 +709,10 @@ window.checkAutoSave = function() {
                             if (td.varEnigmistica === 2) finalQ = `Nomina ${cS_p} ${areaP} che iniziano per <strong>${td.reqCapInit.toUpperCase()}</strong> e finiscono per <strong>${td.reqCapFin.toUpperCase()}</strong>.`;
                         }
                         break;
-                    
                    case 7:
-                        if (num === 1) {
-                            finalQ = `Nomina 1 ${nI} che confina via terra con <strong>${td.targetNode.confini[0].toUpperCase()}</strong>.`;
-                        } else {
-                            finalQ = `Nomina ${nI_p} che confinano via terra con <strong>${td.targetNode.confini[0].toUpperCase()}</strong>.`;
-                        }
+                        if (num === 1) finalQ = `Nomina 1 ${nI} che confina via terra con <strong>${td.targetNode.confini[0].toUpperCase()}</strong>.`;
+                        else finalQ = `Nomina ${nI_p} che confinano via terra con <strong>${td.targetNode.confini[0].toUpperCase()}</strong>.`;
                         break;
-                    
                     case 8:
                         let t8 = "";
                         if (num === 1) {
@@ -752,7 +725,7 @@ window.checkAutoSave = function() {
                             if (td.reqInit) t8 += ` che inizia con la lettera <strong>${td.reqInit.toUpperCase()}</strong>`;
                             if (td.negColor) {
                                 t8 += (td.reqInit) ? ` e la cui bandiera ` : ` la cui bandiera `;
-                                t8 += `<span class='negative-constraint'>NON</span> contiene il colore <strong>${td.negColor.toUpperCase()}</strong>`;
+                                t8 += `<span class='negative-constraint'>NON</span> contiene ${artCol(td.negColor)}`;
                             }
                         } else {
                             if (td.reqGeo === 'isola') t8 = `Nomina ${sTI_p}`;
@@ -764,36 +737,19 @@ window.checkAutoSave = function() {
                             if (td.reqInit) t8 += ` che iniziano con la lettera <strong>${td.reqInit.toUpperCase()}</strong>`;
                             if (td.negColor) {
                                 t8 += (td.reqInit) ? ` e le cui bandiere ` : ` le cui bandiere `;
-                                t8 += `<span class='negative-constraint'>NON</span> contengono il colore <strong>${td.negColor.toUpperCase()}</strong>`;
+                                t8 += `<span class='negative-constraint'>NON</span> contengono ${artCol(td.negColor)}`;
                             }
                         }
                         finalQ = t8 + ".";
                         break;
-                    
                     case 9:
-                        if (num === 1) {
-                            finalQ = td.isComboInception 
-                                ? `Nomina 1 ${nI} che confina via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` 
-                                : `Di quale ${sT}${cloneHint} è questa bandiera?`;
-                        } else {
-                            finalQ = td.isComboInception 
-                                ? `Nomina ${nI_p} che confinano via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` 
-                                : "";
-                        }
+                        if (num === 1) finalQ = td.isComboInception ? `Nomina 1 ${nI} che confina via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` : `Di quale ${sT}${cloneHint} è questa bandiera?`;
+                        else finalQ = td.isComboInception ? `Nomina ${nI_p} che confinano via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` : "";
                         break;
-                    
                     case 10:
-                        if (num === 1) {
-                            finalQ = td.isComboInception 
-                                ? `Nomina 1 ${cS} di uno <strong>STATO INDIPENDENTE</strong> che confina via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` 
-                                : `Qual è la ${cS} di questo <strong>STATO O TERRITORIO</strong>${cloneHint}?`;
-                        } else {
-                            finalQ = td.isComboInception 
-                                ? `Nomina ${cS_p} di altrettanti <strong>STATI INDIPENDENTI</strong> che confinano via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` 
-                                : "";
-                        }
+                        if (num === 1) finalQ = td.isComboInception ? `Nomina 1 ${cS} di uno <strong>STATO INDIPENDENTE</strong> che confina via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` : `Qual è la ${cS} di questo <strong>STATO O TERRITORIO</strong>${cloneHint}?`;
+                        else finalQ = td.isComboInception ? `Nomina ${cS_p} di altrettanti <strong>STATI INDIPENDENTI</strong> che confinano via terra con il Paese${cloneHint} di <strong>QUESTA BANDIERA</strong>.` : "";
                         break;
-                    
                     case 11:
                         let t11 = "";
                         if (num === 1) {
@@ -805,15 +761,13 @@ window.checkAutoSave = function() {
                             
                             if (td.reqArea) t11 += ` ${areaP}`;
                             if (td.reqInit) t11 += ` che inizia per <strong>${td.reqInit.toUpperCase()}</strong>`;
-                            if (td.reqCapInit) {
-                                t11 += (td.reqInit) ? ` e la cui capitale inizia per <strong>${td.reqCapInit.toUpperCase()}</strong>` : ` la cui capitale inizia per <strong>${td.reqCapInit.toUpperCase()}</strong>`;
-                            }
+                            if (td.reqCapInit) t11 += (td.reqInit) ? ` e la cui capitale inizia per <strong>${td.reqCapInit.toUpperCase()}</strong>` : ` la cui capitale inizia per <strong>${td.reqCapInit.toUpperCase()}</strong>`;
                             
                             t11 += (td.reqInit || td.reqCapInit) ? `, la cui bandiera presenta la caratteristica: ` : ` la cui bandiera è caratterizzata da: `;
                             t11 += `<strong>${td.reqFormato.toUpperCase()}</strong>`;
                             
-                            if (td.reqColor) t11 += ` e contiene il colore <strong>${td.reqColor.toUpperCase()}</strong>`;
-                            if (td.negColor) t11 += ` ma <span class='negative-constraint'>NON</span> contiene il <strong>${td.negColor.toUpperCase()}</strong>`;
+                            if (td.reqColor) t11 += ` e contiene ${artCol(td.reqColor)}`;
+                            if (td.negColor) t11 += ` ma <span class='negative-constraint'>NON</span> contiene ${artCol(td.negColor)}`;
                             if (td.negInit) t11 += ` e il cui nome <span class='negative-constraint'>NON</span> inizia per la lettera <strong>${td.negInit.toUpperCase()}</strong>`;
                         } else {
                             if (td.reqGeo === 'isola') t11 = `Nomina ${sTI_p}`;
@@ -824,20 +778,17 @@ window.checkAutoSave = function() {
                             
                             if (td.reqArea) t11 += ` ${areaP}`;
                             if (td.reqInit) t11 += ` che iniziano per <strong>${td.reqInit.toUpperCase()}</strong>`;
-                            if (td.reqCapInit) {
-                                t11 += (td.reqInit) ? ` e le cui capitali iniziano per <strong>${td.reqCapInit.toUpperCase()}</strong>` : ` le cui capitali iniziano per <strong>${td.reqCapInit.toUpperCase()}</strong>`;
-                            }
+                            if (td.reqCapInit) t11 += (td.reqInit) ? ` e le cui capitali iniziano per <strong>${td.reqCapInit.toUpperCase()}</strong>` : ` le cui capitali iniziano per <strong>${td.reqCapInit.toUpperCase()}</strong>`;
                             
                             t11 += (td.reqInit || td.reqCapInit) ? `, le cui bandiere presentano la caratteristica: ` : ` le cui bandiere sono caratterizzate da: `;
                             t11 += `<strong>${td.reqFormato.toUpperCase()}</strong>`;
                             
-                            if (td.reqColor) t11 += ` e contengono il colore <strong>${td.reqColor.toUpperCase()}</strong>`;
-                            if (td.negColor) t11 += ` ma <span class='negative-constraint'>NON</span> contengono il <strong>${td.negColor.toUpperCase()}</strong>`;
+                            if (td.reqColor) t11 += ` e contengono ${artCol(td.reqColor)}`;
+                            if (td.negColor) t11 += ` ma <span class='negative-constraint'>NON</span> contengono ${artCol(td.negColor)}`;
                             if (td.negInit) t11 += ` e i cui nomi <span class='negative-constraint'>NON</span> iniziano per la lettera <strong>${td.negInit.toUpperCase()}</strong>`;
                         }
                         finalQ = t11 + ".";
                         break;
-
                     case 12:
                         let t12 = "";
                         if (num === 1) {
@@ -845,29 +796,24 @@ window.checkAutoSave = function() {
                             if (td.reqArea) t12 += ` ${areaP}`;
                             if (td.reqInit) t12 += (td.f12AskCapital) ? ` il cui nome inizia per <strong>${td.reqInit.toUpperCase()}</strong>` : ` che inizia per <strong>${td.reqInit.toUpperCase()}</strong>`;
                             
-                            t12 += `, la cui bandiera INCLUDE i colori `;
-                            if (td.f12Colors.length === 3) t12 += `<strong>${td.f12Colors[0].toUpperCase()}, ${td.f12Colors[1].toUpperCase()}</strong> e <strong>${td.f12Colors[2].toUpperCase()}</strong>`;
-                            else t12 += `<strong>${td.f12Colors[0].toUpperCase()}</strong> e <strong>${td.f12Colors[1].toUpperCase()}</strong>`;
+                            t12 += `, la cui bandiera INCLUDE i colori ${unisci(td.f12Colors)}`;
                             
                             if (td.f12RequiresSymbol) t12 += ` e raffigura l'elemento grafico <strong>${td.f12RequiresSymbol.toUpperCase()}</strong>`;
-                            if (td.negColor) t12 += ` ma <span class='negative-constraint'>NON</span> contiene il colore <strong>${td.negColor.toUpperCase()}</strong>`;
+                            if (td.negColor) t12 += ` ma <span class='negative-constraint'>NON</span> contiene ${artCol(td.negColor)}`;
                             if (td.negInit) t12 += (td.f12AskCapital) ? ` e il cui nome <span class='negative-constraint'>NON</span> inizia per <strong>${td.negInit.toUpperCase()}</strong>` : ` e il cui nome <span class='negative-constraint'>NON</span> inizia per <strong>${td.negInit.toUpperCase()}</strong>`;
                         } else {
                             t12 = td.f12AskCapital ? `Nomina ${cS_p} di altrettanti <strong>STATI</strong>` : `Nomina ${sT_p}`;
                             if (td.reqArea) t12 += ` ${areaP}`;
                             if (td.reqInit) t12 += (td.f12AskCapital) ? ` i cui nomi iniziano per <strong>${td.reqInit.toUpperCase()}</strong>` : ` che iniziano per <strong>${td.reqInit.toUpperCase()}</strong>`;
                             
-                            t12 += `, le cui bandiere INCLUDONO i colori `;
-                            if (td.f12Colors.length === 3) t12 += `<strong>${td.f12Colors[0].toUpperCase()}, ${td.f12Colors[1].toUpperCase()}</strong> e <strong>${td.f12Colors[2].toUpperCase()}</strong>`;
-                            else t12 += `<strong>${td.f12Colors[0].toUpperCase()}</strong> e <strong>${td.f12Colors[1].toUpperCase()}</strong>`;
+                            t12 += `, le cui bandiere INCLUDONO i colori ${unisci(td.f12Colors)}`;
                             
                             if (td.f12RequiresSymbol) t12 += ` e raffigurano l'elemento grafico <strong>${td.f12RequiresSymbol.toUpperCase()}</strong>`;
-                            if (td.negColor) t12 += ` ma <span class='negative-constraint'>NON</span> contengono il colore <strong>${td.negColor.toUpperCase()}</strong>`;
+                            if (td.negColor) t12 += ` ma <span class='negative-constraint'>NON</span> contengono ${artCol(td.negColor)}`;
                             if (td.negInit) t12 += (td.f12AskCapital) ? ` e i cui nomi <span class='negative-constraint'>NON</span> iniziano per <strong>${td.negInit.toUpperCase()}</strong>` : ` e i cui nomi <span class='negative-constraint'>NON</span> iniziano per <strong>${td.negInit.toUpperCase()}</strong>`;
                         }
                         finalQ = t12 + ".";
                         break;
-
 		    case 13:
                         finalQ = "Seleziona la bandiera di <strong>" + td.targetNode.nome.toUpperCase() + "</strong>.";
                         break;
@@ -892,7 +838,7 @@ window.checkAutoSave = function() {
                     }
                     
                     if (extraNegs.length > 0) {
-                        base += ", " + extraNegs.join(" e ");
+                        base += ", " + extraNegs.slice(0, -1).join(", ") + (extraNegs.length > 1 ? " e " : "") + extraNegs[extraNegs.length - 1];
                     }
                     return base + punc;
                 }
@@ -2226,9 +2172,17 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             let row2 = document.createElement("div"); row2.className = "combo-flag-row";
 
             matchedCountriesInfos.forEach((info, index) => {
-                let img = document.createElement("img"); img.src = "GIF/" + info.matchedCountry.sigla.toLowerCase() + ".jpg"; img.className = "combo-flag-img";
-                img.onclick = function() { window.openFlagModal(this.src); }; img.onerror = function() { this.style.display = 'none'; };
-                if (matchedCountriesInfos.length === 5) { if (index < 3) row1.appendChild(img); else row2.appendChild(img); } else row1.appendChild(img);
+                let img = document.createElement("img"); 
+                img.src = "GIF/" + info.matchedCountry.sigla.toLowerCase() + ".jpg"; 
+                img.className = "combo-flag-img";
+                img.style.cursor = "pointer"; // Rende palese che si può cliccare
+                img.onclick = function() { openFlagModal(this.src); }; // Niente window., richiama la funzione globale di ui.js
+                img.onerror = function() { this.style.display = 'none'; };
+                if (matchedCountriesInfos.length === 5) { 
+                    if (index < 3) row1.appendChild(img); else row2.appendChild(img); 
+                } else {
+                    row1.appendChild(img);
+                }
             });
             gridContainer.appendChild(row1);
             if (matchedCountriesInfos.length === 5) gridContainer.appendChild(row2);
@@ -2932,12 +2886,22 @@ function parla(testo, callbackTermine, force = false) {
     // 1. CORREZIONI FISSE PER TERMINI DI SISTEMA E CONTINENTI
     const correzioniGlobali = {
         "Asia": "Àsia",       
-        "Oceania": "Oceània"  
+        "Oceania": "Oceània"
     };
     for (const [parola, pronuncia] of Object.entries(correzioniGlobali)) {
         let regex = new RegExp("\\b" + parola + "\\b", "gi");
         testoPulito = testoPulito.replace(regex, pronuncia);
     }
+    
+    // Converte lettere singole maiuscole in suoni netti con pausa
+    testoPulito = testoPulito.replace(/\b([A-Z])\b/g, (match) => {
+        const lettereFonetiche = {
+            'A': 'a', 'B': 'bi', 'C': 'ci', 'D': 'di', 'E': 'e', 'F': 'effe', 'G': 'gi', 'H': 'acca',
+            'I': 'i', 'J': 'gei', 'K': 'cappa', 'L': 'elle', 'M': 'emme', 'N': 'enne', 'O': 'o',
+            'P': 'pi', 'Q': 'qu', 'R': 'erre', 'S': 'esse', 'T': 'ti', 'U': 'u', 'V': 'vi', 'Z': 'zeta'
+        };
+        return ", " + lettereFonetiche[match] + ", ";
+    });
 
     // 2. INIEZIONE CORREZIONE FONETICA DAL DATABASE (OTTIMIZZATA)
     if (typeof globalDb !== 'undefined') {
@@ -3172,7 +3136,8 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
-                let correctAns = currentTurnData.validAnswersCache[0].replace(/\s*\(/, ', ').replace(/\)/, '');
+                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+		let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
                     parla(`Ti sei arreso. La risposta era ${correctAns}.${testoVite}`, function() {
@@ -3192,7 +3157,8 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
-                let correctAns = currentTurnData.validAnswersCache[0].replace(/\s*\(/, ', ').replace(/\)/, '');
+                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+		let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale	
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
                     parla(`Sbagliato, era ${correctAns}.${testoVite}`, function() {
