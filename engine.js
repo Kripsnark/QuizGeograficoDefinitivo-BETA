@@ -601,16 +601,16 @@ window.checkAutoSave = function() {
                 
                 let nI = "<span class='target-highlight'>NAZIONE INDIPENDENTE</span>";
                 let nI_p = `<span class='target-highlight'>${num} NAZIONI INDIPENDENTI</span>`;
-                let sT = "<span class='target-highlight'>STATO O TERRITORIO</span>";
-                let sT_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span>`;
-                let sTI = "<span class='target-highlight'>STATO O TERRITORIO</span> <strong>INSULARE</strong>";
+                let sT = "<span class='target-highlight'>TERRITORIO</span>";
+                let sT_p = `<span class='target-highlight'>${num} TERRITORI</span>`;
+		let sTI = "<span class='target-highlight'>STATO O TERRITORIO</span> <strong>INSULARE</strong>";
                 let sTI_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span> <strong>INSULARI</strong>`;
                 let cS = "<span class='target-highlight' style='color:#2196f3;'>CAPITALE</span>";
                 let cS_p = `<span class='target-highlight' style='color:#2196f3;'>${num} CAPITALI</span>`;
 
                 // Funzioni grammaticali intelligenti
-                const artCol = (c) => ['a','e','i','o','u'].includes(c.charAt(0).toLowerCase()) ? "l'" + c.toUpperCase() : "il colore " + c.toUpperCase();
-                const unisci = (arr) => arr.length > 1 ? arr.slice(0, -1).map(x=>`<strong>${x.toUpperCase()}</strong>`).join(', ') + " e <strong>" + arr[arr.length - 1].toUpperCase() + "</strong>" : `<strong>${arr[0].toUpperCase()}</strong>`;
+                const artCol = (c) => ['a','e','i','o','u'].includes(c.charAt(0).toLowerCase()) ? "l'<span style='color:#ffd700; font-weight:bold;'>" + c.toUpperCase() + "</span>" : "il colore <span style='color:#ffd700; font-weight:bold;'>" + c.toUpperCase() + "</span>";
+const unisci = (arr) => arr.length > 1 ? arr.slice(0, -1).map(x=>`<span style='color:#ffd700; font-weight:bold;'>${x.toUpperCase()}</span>`).join(', ') + " e <span style='color:#ffd700; font-weight:bold;'>" + arr[arr.length - 1].toUpperCase() + "</span>" : `<span style='color:#ffd700; font-weight:bold;'>${arr[0].toUpperCase()}</span>`;
 
                 let cloneHint = "";
                 if (format === 9 || format === 10) {
@@ -638,10 +638,10 @@ window.checkAutoSave = function() {
                         break;
                     case 2:
                         if (num === 1) {
-                            if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha come <strong>COLORE DI BASE</strong> ${artCol(td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha TRA I COLORI DI BASE ${artCol(td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
                             else finalQ = `Nomina 1 ${sT} la cui bandiera ha come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         } else {
-                            if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno come <strong>COLORE DI BASE</strong> ${artCol(td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno TRA I COLORI DI BASE ${artCol(td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
                             else finalQ = `Nomina ${sT_p} le cui bandiere hanno come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         }
                         break;
@@ -1644,16 +1644,47 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                     testoDaLeggere += "... Le opzioni sono: " + opzioniL0[0].text + ", " + opzioniL0[1].text + ", oppure " + opzioniL0[2].text;
                 }
 
-                parla(testoDaLeggere, function() {
-                    if (assistantRec && !isListening) {
-                        innescaMicrofonoConDing();
-                    }
+                // --- NUOVA LOGICA: LETTURA RALLENTATA PER I BERSAGLI NEI FORMATI 0 e 1 ---
+                if (currentTurnData.format === 0 || currentTurnData.format === 1) {
+                    let startTag = testoDaLeggere.lastIndexOf("<strong>");
+                    let endTag = testoDaLeggere.lastIndexOf("</strong>");
                     
-                    // L'ASSISTENTE HA FINITO DI PARLARE: SE SIAMO AL L6, SCATENA IL TIMER!
-                    if (currentLevel === 6 && timerState === "reading") {
-                        activateMainTimer();
+                    if (startTag !== -1 && endTag !== -1) {
+                        let introduzione = testoDaLeggere.substring(0, startTag);
+                        let bersaglio = testoDaLeggere.substring(startTag + 8, endTag);
+                        let vecchiaVelocita = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
+                        
+                        // 1. Legge l'introduzione a velocità normale
+                        parla(introduzione, function() {
+                            // 2. Altera la velocità globale per leggere il bersaglio lento
+                            voiceSpeed = vecchiaVelocita * 0.8; 
+                            
+                            parla(bersaglio, function() {
+                                // 3. Ripristina la velocità normale
+                                voiceSpeed = vecchiaVelocita; 
+                                
+                                if (assistantRec && !isListening) innescaMicrofonoConDing();
+                                if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                            });
+                        });
+                    } else {
+                        // Fallback
+                        parla(testoDaLeggere, function() {
+                            if (assistantRec && !isListening) innescaMicrofonoConDing();
+                            if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                        });
                     }
-                });
+                } else {
+                    // Lettura normale per tutti gli altri formati
+                    parla(testoDaLeggere, function() {
+                        if (assistantRec && !isListening) {
+                            innescaMicrofonoConDing();
+                        }
+                        if (currentLevel === 6 && timerState === "reading") {
+                            activateMainTimer();
+                        }
+                    });
+                }
             }
             
             logQuestionCounter++;
@@ -2839,7 +2870,7 @@ function creaBottoneAssistente() {
             
             if (suoniAttivi) playSound("ding");
 
-            parla("Modalità vocale attivata. Quale livello vuoi giocare? Dire: livello + numero", function() {
+            parla("Modalità vocale attivata. Quale livello vuoi giocare? Pronuncia la parola livello, seguita dal numero.", function() {
                 if (assistantRec && !isListening) {
                     window.innescaMicrofonoConDing();
                 }
@@ -2897,7 +2928,7 @@ function parla(testo, callbackTermine, force = false) {
     testoPulito = testoPulito.replace(/\b([A-Z])\b/g, (match) => {
         const lettereFonetiche = {
             'A': 'a', 'B': 'bi', 'C': 'ci', 'D': 'di', 'E': 'e', 'F': 'effe', 'G': 'gi', 'H': 'acca',
-            'I': 'i', 'J': 'gei', 'K': 'cappa', 'L': 'elle', 'M': 'emme', 'N': 'enne', 'O': 'o',
+            'I': 'i', 'J': 'gei', 'K': 'cappa', 'L': 'elle', 'M': ', èèmme, ', 'N': ', èènne, ', 'O': 'o',
             'P': 'pi', 'Q': 'qu', 'R': 'erre', 'S': 'esse', 'T': 'ti', 'U': 'u', 'V': 'vi', 'Z': 'zeta'
         };
         return ", " + lettereFonetiche[match] + ", ";
