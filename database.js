@@ -20,7 +20,7 @@ JE	Baliato di Jersey	Jersey, Sbagliato di Jersey		Saint Helier	S Helier	Sènt H�
 BD	Bangladesh			Dacca			india, myanmar, mare	Asia, Subcontinente indiano	verde, rosso	rosso	cerchio		cerchio rosso, lenzuolo verde	2
 BB	Barbados			Bridgetown	Bridgestone			Nord America, caraibi	blu, giallo	nero	tridente		strisce verticali	2
 BE	Belgio			Bruxelles			paesi bassi, germania, lussemburgo, francia, mare	Europa, Benelux	nero, giallo, rosso				strisce verticali	1
-BZ	Belize	felice		Belmopan	bel mo pan, belgio pan, termopan		guatemala, messico, mare	Nord America, america centrale	rosso, blu	bianco	emblema nazionale, persona, cerchio, nave		cerchio bianco	2
+BZ	Belize	felice		Belmopan	bel mo pan, belgio pan, termopan		guatemala, messico, mare	Nord America, america centrale	rosso, blu, bianco	bianco	emblema nazionale, persona, cerchio, nave		cerchio bianco	2
 BJ	Benin			Porto Novo	Portonovo		togo, burkina faso, niger, nigeria, mare	africa, africa Occidentale, Golfo di Guinea	verde, giallo, rosso				Banda verticale a lato	2
 BM	Bermuda			Hamilton				Nord America	rosso		emblema nazionale, union jack	x		3
 BT	Bhutan	Buthan		Thimphu	tempo, tv		cina, india	Asia, Subcontinente indiano	giallo, arancione	bianco	drago		taglio diagonale	2
@@ -85,7 +85,7 @@ GD	Grenada			Saint George's	st george's, st george, saint george, Giorgis, sangi
 GL	Groenlandia			Nuuk	Nuk		canada, mare	nord america	rosso, bianco		cerchio	x	strisce orizzontali	3
 GP	Guadalupa			Basse-Terre	base terra, passe terra			nord america, caraibi	blu, giallo, nero, verde		emblema nazionale, sole	x		3
 GU	Guam	Wham		Hagåtña	Agatnia, agatna, agata, a gatta, la gatta, accatna, a canna	Agàt gna		Oceania	blu, rosso		emblema nazionale	x	cornice perimetrale	3
-GT	Guatemala			Città del Guatemala	Guatemala		messico, belize, honduras, el salvador, mare	nord america, america centrale	azzurro, bianco		emblema nazionale		strisce verticali	2
+GT	Guatemala			Città del Guatemala	Guatemala		messico, belize, honduras, el salvador, mare	nord america, america centrale	azzurro, bianco		emblema nazionale, arma, animale, uccello		strisce verticali	2
 GG	Guernsey			Saint Peter Port	Porto di San Pietro, tempi per port			Europa, Europa Settentrionale	bianco, rosso, giallo		croce simmetrica	x		3
 GN	Guinea			Conakry	Con Acri, Macri		guinea-bissau, senegal, mali, costa d'avorio, liberia, sierra leone, mare	africa, africa occidentale	rosso, giallo, verde				strisce verticali	2
 GQ	Guinea Equatoriale	Linea equatoriale		ciutad de la paz	*Malabo, la pass	Siutaàd de la pas	camerun, gabon, mare	africa, africa centrale, Golfo di Guinea	azzurro, verde, bianco, rosso		emblema nazionale, albero		triangolo a sinistra azzurro	2
@@ -226,8 +226,8 @@ CH	Svizzera			Berna			francia, germania, liechtenstein, austria, italia	europa	r
 TJ	Tagikistan			Dushanbe	Dujabbe, Due gambe, du scian be	Duscianbé	uzbekistan, kirghizistan, cina, Afghanistan 	Asia, Asia Centrale	rosso, bianco, verde	giallo	stella, corona		strisce orizzontali, stella gialla	2
 TW	Taiwan			Taipei	Ebay			Asia, Asia Orientale	blu, rosso	bianco	sole	x	Riquadro in alto a sinistra	3
 TZ	Tanzania			Dodoma			mozambico, malawi, zambia, repubblica democratica del congo, uganda, kenya, ruanda, burundi, mare	africa, africa orientale	verde, giallo, nero, azzurro				taglio diagonale	1
-TF	Terre Australi e Antartiche Francesi	Terre australi, terra antartiche		Port-Douzième	Port Douzieme, cordusiom	Pòr Dusièm			blu, bianco, rosso	bianco	emblema nazionale, bandiera francese	x		3
-IO	Territorio britannico dell'Oceano Indiano	territorio britannico doltremare		Diego Garcia				Asia, Subcontinente indiano	blu, bianco		albero, union jack	x		3
+TF	Terre Australi e Antartiche Francesi	Terre australi, terra antartiche		Port-Douzième	Port Douzieme, cordusiom	Pòr Dusièm			blu, bianco	bianco	emblema nazionale, bandiera francese	x		3
+IO	Territorio britannico dell'Oceano Indiano	territorio britannico doltremare		Diego Garcia				Asia, Subcontinente indiano	blu, bianco		albero, union jack, corona	x		3
 TH	Thailandia			Bangkok			myanmar, laos, cambogia, malaysia, mare	Asia, Sud-Est Asiatico, Penisola indocinese	rosso, bianco, blu				strisce orizzontali	1
 TL	Timor Est			Dili			indonesia, mare	Asia, Sud-Est Asiatico	nero, giallo, rosso	bianco	stella		triangolo a sinistra nero, stella bianca	2
 TG	Togo	Dogo		Lomé	Lume, elome		ghana, burkina faso, benin, mare	africa, africa occidentale, Golfo di Guinea	rosso, verde, giallo	bianco	stella		stella bianca, Riquadro in alto a sinistra	2

@@ -49,7 +49,7 @@ function toggleSuoni() {
 }
 
 // === VARIABILI DI STATO E COLLEGAMENTI DOM (RECUPERATI) ===
-const allColors = ['rosso','bianco','blu','nero','giallo','verde','arancione','azzurro'];
+const allColors = ['rosso','bianco','blu','nero','giallo','verde','arancione','azzurro','viola'];
 const allLetters = 'ABCDEFGHILMNOPQRSTUVZ'.split('');
 
 let vite = 3;
@@ -1672,7 +1672,6 @@ let tempValid = getValidAnswersArray(td, currentLevel);
             if (voiceModeActive) {
                 let testoDaLeggere = currentTurnData.questionText;
                 
-                // Visto che i formati visivi sono già bloccati a monte, aggiunge le opzioni a occhi chiusi
                 if (currentLevel === 0) {
                     testoDaLeggere += "... Le opzioni sono: " + opzioniL0[0].text + ", " + opzioniL0[1].text + ", oppure " + opzioniL0[2].text;
                 }
@@ -1686,26 +1685,27 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                         let introduzione = testoDaLeggere.substring(0, startTag);
                         let bersaglio = testoDaLeggere.substring(startTag + 8, endTag);
                         
-                        // Calcoliamo al volo il nostro "0.8x" in base alla velocità standard
                         let currentDefaultSpeed = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
                         let slowSpeed = currentDefaultSpeed * 0.8;
                         
-                        // 1. Legge l'introduzione a velocità normale (usando force: true)
                         parla(introduzione, function() {
-                            // 2. Legge il bersaglio passando "slowSpeed" come quarto parametro
                             parla(bersaglio, function() {
-                                // 3. Il callback finale attiva timer e microfono
                                 if (assistantRec && !isListening) innescaMicrofonoConDing();
                                 if (currentLevel === 6 && timerState === "reading") activateMainTimer();
                             }, true, slowSpeed); 
                         }, true); 
                     } else {
-                        // Fallback: se qualcosa va storto coi tag, legge tutto normale
+                        // Fallback
                         parla(testoDaLeggere, function() {
                             if (assistantRec && !isListening) innescaMicrofonoConDing();
                             if (currentLevel === 6 && timerState === "reading") activateMainTimer();
                         }, true);
                     }
+                } else {
+                    parla(testoDaLeggere, function() {
+                        if (assistantRec && !isListening) innescaMicrofonoConDing();
+                        if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                    }, true);
                 }
             }
             
@@ -3218,9 +3218,16 @@ if (!window.voiceHooksAdded) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
                 let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-		let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale	
+                let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale
+                
+                // FIX LIVELLO 0: Se sei al Livello 0, legge la prima risposta valida generata (che è quella associata all'immagine)
+                if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
+                     correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
+                }
+                
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
+                    // Al Livello 6 non dice le vite rimanenti (perché è Morte Improvvisa e se sbagli sei morto subito, quindi window.pendingDefeat intercetta prima)
                     parla(`Sbagliato, era ${correctAns}.${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000); 
                     });
@@ -3248,7 +3255,46 @@ if (!window.voiceHooksAdded) {
         }
     };
 
-    // 3. Intercetta le risposte corrette
+    // 3. Intercetta i successi delle COMBO (incluso Grazia da timeout e Fotofinish)
+    const origEseguiValidazioneMultipla = eseguiValidazioneMultipla;
+    eseguiValidazioneMultipla = function(isTimeout = false) {
+        let esattePrima = esatte;
+        let puntiPrima = punteggio;
+        
+        origEseguiValidazioneMultipla(isTimeout);
+        
+        if (voiceModeActive && !window.pendingVictory && !window.pendingDefeat) {
+            if (esatte > esattePrima) {
+                let puntiGuadagnati = punteggio - puntiPrima;
+                // FIX LIVELLO 6: Se sei a Morte Improvvisa non ci sono punti
+                let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
+                
+                let badgeEl = document.getElementById("event-badge");
+                let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
+                let extraTesto = "";
+                
+                if (badgeTesto.includes("grazia")) {
+                    testoEsatto = `Tempo scaduto, ma ti sei salvato per grazia ricevuta! Più ${puntiGuadagnati} punti.`;
+                } else {
+                    if (badgeTesto.includes("fotofinish")) extraTesto += " Salvataggio al fotofinish.";
+                    if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
+                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
+                }
+                
+                if (badgeTesto.includes("vita extra")) extraTesto += " Hai ottenuto una vita extra.";
+                
+                testoEsatto += extraTesto;
+                
+                setTimeout(() => {
+                    parla(testoEsatto, function() {
+                        setTimeout(() => nextTurnMulti(), 300);
+                    });
+                }, 150);
+            }
+        }
+    };
+
+    // 4. Intercetta le risposte corrette
     const origProcessaRisposta = processaRisposta;
     processaRisposta = function() {
         let esattePrima = esatte;
@@ -3273,22 +3319,20 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) return; 
             if (vite < vitePrima) return; 
 
-            // Se la risposta finale o l'intera combo è esatta
-            if (esatte > esattePrima) {
+            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+
+            // Se la risposta è esatta ma è una domanda singola (Livelli 1, 2, 3)
+            if (!isMulti && esatte > esattePrima) {
                  let puntiGuadagnati = punteggio - puntiPrima;
+                 // FIX: Qui c'era già, controlliamo solo che funzioni bene
                  let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
                  
                  let badgeEl = document.getElementById("event-badge");
                  let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
                  let extraTesto = "";
                  
-                 if (badgeTesto.includes("grazia")) {
-                     testoEsatto = `Combo salvata per grazia ricevuta! Più ${puntiGuadagnati} punti.`;
-                 } else {
-                     if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
-                     if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
-                 }
-                 
+                 if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
+                 if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
                  if (badgeTesto.includes("vita extra")) extraTesto += " Hai ottenuto una vita extra.";
                  
                  testoEsatto += extraTesto;
@@ -3301,7 +3345,8 @@ if (!window.voiceHooksAdded) {
                  return;
             } 
             
-            if (comboInserted.length > comboPrima) {
+            // Se stiamo accumulando risposte per una combo (ma non abbiamo ancora finito)
+            if (isMulti && comboInserted.length > comboPrima) {
                  setTimeout(() => {
                      parla("Presa.", function() { 
                          if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
