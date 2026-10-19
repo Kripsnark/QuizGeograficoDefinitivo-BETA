@@ -228,6 +228,8 @@ function ModuloVessillologia(nazione, livello, db, config) {
         td.format = 2;
         if (lvlCheckNeg && Math.random() > 0.5 && hasSymbols) {
             td.f2RequiresSymbol = nazione.simboli[Math.floor(Math.random() * nazione.simboli.length)];
+            // PESCAGGIO CASUALE DEL COLORE BASE (non più fisso a [0])
+            td.f2Color = nazione.colori_base[Math.floor(Math.random() * nazione.colori_base.length)];
             td.numVariables++;
         }
     }
@@ -250,12 +252,18 @@ function ModuloVessillologia(nazione, livello, db, config) {
         
         if (f3Variant === 1) { td.reqArea = td.selectedArea; td.numVariables++; }
         if (f3Variant === 2) { 
-            let coloreScelto = nazione.colori_base[0];
-            if (td.isColoreEmblema && coloreScelto === td.elemScelto) {
-                let altColors = nazione.colori_base.filter(c => c !== td.elemScelto);
-                if (altColors.length > 0) coloreScelto = altColors[0];
-                else f3Variant = 0; 
+            // PESCAGGIO CASUALE DEL COLORE BASE
+            let validCols = [...nazione.colori_base];
+            if (td.isColoreEmblema) {
+                validCols = validCols.filter(c => c !== td.elemScelto);
             }
+            if (validCols.length > 0) {
+                td.reqColor = validCols[Math.floor(Math.random() * validCols.length)];
+                td.numVariables++;
+            } else {
+                f3Variant = 0;
+            }
+        }
             if (f3Variant === 2) { td.reqColor = coloreScelto; td.numVariables++; }
         }
         if (f3Variant === 3) { td.reqInit = nazione.nome.charAt(0).toUpperCase(); td.numVariables++; }
@@ -291,23 +299,17 @@ function ModuloVessillologia(nazione, livello, db, config) {
 
         if (selectedConditions.includes('area')) { td.reqArea = td.selectedArea; td.numVariables++; }
         if (selectedConditions.includes('colore')) { 
-            let coloreScelto = nazione.colori_base[0];
             let formatoText = td.reqFormato.toLowerCase();
             let getRadice = (col) => col.endsWith("o") ? col.slice(0, -1) : col;
             
-            if (formatoText.includes(getRadice(coloreScelto))) {
-                let altColors = nazione.colori_base.filter(c => !formatoText.includes(getRadice(c)));
-                if (altColors.length > 0) {
-                    coloreScelto = altColors[0];
-                    td.reqColor = coloreScelto; 
-                    td.numVariables++;
-                } else {
-                    let idx = selectedConditions.indexOf('colore');
-                    if (idx > -1) selectedConditions.splice(idx, 1);
-                }
-            } else {
-                td.reqColor = coloreScelto; 
+            // Filtra subito tutti i colori base che NON sono già scritti nel nome del formato e ne pesca uno a caso!
+            let altColors = nazione.colori_base.filter(c => !formatoText.includes(getRadice(c)));
+            if (altColors.length > 0) {
+                td.reqColor = altColors[Math.floor(Math.random() * altColors.length)]; 
                 td.numVariables++;
+            } else {
+                let idx = selectedConditions.indexOf('colore');
+                if (idx > -1) selectedConditions.splice(idx, 1);
             }
         }
         if (selectedConditions.includes('geo')) { 

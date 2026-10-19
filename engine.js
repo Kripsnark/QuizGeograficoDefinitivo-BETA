@@ -590,7 +590,38 @@ window.checkAutoSave = function() {
         }
 
 	function generateQuestion() {
-            let td = creaNuovaDomanda(currentLevel, levelDb, customConfig, voiceModeActive, recentTargets);
+            let td;
+            
+            if (currentLevel === 6) {
+                // IL FIX PER IL LIVELLO 6: Bypassiamo il dado primario della Factory per rispettare rigorosamente configL6
+                let dbDisponibile = levelDb.filter(n => {
+                    if (recentTargets.includes(n.sigla)) return false;
+                    // Se l'argomento scelto richiede la capitale (Formato 0 o 1), scartiamo le nazioni che non ce l'hanno
+                    if ((configL6.formato === 0 || configL6.formato === 1) && (!n.capitale || n.capitale.trim() === "")) return false;
+                    return true;
+                });
+                
+                if (dbDisponibile.length === 0) {
+                    recentTargets = [];
+                    dbDisponibile = levelDb.filter(n => {
+                        if ((configL6.formato === 0 || configL6.formato === 1) && (!n.capitale || n.capitale.trim() === "")) return false;
+                        return true;
+                    });
+                }
+                
+                let nazioneEstratta = dbDisponibile[Math.floor(Math.random() * dbDisponibile.length)];
+                recentTargets.push(nazioneEstratta.sigla);
+                
+                td = { 
+                    categoria: 'MorteImprovvisa', 
+                    format: configL6.formato, 
+                    targetNode: nazioneEstratta, 
+                    numVariables: 1, 
+                    isComboInception: false 
+                };
+            } else {
+                td = creaNuovaDomanda(currentLevel, levelDb, customConfig, voiceModeActive, recentTargets);
+            }
 
             // --- FIX: PONTE TRA FACTORY ED ENGINE ---
             let format = td.format; 
@@ -638,10 +669,10 @@ const unisci = (arr) => arr.length > 1 ? arr.slice(0, -1).map(x=>`<span style='c
                         break;
                     case 2:
                         if (num === 1) {
-                            if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha TRA I COLORI DI BASE ${artCol(td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha TRA I COLORI DI BASE ${artCol(td.f2Color || td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
                             else finalQ = `Nomina 1 ${sT} la cui bandiera ha come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         } else {
-                            if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno TRA I COLORI DI BASE ${artCol(td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
+                            if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno TRA I COLORI DI BASE ${artCol(td.f2Color || td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
                             else finalQ = `Nomina ${sT_p} le cui bandiere hanno come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
                         }
                         break;
@@ -1008,9 +1039,10 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                     else if (td.format === 2) {
                         let cBaseRichiesti = td.targetNode.colori_base;
                         if (td.f2RequiresSymbol) {
-                            if (country.colori_base.includes(cBaseRichiesti[0]) && country.simboli.includes(td.f2RequiresSymbol)) match = true;
+                            let colReq = td.f2Color || cBaseRichiesti[0];
+                            if (country.colori_base.includes(colReq) && country.simboli.includes(td.f2RequiresSymbol)) match = true;
                         } else {
-                            if (country.colori_base.sort().join(',') === cBaseRichiesti.sort().join(',')) match = true;
+                            if ([...country.colori_base].sort().join(',') === [...cBaseRichiesti].sort().join(',')) match = true;
                         }
                     }
                     else if (td.format === 3) {
@@ -1245,9 +1277,10 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                     else if (td.format === 2) {
                         let cBaseRichiesti = td.targetNode.colori_base;
                         if (td.f2RequiresSymbol) {
-                            if (country.colori_base.includes(cBaseRichiesti[0]) && country.simboli.includes(td.f2RequiresSymbol) && nameMatch) { match = true; relevantDist = nameDist; }
+                            let colReq = td.f2Color || cBaseRichiesti[0];
+                            if (country.colori_base.includes(colReq) && country.simboli.includes(td.f2RequiresSymbol) && nameMatch) { match = true; relevantDist = nameDist; }
                         } else {
-                            if (country.colori_base.sort().join(',') === cBaseRichiesti.sort().join(',')) {
+                            if ([...country.colori_base].sort().join(',') === [...cBaseRichiesti].sort().join(',')) {
                                 if (nameMatch) { match = true; relevantDist = nameDist; }
                             }
                         }
@@ -1652,38 +1685,27 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                     if (startTag !== -1 && endTag !== -1) {
                         let introduzione = testoDaLeggere.substring(0, startTag);
                         let bersaglio = testoDaLeggere.substring(startTag + 8, endTag);
-                        let vecchiaVelocita = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
                         
-                        // 1. Legge l'introduzione a velocità normale
+                        // Calcoliamo al volo il nostro "0.8x" in base alla velocità standard
+                        let currentDefaultSpeed = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
+                        let slowSpeed = currentDefaultSpeed * 0.8;
+                        
+                        // 1. Legge l'introduzione a velocità normale (usando force: true)
                         parla(introduzione, function() {
-                            // 2. Altera la velocità globale per leggere il bersaglio lento
-                            voiceSpeed = vecchiaVelocita * 0.8; 
-                            
+                            // 2. Legge il bersaglio passando "slowSpeed" come quarto parametro
                             parla(bersaglio, function() {
-                                // 3. Ripristina la velocità normale
-                                voiceSpeed = vecchiaVelocita; 
-                                
+                                // 3. Il callback finale attiva timer e microfono
                                 if (assistantRec && !isListening) innescaMicrofonoConDing();
                                 if (currentLevel === 6 && timerState === "reading") activateMainTimer();
-                            });
-                        });
+                            }, true, slowSpeed); 
+                        }, true); 
                     } else {
-                        // Fallback
+                        // Fallback: se qualcosa va storto coi tag, legge tutto normale
                         parla(testoDaLeggere, function() {
                             if (assistantRec && !isListening) innescaMicrofonoConDing();
                             if (currentLevel === 6 && timerState === "reading") activateMainTimer();
-                        });
+                        }, true);
                     }
-                } else {
-                    // Lettura normale per tutti gli altri formati
-                    parla(testoDaLeggere, function() {
-                        if (assistantRec && !isListening) {
-                            innescaMicrofonoConDing();
-                        }
-                        if (currentLevel === 6 && timerState === "reading") {
-                            activateMainTimer();
-                        }
-                    });
                 }
             }
             
@@ -2907,7 +2929,8 @@ function creaBottoneAssistente() {
 window.speechUtterances = []; // TRUCCO: Evita che il browser mobile cancelli la voce dalla RAM
 
 // === LA FUNZIONE PARLA DINAMICA E IBRIDA ===
-function parla(testo, callbackTermine, force = false) {
+// Aggiungiamo un quarto parametro opzionale "customSpeed"
+function parla(testo, callbackTermine, force = false, customSpeed = null) {
     if (!voiceModeActive && !force) return;
     synth.cancel(); 
     
@@ -2966,7 +2989,13 @@ function parla(testo, callbackTermine, force = false) {
 
     let utterance = new SpeechSynthesisUtterance(testoPulito);
     utterance.lang = 'it-IT';
-    utterance.rate = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
+    
+    // Se c'è una velocità personalizzata (es. il nostro 0.8x), usa quella. Altrimenti usa quella standard del menu.
+    if (customSpeed !== null) {
+        utterance.rate = customSpeed;
+    } else {
+        utterance.rate = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
+    }
     
     window.speechUtterances.push(utterance); 
     
