@@ -247,7 +247,7 @@ function ModuloVessillologia(nazione, livello, db, config) {
             else f3Variant = 4;               
         }
         
-        if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant = 0;
+if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant = 0;
         if (f3Variant === 2 && !hasBaseColors) f3Variant = 0;
         
         if (f3Variant === 1) { td.reqArea = td.selectedArea; td.numVariables++; }
@@ -263,8 +263,6 @@ function ModuloVessillologia(nazione, livello, db, config) {
             } else {
                 f3Variant = 0;
             }
-        }
-            if (f3Variant === 2) { td.reqColor = coloreScelto; td.numVariables++; }
         }
         if (f3Variant === 3) { td.reqInit = nazione.nome.charAt(0).toUpperCase(); td.numVariables++; }
         if (f3Variant === 4) {
@@ -316,8 +314,7 @@ function ModuloVessillologia(nazione, livello, db, config) {
             td.reqGeo = nazione.tipoGeo; 
             if (['isola', 'costiera'].includes(td.reqGeo) && Math.random() > 0.5) td.reqGeo = 'marittima';
             td.numVariables++; 
-        }
-        if (selectedConditions.includes('capitale')) { td.reqCapInit = nazione.capitale.charAt(0).toUpperCase(); td.numVariables++; }
+        }        if (selectedConditions.includes('capitale')) { td.reqCapInit = nazione.capitale.charAt(0).toUpperCase(); td.numVariables++; }
         if (selectedConditions.includes('iniziale')) { td.reqInit = nazione.nome.charAt(0).toUpperCase(); td.numVariables++; }
     }
     else if (varianteScelta === 'paletteInclusiva') {
