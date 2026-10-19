@@ -2,23 +2,16 @@
 // FACTORY.JS (BETA) - Il Nuovo Motore Procedurale
 // ==========================================
 
-function creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemoria) {
+function creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemoria, forzaCategoria = null) {
     
     if (!dbAttivo || dbAttivo.length === 0) return null; 
 
-    // 1. DADO PRIMARIO: Sceglie la Macro-Categoria
-    let macroCategorie = ['Identita', 'Territorio']; // Base per tutti
-    
-    // La Vessillologia (testuale) è bandita dal Livello 0!
-    if (livello !== 0) {
-        macroCategorie.push('Vessillologia');
-    }
+    let macroCategorie = ['Identita', 'Territorio']; 
+    if (livello !== 0) macroCategorie.push('Vessillologia');
+    if (!voceAttiva && livello !== 7) macroCategorie.push('Visivo');
 
-    if (!voceAttiva && livello !== 7) {
-        macroCategorie.push('Visivo');
-    }
-
-    let categoriaScelta = macroCategorie[Math.floor(Math.random() * macroCategorie.length)];
+    // Se stiamo facendo un "reroll" a causa di un fail, manteniamo la categoria decisa al primo giro!
+    let categoriaScelta = forzaCategoria || macroCategorie[Math.floor(Math.random() * macroCategorie.length)];
     
     // 2. Memoria intelligente anti-doppioni
     let dbDisponibile = dbAttivo.filter(n => !arrayMemoria.includes(n.sigla + "-" + categoriaScelta));
@@ -48,7 +41,7 @@ function creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemo
         td = ModuloVisivo(nazioneEstratta, livello, dbAttivo, configCustom);
     }
 
-    if (!td) return creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemoria);
+    if (!td) return creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemoria, categoriaScelta);
 
     return td;
 }
@@ -57,13 +50,10 @@ function creaNuovaDomanda(livello, dbAttivo, configCustom, voceAttiva, arrayMemo
 // MODULO 1: IDENTITÀ (Capitali e Nomi)
 // ==========================================
 function ModuloIdentita(nazione, livello, db, config) {
-    let varianti = [];
-    
-    if (nazione.capitale) varianti.push('chiediCapitale'); 
-    if (nazione.capitale) varianti.push('chiediNazione');  
+    let varianti = ['chiediCapitale', 'chiediNazione'];
     
     let sbloccaEnigmistica = (livello >= 2 && livello !== 5) || (livello === 5 && config.difficolta !== 'facile');
-    if (sbloccaEnigmistica && nazione.capitale && nazione.aree && nazione.aree.length > 0) {
+    if (sbloccaEnigmistica) {
         varianti.push('enigmistica'); 
     }
 
@@ -75,6 +65,13 @@ function ModuloIdentita(nazione, livello, db, config) {
     if (varianti.length === 0) return null;
 
     let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
+    
+    // FAIL FAST: Requisiti rigidi
+    if (varianteScelta === 'chiediCapitale' && !nazione.capitale) return null;
+    if (varianteScelta === 'chiediNazione' && !nazione.capitale) return null;
+    if (varianteScelta === 'enigmistica') {
+        if (!nazione.capitale || !nazione.aree || nazione.aree.length === 0) return null;
+    }
     
     let td = { categoria: 'Identita', variante: varianteScelta, targetNode: nazione, numVariables: 1, isComboInception: false };
 
@@ -119,23 +116,35 @@ function ModuloIdentita(nazione, livello, db, config) {
 // MODULO 2: TERRITORIO (Confini e Geografia)
 // ==========================================
 function ModuloTerritorio(nazione, livello, db, config) {
+    if (livello === 5 && !config.stati) return null; 
+
     let varianti = [];
+    if (livello === 0) {
+        varianti.push('singoloConfine'); 
+    } else {
+        varianti.push('singoloConfine'); 
+        varianti.push('tipoGeografico'); 
+        varianti.push('doppioConfine'); 
+        varianti.push('numeroConfini'); 
+    }
+
+    if (varianti.length === 0) return null;
+    let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
+
     let numConfini = nazione.confini ? nazione.confini.length : 0;
     let isIndipendente = nazione.indipendente !== false && (!nazione.dipendente || nazione.dipendente.trim() === ''); 
     
-    if (livello === 0) {
-        if (isIndipendente && numConfini > 0) varianti.push('singoloConfine'); 
-    } else {
-        if (isIndipendente && numConfini > 0) varianti.push('singoloConfine'); 
-        varianti.push('tipoGeografico'); 
-        if (isIndipendente && numConfini >= 2) varianti.push('doppioConfine'); 
-        if (isIndipendente && numConfini > 0 && numConfini <= 3) varianti.push('numeroConfini'); 
+    // FAIL FAST: Requisiti rigidi
+    if (varianteScelta === 'singoloConfine') {
+        if (!isIndipendente || numConfini < 1) return null;
+    }
+    else if (varianteScelta === 'doppioConfine') {
+        if (!isIndipendente || numConfini < 2) return null;
+    }
+    else if (varianteScelta === 'numeroConfini') {
+        if (!isIndipendente || numConfini < 1 || numConfini > 3) return null;
     }
 
-    if (livello === 5 && !config.stati) return null; 
-    if (varianti.length === 0) return null;
-
-    let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
     let td = { categoria: 'Territorio', variante: varianteScelta, targetNode: nazione, numVariables: 1, isComboInception: false };
 
     if (nazione.aree && nazione.aree.length > 0) {
@@ -189,8 +198,11 @@ function ModuloTerritorio(nazione, livello, db, config) {
 // ==========================================
 function ModuloVessillologia(nazione, livello, db, config) {
     if (livello === 0) return null; // SCUDO: Niente Vessillologia al Lv0
+    if (livello === 5 && !config.bandiere) return null;
     
-    let varianti = [];
+    let varianti = ['coloriEsclusivi', 'simboloOEmblema', 'geometriaBandiera', 'paletteInclusiva'];
+
+    let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
     
     let hasBaseColors = nazione.colori_base && nazione.colori_base.length > 0;
     let hasSymbols = nazione.simboli && nazione.simboli.length > 0;
@@ -202,15 +214,12 @@ function ModuloVessillologia(nazione, livello, db, config) {
     if (hasEmblemColors) allTargetColors.push(...nazione.colori_emblema);
     let uniqueColors = [...new Set(allTargetColors)];
 
-    if (hasBaseColors) varianti.push('coloriEsclusivi'); 
-    if (hasSymbols || hasEmblemColors) varianti.push('simboloOEmblema'); 
-    if (hasFlagFormats) varianti.push('geometriaBandiera'); 
-    if (uniqueColors.length >= 2) varianti.push('paletteInclusiva'); 
+    // FAIL FAST: Requisiti rigidi
+    if (varianteScelta === 'coloriEsclusivi' && !hasBaseColors) return null;
+    if (varianteScelta === 'simboloOEmblema' && (!hasSymbols && !hasEmblemColors)) return null;
+    if (varianteScelta === 'geometriaBandiera' && !hasFlagFormats) return null;
+    if (varianteScelta === 'paletteInclusiva' && uniqueColors.length < 2) return null;
 
-    if (livello === 5 && !config.bandiere) return null;
-    if (varianti.length === 0) return null;
-
-    let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
     let td = { categoria: 'Vessillologia', variante: varianteScelta, targetNode: nazione, numVariables: 1, isComboInception: false };
 
     if (nazione.aree && nazione.aree.length > 0) {
@@ -228,7 +237,6 @@ function ModuloVessillologia(nazione, livello, db, config) {
         td.format = 2;
         if (lvlCheckNeg && Math.random() > 0.5 && hasSymbols) {
             td.f2RequiresSymbol = nazione.simboli[Math.floor(Math.random() * nazione.simboli.length)];
-            // PESCAGGIO CASUALE DEL COLORE BASE (non più fisso a [0])
             td.f2Color = nazione.colori_base[Math.floor(Math.random() * nazione.colori_base.length)];
             td.numVariables++;
         }
@@ -247,12 +255,12 @@ function ModuloVessillologia(nazione, livello, db, config) {
             else f3Variant = 4;               
         }
         
-if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant = 0;
-        if (f3Variant === 2 && !hasBaseColors) f3Variant = 0;
+        // FAIL FAST INTERNO: Se la sottomodalità richiede qualcosa che non c'è, annulliamo
+        if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) return null;
+        if (f3Variant === 2 && !hasBaseColors) return null;
         
         if (f3Variant === 1) { td.reqArea = td.selectedArea; td.numVariables++; }
         if (f3Variant === 2) { 
-            // PESCAGGIO CASUALE DEL COLORE BASE
             let validCols = [...nazione.colori_base];
             if (td.isColoreEmblema) {
                 validCols = validCols.filter(c => c !== td.elemScelto);
@@ -261,7 +269,7 @@ if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant =
                 td.reqColor = validCols[Math.floor(Math.random() * validCols.length)];
                 td.numVariables++;
             } else {
-                f3Variant = 0;
+                return null; // Fallisci in fretta invece di fallback a f3Variant=0
             }
         }
         if (f3Variant === 3) { td.reqInit = nazione.nome.charAt(0).toUpperCase(); td.numVariables++; }
@@ -270,7 +278,7 @@ if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant =
             let lvlCheckExact = (livello === 5 && config.difficolta === 'difficile') ? true : (livello >= 3 && livello !== 5 && livello !== 7);
             if (cBase === 2 && lvlCheckExact) { td.exactBaseColors = 2; td.numVariables++; } 
             else if (cBase >= 4) { td.minBaseColors = 4; td.numVariables++; } 
-            else { f3Variant = 0; }
+            else { return null; } // Niente fallback!
         }
     }
     else if (varianteScelta === 'geometriaBandiera') {
@@ -300,21 +308,20 @@ if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant =
             let formatoText = td.reqFormato.toLowerCase();
             let getRadice = (col) => col.endsWith("o") ? col.slice(0, -1) : col;
             
-            // Filtra subito tutti i colori base che NON sono già scritti nel nome del formato e ne pesca uno a caso!
             let altColors = nazione.colori_base.filter(c => !formatoText.includes(getRadice(c)));
             if (altColors.length > 0) {
                 td.reqColor = altColors[Math.floor(Math.random() * altColors.length)]; 
                 td.numVariables++;
             } else {
-                let idx = selectedConditions.indexOf('colore');
-                if (idx > -1) selectedConditions.splice(idx, 1);
+                return null; // Fallisci in fretta
             }
         }
         if (selectedConditions.includes('geo')) { 
             td.reqGeo = nazione.tipoGeo; 
             if (['isola', 'costiera'].includes(td.reqGeo) && Math.random() > 0.5) td.reqGeo = 'marittima';
             td.numVariables++; 
-        }        if (selectedConditions.includes('capitale')) { td.reqCapInit = nazione.capitale.charAt(0).toUpperCase(); td.numVariables++; }
+        }
+        if (selectedConditions.includes('capitale')) { td.reqCapInit = nazione.capitale.charAt(0).toUpperCase(); td.numVariables++; }
         if (selectedConditions.includes('iniziale')) { td.reqInit = nazione.nome.charAt(0).toUpperCase(); td.numVariables++; }
     }
     else if (varianteScelta === 'paletteInclusiva') {
@@ -358,22 +365,24 @@ if (f3Variant === 1 && (!nazione.aree || nazione.aree.length === 0)) f3Variant =
 // MODULO 4: VISIVO (Immagini a schermo)
 // ==========================================
 function ModuloVisivo(nazione, livello, db, config) {
+    if (livello === 5 && !config.bandiere) return null;
+
     let varianti = [];
-    
     if (livello === 0) {
         varianti.push('sceltaMultiplaVisiva'); 
         varianti.push('immagineVersoNazione'); 
     } else {
         varianti.push('immagineVersoNazione'); 
-        if (livello >= 2 && nazione.capitale) {
-            varianti.push('immagineVersoCapitale'); 
-        }
+        varianti.push('immagineVersoCapitale'); 
     }
 
-    if (livello === 5 && !config.bandiere) return null;
     if (varianti.length === 0) return null;
 
     let varianteScelta = varianti[Math.floor(Math.random() * varianti.length)];
+    
+    // FAIL FAST
+    if (varianteScelta === 'immagineVersoCapitale' && !nazione.capitale) return null;
+
     let td = { categoria: 'Visivo', variante: varianteScelta, targetNode: nazione, numVariables: 1, isComboInception: false };
 
     if (varianteScelta === 'immagineVersoNazione') td.format = 9;
