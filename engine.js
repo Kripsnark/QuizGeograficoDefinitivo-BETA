@@ -39,13 +39,15 @@ function playSound(nomeSuono) {
     // Riporta l'audio a zero. Utile se il giocatore risponde a raffica
     EffettiSonori[nomeSuono].currentTime = 0; 
     
+    // Regolazione dinamica dei volumi
+    if (nomeSuono === "battito") {
+        EffettiSonori[nomeSuono].volume = 0.3; // Abbassa il battito al 30%
+    } else {
+        EffettiSonori[nomeSuono].volume = 1.0; // Tutti gli altri suoni al 100%
+    }
+    
     // Il catch serve per evitare errori del browser se blocca l'autoplay
     EffettiSonori[nomeSuono].play().catch(err => console.log("Audio bloccato dal browser"));
-}
-
-function toggleSuoni() {
-    suoniAttivi = !suoniAttivi;
-    // Nessuna ricerca DOM. La UI viene aggiornata direttamente dal bottone in ui.js!
 }
 
 // === VARIABILI DI STATO E COLLEGAMENTI DOM (RECUPERATI) ===
@@ -1497,8 +1499,12 @@ let tempValid = getValidAnswersArray(td, currentLevel);
                         let currentSecondInt = Math.ceil(activeTimeLeft);
                         if (window.lastVibeSecond !== currentSecondInt) {
                             window.lastVibeSecond = currentSecondInt;
-                            triggerVibration([40, 60, 40]);
-                            playSound("battito");
+                            
+                            // FIX: Nessun suono o vibrazione al Livello 6 per non coprire la voce
+                            if (currentLevel !== 6) {
+                                triggerVibration([40, 60, 40]);
+                                playSound("battito");
+                            }
                         }
                     } else if (pct < 50) {
                         timerBar.style.backgroundColor = "#ff9800"; 
