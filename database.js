@@ -72,7 +72,7 @@ GA	Gabon			Libreville	livrevilla	Librevìl	guinea equatoriale, camerun, congo, m
 GB-WLS	Galles			Cardiff			inghilterra, mare	Europa, Europa Settentrionale	bianco, verde, rosso	rosso	drago	x		3
 GM	Gambia	Cambia		Banjul	Bangiul, Bonjour, Fanciulle		senegal, mare	africa, africa occidentale	rosso, blu, verde, bianco				strisce orizzontali	2
 GE	Georgia			Tbilisi			russia, turchia, armenia, azerbaigian, mare	Asia, Caucaso	bianco, rosso		croce simmetrica			2
-GS	Georgia del Sud e Isole Sandwich Australi	Georgia del sud, sandwich		King Edward Point	King edward			Sud America	blu		emblema nazionale, animale, union jack	x		3
+GS	Georgia del Sud e Isole Sandwich Australi	Georgia del sud, sandwich		King Edward Point	King edward, edward point			Sud America	blu		emblema nazionale, animale, union jack	x		3
 DE	Germania			Berlino			danimarca, polonia, cechia, austria, svizzera, francia, lussemburgo, belgio, paesi bassi, mare	europa	rosso, nero, giallo				strisce orizzontali	1
 GH	Ghana	Diana		Accra			togo, burkina faso, costa d'avorio, mare	africa, africa occidentale, Golfo di Guinea	rosso, giallo, verde, nero	nero	stella		strisce orizzontali, stella nera	1
 JM	Giamaica	*Jamaica		Kingston				Nord America, caraibi	verde, nero, giallo				croce di Sant'Andrea (X)	1
@@ -81,14 +81,14 @@ GI	Gibilterra			Gibilterra			spagna, mare	europa, mediterraneo, Penisola Iberica
 DJ	Gibuti	Tributi		Gibuti	Tributi		eritrea, etiopia, somalia, mare	africa, africa orientale, Corno d'Africa	bianco, azzurro, verde	rosso	stella		triangolo a sinistra bianco, stella rossa	2
 JO	Giordania			Amman			israele, siria, iraq, arabia saudita, mare	Asia, medio oriente	rosso, nero, bianco, verde	bianco	stella		triangolo a sinistra rosso, stella bianca	2
 GR	Grecia			Atene			albania, macedonia del nord, bulgaria, turchia, mare	Europa, Mediterraneo, Balcani	bianco, azzurro		croce simmetrica		Riquadro in alto a sinistra	1
-GD	Grenada			Saint George's	st george's, st george, saint george, Giorgis, sangiorgis			nord america, caraibi	rosso, giallo, verde	rosso, giallo	stella, cerchio		cerchio rosso, stella gialla, cornice perimetrale	2
-GL	Groenlandia			Nuuk	Nuk		canada, mare	nord america	rosso, bianco		cerchio	x	strisce orizzontali	3
+GD	Grenada			Saint George's	st george's, st george, saint george, Giorgis, sangiorgis	Sènt Giorgis		nord america, caraibi	rosso, giallo, verde	rosso, giallo	stella, cerchio		cerchio rosso, stella gialla, cornice perimetrale	2
+GL	Groenlandia			Nuuk	Nuk, nuke		canada, mare	nord america	rosso, bianco		cerchio	x	strisce orizzontali	3
 GP	Guadalupa			Basse-Terre	base terra, passe terra			nord america, caraibi	blu, giallo, nero, verde		emblema nazionale, sole	x		3
-GU	Guam	Wham		Hagåtña	Agatnia, agatna, agata, a gatta, la gatta, accatna, a canna	Agàt gna		Oceania	blu, rosso		emblema nazionale	x	cornice perimetrale	3
+GU	Guam	Wham		Hagåtña	Agatnia, agatna, agata, a gatta, la gatta, accatna, a canna, a gadna	Agàt gna		Oceania	blu, rosso		emblema nazionale	x	cornice perimetrale	3
 GT	Guatemala			Città del Guatemala	Guatemala		messico, belize, honduras, el salvador, mare	nord america, america centrale	azzurro, bianco		emblema nazionale, arma, animale, uccello		strisce verticali	2
 GG	Guernsey			Saint Peter Port	Porto di San Pietro, tempi per port			Europa, Europa Settentrionale	bianco, rosso, giallo		croce simmetrica	x		3
 GN	Guinea			Conakry	Con Acri, Macri		guinea-bissau, senegal, mali, costa d'avorio, liberia, sierra leone, mare	africa, africa occidentale	rosso, giallo, verde				strisce verticali	2
-GQ	Guinea Equatoriale	Linea equatoriale		ciutad de la paz	*Malabo, la pass	Siutaàd de la pas	camerun, gabon, mare	africa, africa centrale, Golfo di Guinea	azzurro, verde, bianco, rosso		emblema nazionale, albero		triangolo a sinistra azzurro	2
+GQ	Guinea Equatoriale	Linea equatoriale		ciutad de la paz	*Malabo, la pass, città della pace	Siutaàd de la pas	camerun, gabon, mare	africa, africa centrale, Golfo di Guinea	azzurro, verde, bianco, rosso		emblema nazionale, albero		triangolo a sinistra azzurro	2
 GW	Guinea-Bissau	guinea bissau		Bissau			senegal, guinea, mare	africa, africa occidentale	rosso, giallo, verde	nero	stella		stella nera, Banda verticale a lato	2
 GY	Guyana			Georgetown			venezuela, brasile, suriname, mare	Sud America, Amazzonia	rosso, giallo, verde				triangolo a sinistra rosso	2
 GF	Guyana francese			Cayenne	caienna	Caièn	suriname, brasile, mare	Sud America, Amazzonia	giallo, verde	rosso	stella	x	stella rossa, taglio diagonale	3
@@ -102,7 +102,7 @@ IR	Iran			Teheran			iraq, turchia, azerbaigian, armenia, turkmenistan, afghanist
 IQ	Iraq			Bagdad			kuwait, arabia saudita, giordania, siria, turchia, iran, mare	Asia, Medio Oriente	rosso, bianco, nero	verde	scritta		strisce orizzontali	1
 IE	Irlanda			Dublino			regno unito, mare	Europa, Europa Settentrionale	verde, bianco, arancione				strisce verticali	1
 GB-NIR	Irlanda del Nord	nord irlanda		Belfast			irlanda, mare	Europa, Europa Settentrionale	bianco, rosso		emblema nazionale, corona	x		3
-IS	Islanda			Reykjavík	Rekiavik			Europa, Europa Settentrionale	blu, bianco, rosso		croce scandinava			1
+IS	Islanda			Reykjavík	Rekiavik	Reikiavik		Europa, Europa Settentrionale	blu, bianco, rosso		croce scandinava			1
 IM	Isola di Man	man		Douglas		Daaglas		Europa, Europa Settentrionale	rosso, bianco	bianco	emblema nazionale	x	lenzuolo rosso	3
 CX	Isola di Natale	Natale		Flying Fish Cove	Flying Fish Club	Flying Fish Còv		Oceania	blu, verde, giallo	verde	croce del sud, stella, uccello, animale, sagoma paese, cerchio	x	stella bianca, taglio diagonale	3
 NF	Isola Norfolk	Norfolk		Kingston				Oceania	verde, bianco	verde	albero	x	strisce verticali	3
@@ -200,7 +200,7 @@ PM	Saint-Pierre e Miquelon	Saint Pierre, S Pierre, Miquelon, san pierre michelon
 WS	Samoa			Apia	Abbia, Appia			Oceania	rosso, blu	bianco	stella, croce del sud		stella bianca, Riquadro in alto a sinistra	2
 AS	Samoa Americane			Pago Pago				Oceania	blu, bianco, rosso		aquila, uccello, animale, emblema nazionale, arma	x		3
 SH	Sant'Elena			Jamestown	James Brown			africa, Africa occidentale	blu		uccello, animale, emblema nazionale, union jack	x		3
-ST	São Tomé e Príncipe	Sao Tome, Sao to me, Ciao tome, soho to me		São Tomé	Sao Tome, Sao to me, Ciao tome			africa, africa centrale, Golfo di Guinea	verde, giallo, rosso	nero	stella		triangolo a sinistra rosso, stella nera	2
+ST	São Tomé e Príncipe	Sao Tome, Sao to me, Ciao tome, soho to me, sau come		São Tomé	Sao Tome, Sao to me, Ciao tome, soho to me, sau come			africa, africa centrale, Golfo di Guinea	verde, giallo, rosso	nero	stella		triangolo a sinistra rosso, stella nera	2
 GB-SCT	Scozia			Glasgow			inghilterra, mare	Europa, Europa Settentrionale	bianco, azzurro			x	croce di Sant'Andrea (X)	3
 SN	Senegal			Dakar			mauritania, mali, guinea, guinea-bissau, gambia, mare	africa, africa occidentale	verde, giallo, rosso	verde	stella		strisce verticali, stella verde	1
 RS	Serbia			Belgrado			kosovo, montenegro, bosnia ed erzegovina, croazia, ungheria, romania, bulgaria, macedonia del nord	europa, Balcani	rosso, blu, bianco		aquila, corona, emblema nazionale		strisce orizzontali	1
@@ -233,7 +233,7 @@ TL	Timor Est			Dili			indonesia, mare	Asia, Sud-Est Asiatico	nero, giallo, rosso
 TG	Togo	Dogo		Lomé	Lume, elome		ghana, burkina faso, benin, mare	africa, africa occidentale, Golfo di Guinea	rosso, verde, giallo	bianco	stella		stella bianca, Riquadro in alto a sinistra	2
 TK	Tokelau			Fakaofo	Faco, Vaccarofo			Oceania	blu, giallo	bianco	stella, croce del sud	x	stella bianca, lenzuolo blu	3
 TO	Tonga			Nuku'Alofa	Nuku alofa, Mutualopa, Nukolov, nucu alofa, nuco a lo fa			Oceania	rosso, bianco	rosso	croce simmetrica		Riquadro in alto a sinistra	2
-TT	Trinidad e Tobago	Trinidad, Tobago		Port of Spain				Nord America, caraibi	rosso, bianco, nero				taglio diagonale	2
+TT	Trinidad e Tobago	Trinidad, Tobago		Port of Spain	Work of spain			Nord America, caraibi	rosso, bianco, nero				taglio diagonale	2
 TA	Tristan da Cunha	Tristan	Trìstan da Cùgna	Edinburgh of the Seven Seas	Edimburgh	Èdinbrha of de Sèven Sìis		africa, Africa occidentale	blu		emblema nazionale, animale, union jack	x	strisce orizzontali	3
 TN	Tunisia			Tunisi			algeria, libia, mare	Africa, Africa settentrionale, Mediterraneo	rosso, bianco	rosso, bianco	mezzaluna, stella, cerchio		cerchio bianco, mezzaluna rossa, stella rossa, lenzuolo rosso	1
 TR	Turchia			Ankara			azerbaigian, grecia, bulgaria, georgia, armenia, iran, iraq, siria, mare	Asia, Mediterraneo	rosso, bianco	bianco	mezzaluna, stella		mezzaluna bianca, stella bianca, lenzuolo rosso	1

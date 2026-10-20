@@ -632,8 +632,8 @@ window.checkAutoSave = function() {
                 
                 let nI = "<span class='target-highlight'>NAZIONE INDIPENDENTE</span>";
                 let nI_p = `<span class='target-highlight'>${num} NAZIONI INDIPENDENTI</span>`;
-                let sT = "<span class='target-highlight'>TERRITORIO</span>";
-                let sT_p = `<span class='target-highlight'>${num} TERRITORI</span>`;
+                let sT = "<span class='target-highlight'>STATO O TERRITORIO</span>";
+                let sT_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span>`;
 		let sTI = "<span class='target-highlight'>STATO O TERRITORIO</span> <strong>INSULARE</strong>";
                 let sTI_p = `<span class='target-highlight'>${num} STATI O TERRITORI</span> <strong>INSULARI</strong>`;
                 let cS = "<span class='target-highlight' style='color:#2196f3;'>CAPITALE</span>";
@@ -2929,7 +2929,6 @@ function creaBottoneAssistente() {
 window.speechUtterances = []; // TRUCCO: Evita che il browser mobile cancelli la voce dalla RAM
 
 // === LA FUNZIONE PARLA DINAMICA E IBRIDA ===
-// Aggiungiamo un quarto parametro opzionale "customSpeed"
 function parla(testo, callbackTermine, force = false, customSpeed = null) {
     if (!voiceModeActive && !force) return;
     synth.cancel(); 
@@ -2947,17 +2946,19 @@ function parla(testo, callbackTermine, force = false, customSpeed = null) {
         testoPulito = testoPulito.replace(regex, pronuncia);
     }
     
-    // Converte lettere singole maiuscole in suoni netti con pausa
-    testoPulito = testoPulito.replace(/\b([A-Z])\b/g, (match) => {
-        const lettereFonetiche = {
-            'A': 'a', 'B': 'bi', 'C': 'ci', 'D': 'di', 'E': 'e', 'F': 'effe', 'G': 'gi', 'H': 'acca',
-            'I': 'i', 'J': 'gei', 'K': 'cappa', 'L': 'elle', 'M': ', èèmme, ', 'N': ', èènne, ', 'O': 'o',
-            'P': 'pi', 'Q': 'qu', 'R': 'erre', 'S': 'esse', 'T': 'ti', 'U': 'u', 'V': 'vi', 'Z': 'zeta'
+    // 2. FILTRO ALFABETO TELEFONICO (Infallibile per le singole lettere)
+    testoPulito = testoPulito.replace(/\b(lettera |per )([A-Z])\b/g, (match, prefisso, lettera) => {
+        const alfabetoTelefonico = {
+            'A': 'Ancona', 'B': 'Bologna', 'C': 'Como', 'D': 'Domodossola', 'E': 'Empoli', 
+            'F': 'Firenze', 'G': 'Genova', 'H': 'Hotel', 'I': 'Imola', 'J': 'Jolly', 
+            'K': 'Koala', 'L': 'Livorno', 'M': 'Milano', 'N': 'Napoli', 'O': 'Otranto',
+            'P': 'Padova', 'Q': 'Quadro', 'R': 'Rimini', 'S': 'Savona', 'T': 'Torino', 
+            'U': 'Udine', 'V': 'Verona', 'Z': 'Zara'
         };
-        return ", " + lettereFonetiche[match] + ", ";
+        return `${prefisso}${lettera}, come ${alfabetoTelefonico[lettera]}`;
     });
 
-    // 2. INIEZIONE CORREZIONE FONETICA DAL DATABASE (OTTIMIZZATA)
+    // 3. INIEZIONE CORREZIONE FONETICA DAL DATABASE
     if (typeof globalDb !== 'undefined') {
         let sostituzioni = [];
         
@@ -2981,7 +2982,6 @@ function parla(testo, callbackTermine, force = false, customSpeed = null) {
 
         sostituzioni.forEach(sost => {
             let testoEscaped = sost.originale.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            // Regex di precisione chirurgica che riconosce anche gli accenti italiani ed esteri
             let regex = new RegExp("(?<=^|[^a-zA-ZÀ-ÿ])" + testoEscaped + "(?=[^a-zA-ZÀ-ÿ]|$)", "gi");
             testoPulito = testoPulito.replace(regex, sost.pronuncia);
         });
@@ -2990,7 +2990,6 @@ function parla(testo, callbackTermine, force = false, customSpeed = null) {
     let utterance = new SpeechSynthesisUtterance(testoPulito);
     utterance.lang = 'it-IT';
     
-    // Se c'è una velocità personalizzata (es. il nostro 0.8x), usa quella. Altrimenti usa quella standard del menu.
     if (customSpeed !== null) {
         utterance.rate = customSpeed;
     } else {
