@@ -2958,7 +2958,7 @@ function parla(testo, callbackTermine, force = false, customSpeed = null) {
             'F': 'Firenze', 'G': 'Genova', 'H': 'Hotel', 'I': 'Imola', 'J': 'Jolly', 
             'K': 'Koala', 'L': 'Livorno', 'M': 'Milano', 'N': 'Napoli', 'O': 'Otranto',
             'P': 'Padova', 'Q': 'Quadro', 'R': 'Rimini', 'S': 'Savona', 'T': 'Torino', 
-            'U': 'Udine', 'V': 'Verona', 'Z': 'Zara'
+            'U': 'Udine', 'V': 'Verona', 'W': 'Whisky', 'X': 'Xilofono', 'Y': 'Yogurt', 'Z': 'Zara'
         };
         return `${prefisso}${lettera}, come ${alfabetoTelefonico[lettera]}`;
     });
