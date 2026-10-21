@@ -332,7 +332,7 @@ righe.forEach((riga, index) => {
         });
         nazione.confini = landBorders; 
         
-        let eccezioniIsole = ["GL", "HT", "DO", "MF", "SX"];
+        let eccezioniIsole = ["GL", "HT", "DO", "MF", "SX", "SG", "QA"];
         if (landBorders.length === 0 || eccezioniIsole.includes(nazione.sigla)) nazione.tipoGeo = "isola"; 
         else if (hasSea) nazione.tipoGeo = "costiera";
         else nazione.tipoGeo = "interna"; 
