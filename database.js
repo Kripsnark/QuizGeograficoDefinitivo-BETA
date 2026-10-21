@@ -191,7 +191,7 @@ RW	Ruanda			Kigali	Cigali, Cialis, chi gali		uganda, tanzania, burundi, repubbli
 RU	Russia			Mosca			norvegia, finlandia, estonia, lettonia, lituania, polonia, bielorussia, ucraina, georgia, azerbaigian, kazakistan, cina, mongolia, corea del nord, mare	europa	bianco, blu, rosso				strisce orizzontali	1
 SAB	Saba			The Bottom	Bottom, de botto			nord america, caraibi	rosso, bianco, blu	giallo	stella	x	stella gialla	3
 EH	Sahara Occidentale	Sara Occidentale		El Aaiún	el aiun, aaiun, Ela jun, Aiun, elaine	El Aiùn	marocco, mauritania, mare	Africa, Africa settentrionale	rosso, nero, bianco, verde	rosso	mezzaluna, stella	x	triangolo a sinistra rosso, mezzaluna rossa, stella rossa	3
-KN	Saint Kitts e Nevis	Saint Kitts, S Kitts, Nevis, sun kids and nevis, sanchizza e nevis, sanchez & nevis, saint kitze nevis, send kids in iris, sankitsi nevis, thank you say nadies, zenkids e nevis	Sènt chits end nèvis	Basseterre	base terra, passe terra			nord america, caraibi	verde, rosso, nero	bianco	stella		stella bianca, taglio diagonale	2
+KN	Saint Kitts e Nevis	Saint Kitts, S Kitts, Nevis, sun kids and nevis, sanchizza e nevis, sanchez & nevis, saint kitze nevis, send kids in iris, sankitsi nevis, thank you say nadies, zenkids e nevis, send kids a nevis	Sènt chits end nèvis	Basseterre	base terra, passe terra			nord america, caraibi	verde, rosso, nero	bianco	stella		stella bianca, taglio diagonale	2
 LC	Saint Lucia	S Lucia, Santa Lucia		Castries				nord america, caraibi	azzurro, nero, giallo	bianco, nero, giallo			lenzuolo azzurro	2
 VC	Saint Vincent e Grenadine	S Vincent, Grenadine, Saint Vincent		Kingstown	King's Town			nord america, caraibi	blu, giallo, verde	verde			strisce verticali	2
 BL	Saint-Barthélemy	San Bartolomeo, St Barthelemy, Saint Barthelemy, sig bar televi, simbartelemy, bartalemi, synth bardellemi, sing bardellemy, saint barthelemy, san barthelemy		Gustavia				nord america, caraibi	bianco		emblema nazionale, scritta	x	lenzuolo bianco	3
@@ -200,14 +200,14 @@ PM	Saint-Pierre e Miquelon	Saint Pierre, S Pierre, Miquelon, san pierre michelon
 WS	Samoa			Apia	Abbia, Appia			Oceania	rosso, blu	bianco	stella, croce del sud		stella bianca, Riquadro in alto a sinistra	2
 AS	Samoa Americane			Pago Pago				Oceania	blu, bianco, rosso		aquila, uccello, animale, emblema nazionale, arma	x		3
 SH	Sant'Elena			Jamestown	James Brown			africa, Africa occidentale	blu		uccello, animale, emblema nazionale, union jack	x		3
-ST	São Tomé e Príncipe	Sao Tome, Sao to me, Ciao tome, soho to me, sau come		São Tomé	Sao Tome, Sao to me, Ciao tome, soho to me, sau come			africa, africa centrale, Golfo di Guinea	verde, giallo, rosso	nero	stella		triangolo a sinistra rosso, stella nera	2
+ST	São Tomé e Príncipe	Sao Tome, Sao to me, Ciao tome, soho to me, sau come, soã come, sauto me principe, sau tome		São Tomé	Sao Tome, Sao to me, Ciao tome, soho to me, sau come, soã come, sau tome			africa, africa centrale, Golfo di Guinea	verde, giallo, rosso	nero	stella		triangolo a sinistra rosso, stella nera	2
 GB-SCT	Scozia			Glasgow			inghilterra, mare	Europa, Europa Settentrionale	bianco, azzurro			x	croce di Sant'Andrea (X)	3
 SN	Senegal			Dakar			mauritania, mali, guinea, guinea-bissau, gambia, mare	africa, africa occidentale	verde, giallo, rosso	verde	stella		strisce verticali, stella verde	1
 RS	Serbia			Belgrado			kosovo, montenegro, bosnia ed erzegovina, croazia, ungheria, romania, bulgaria, macedonia del nord	europa, Balcani	rosso, blu, bianco		aquila, corona, emblema nazionale		strisce orizzontali	1
 SC	Seychelles	Seiscel		Victoria				africa, africa orientale	blu, giallo, rosso, bianco, verde				taglio diagonale	2
 SL	Sierra Leone			Freetown			guinea, liberia, mare	africa, africa occidentale	verde, bianco, azzurro				strisce orizzontali	2
 SG	Singapore			Singapore			malaysia, mare	Asia, Sud-Est Asiatico	rosso, bianco		mezzaluna, stella		strisce orizzontali, mezzaluna bianca, stella bianca	1
-STE	Sint Eustatius	S eustatius, sintestatius, sintastatius		Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant			Nord America, caraibi	rosso, blu, bianco	verde, bianco	stella	x	stella gialla	3
+STE	Sint Eustatius	S eustatius, sintestatius, sintastatius, sinteu status		Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant			Nord America, caraibi	rosso, blu, bianco	verde, bianco	stella	x	stella gialla	3
 SX	Sint Maarten	S Maarten, Sint Marten, synth martin		Philipsburg	Philips burger, flixbus		saint-martin, mare	Nord America, caraibi	bianco, rosso, blu		emblema nazionale	x	triangolo a sinistra bianco	3
 SY	Siria			Damasco			turchia, iraq, giordania, israele, libano, mare	Asia, medio oriente	verde, bianco, nero	rosso	stella		strisce orizzontali, stella rossa	1
 SK	Slovacchia			Bratislava			cechia, polonia, ucraina, ungheria, austria	europa	bianco, blu, rosso		emblema nazionale		strisce orizzontali	1
@@ -332,7 +332,7 @@ righe.forEach((riga, index) => {
         });
         nazione.confini = landBorders; 
         
-        let eccezioniIsole = ["GL", "HT", "DO", "MF", "SX", "SG", "BH"];
+        let eccezioniIsole = ["GL", "HT", "DO", "MF", "SX", "SG", "QA"];
         if (landBorders.length === 0 || eccezioniIsole.includes(nazione.sigla)) nazione.tipoGeo = "isola"; 
         else if (hasSea) nazione.tipoGeo = "costiera";
         else nazione.tipoGeo = "interna"; 

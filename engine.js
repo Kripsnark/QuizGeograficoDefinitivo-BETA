@@ -3042,7 +3042,7 @@ window.innescaMicrofonoConDing = function() {
 if (SpeechRecognition) {
     assistantRec = new SpeechRecognition();
     assistantRec.lang = 'it-IT';
-    assistantRec.continuous = false;
+    assistantRec.continuous = true;
     assistantRec.interimResults = false;
 
     try {
@@ -3084,7 +3084,8 @@ if (SpeechRecognition) {
             return;
         }
 
-        let parolaDetta = event.results[0][0].transcript.replace(/\.$/, '').trim().toLowerCase();
+        let currentIdx = event.resultIndex;
+        let parolaDetta = event.results[currentIdx][0].transcript.replace(/\.$/, '').trim().toLowerCase();
 
         // --- FIX RIPETIZIONI VOCALI A PAPPAGALLO (es. "belize belize" -> "belize") ---
         let matchRipetizione = parolaDetta.match(/^(.+?)\s+\1$/i);
@@ -3178,9 +3179,10 @@ if (SpeechRecognition) {
         let waitNext = document.getElementById("next-btn") && document.getElementById("next-btn").style.display === "block";
         
         if (voiceModeActive && !window.speechSynthesis.speaking && (gameIsActive || waitContinua) && !waitNext && !window.pendingDefeat && !window.pendingVictory) {
+            // Riavvio ISTANTANEO E SILENZIOSO (10 millisecondi, niente "ding")
             setTimeout(() => {
-                innescaMicrofonoConDing();
-            }, 100);
+                try { assistantRec.start(); } catch(e) {}
+            }, 10);
         } else {
             // Spegnimento effettivo se usciamo dalla partita
             if(inputEl && inputEl.placeholder === "🎤 In ascolto...") inputEl.placeholder = "Scrivi la risposta...";
