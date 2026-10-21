@@ -41,7 +41,7 @@ function playSound(nomeSuono) {
     
     // Regolazione dinamica dei volumi
     if (nomeSuono === "battito") {
-        EffettiSonori[nomeSuono].volume = 0.3; // Abbassa il battito al 30%
+        EffettiSonori[nomeSuono].volume = 0.15; // Abbassa il battito
     } else {
         EffettiSonori[nomeSuono].volume = 1.0; // Tutti gli altri suoni al 100%
     }
@@ -3030,10 +3030,13 @@ let isListening = false;
 // Funzione globale accessibile ovunque per il DING
 window.innescaMicrofonoConDing = function() {
     if (assistantRec && !isListening) {
+        // SCUDO: Se il TTS sta ancora parlando, non innescare il microfono!
+        if (window.speechSynthesis.speaking) return; 
+        
         playSound("ding");
         setTimeout(() => { 
             try { assistantRec.start(); } catch(e) {} 
-        }, 250);
+        }, 350); // Alzato da 250 a 350ms per dare tempo al DING di sfumare
     }
 };
 
@@ -3046,7 +3049,7 @@ if (SpeechRecognition) {
     try {
         if (SpeechGrammarList) {
             // Aggiunti i nuovi comandi alla grammatica del browser
-            let paroleValide = ["livello zero", "livello 0", "livello uno", "livello 1", "livello due", "livello 2", "livello tre", "livello 3", "livello quattro", "livello 4", "livello cinque", "livello 5", "livello sei", "livello 6", "morte improvvisa", "ripeti", "mi arrendo", "arrendo", "termina partita", "termina"];
+            let paroleValide = ["livello zero", "livello 0", "livello uno", "livello 1", "livello due", "livello 2", "livello tre", "livello 3", "livello quattro", "livello 4", "livello cinque", "livello 5", "livello sei", "livello 6", "morte improvvisa", "senza mani", "livello senza mani", "ripeti", "mi arrendo", "arrendo", "termina partita", "termina"];
             globalDb.forEach(n => {
                 paroleValide.push(n.nome.toLowerCase());
                 if(n.capitale) paroleValide.push(n.capitale.toLowerCase());
@@ -3073,11 +3076,17 @@ if (SpeechRecognition) {
     };
 
     assistantRec.onresult = function(event) {
-        // SCUDO ANTI-SPILLOVER: Ignora i frammenti audio se il turno è appena iniziato
+        // 1. SCUDO ANTI-SPILLOVER: Ignora i frammenti audio se il turno è appena iniziato
         if (Date.now() - turnStartTime < 800) return;
+        
+        // 2. SCUDO ANTI-ECO: Se il robot sta ancora parlando in background, IGNORA QUALSIASI INPUT
+        if (window.speechSynthesis.speaking) {
+            console.log("Input ignorato: Il robot sta ancora parlando.");
+            return;
+        }
 
         let parolaDetta = event.results[0][0].transcript.replace(/\.$/, '').trim().toLowerCase();
-        
+
         // --- FIX RIPETIZIONI VOCALI A PAPPAGALLO (es. "belize belize" -> "belize") ---
         let matchRipetizione = parolaDetta.match(/^(.+?)\s+\1$/i);
         if (matchRipetizione) {
@@ -3099,7 +3108,7 @@ if (SpeechRecognition) {
         
         // INTERCETTAZIONE MENU PRINCIPALE E LIVELLO SEGRETO
         if (document.getElementById("start-screen").style.display !== "none") {
-            if (parolaDetta.includes("senza mani")) {
+            if (parolaDetta.includes("senza mani") || parolaDetta.includes("livello senza mani")) {
                 parla("Livello segreto attivato. Nessuna distrazione visiva.", function() {
                     startGame(7);
                 });
@@ -3326,41 +3335,41 @@ if (!window.voiceHooksAdded) {
 
             let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
 
-            // Se la risposta è esatta ma è una domanda singola (Livelli 1, 2, 3)
-            if (!isMulti && esatte > esattePrima) {
-                 let puntiGuadagnati = punteggio - puntiPrima;
-                 // FIX: Qui c'era già, controlliamo solo che funzioni bene
-                 let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
-                 
-                 let badgeEl = document.getElementById("event-badge");
-                 let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
-                 let extraTesto = "";
-                 
-                 if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
-                 if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
-                 if (badgeTesto.includes("vita extra")) extraTesto += " Hai ottenuto una vita extra.";
-                 
-                 testoEsatto += extraTesto;
-                 
-                 setTimeout(() => {
-                     parla(testoEsatto, function() {
-                         setTimeout(() => nextTurnMulti(), 300);
-                     });
-                 }, 150);
-                 return;
-            } 
-            
-            // Se stiamo accumulando risposte per una combo (ma non abbiamo ancora finito)
-            if (isMulti && comboInserted.length > comboPrima) {
-                 setTimeout(() => {
-                     parla("Presa.", function() { 
-                         if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
-                     });
-                 }, 150);
-                 return;
-            }
+        // 1. CASO VITTORIA TURNO: Se abbiamo indovinato la domanda singola o COMPLETATO la combo
+        if (esatte > esattePrima) {
+            let puntiGuadagnati = punteggio - puntiPrima;
+            let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
 
-            if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
+            let badgeEl = document.getElementById("event-badge");
+            let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
+            let extraTesto = "";
+
+            if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
+            if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
+            if (badgeTesto.includes("vita extra")) extraTesto += " Hai ottenuto una vita extra.";
+
+            testoEsatto += extraTesto;
+
+            setTimeout(() => {
+                parla(testoEsatto, function() {
+                    setTimeout(() => nextTurnMulti(), 300);
+                });
+            }, 150);
+            return;
+        }
+
+        // 2. CASO COMBO IN CORSO: Se stiamo accumulando risposte per una combo (non ancora finita)
+        if (isMulti && comboInserted.length > comboPrima) {
+            setTimeout(() => {
+                parla("Presa.", function() {
+                    if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
+                });
+            }, 150);
+            return;
+        }
+
+        // 3. Fallback: Se c'è stato un errore o un duplicato, riattiva il microfono
+        if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
         }
     };
 }
