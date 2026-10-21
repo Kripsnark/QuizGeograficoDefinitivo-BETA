@@ -3265,12 +3265,29 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
-                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+                // 1. Capiamo quali nazioni avevi già indovinato prima di sbagliare
+                let sigleIndovinate = [];
+                comboInserted.forEach(ans => {
+                    let res = checkSingleAnswer(ans, currentTurnData, currentLevel);
+                    if (res.isCorrect) sigleIndovinate.push(res.matchedCountry.sigla);
+                });
+
+                // 2. Filtriamo le risposte valide escludendo quelle che hai già detto
+                let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
+                    let sigla = currentTurnData.validSiglas[index];
+                    return !sigleIndovinate.includes(sigla);
+                });
+
+                // Paracadute di sicurezza (non dovrebbe mai servire, ma previene crash)
+                if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
+
+                // 3. Peschiamo una risposta a caso tra quelle RIMASTE
+                let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
                 let correctAns = rndAns.split(" (")[0]; 
                 
-                let numValide = currentTurnData.validAnswersCache.length;
+                let numValideRimanenti = risposteNonDette.length;
                 let baseText = reason.includes("Tempo scaduto") ? "Tempo scaduto" : "Sbagliato";
-                let incipit = (numValide > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
+                let incipit = (numValideRimanenti > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
 
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
