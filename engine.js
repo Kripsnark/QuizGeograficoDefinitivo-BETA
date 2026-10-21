@@ -1597,8 +1597,8 @@ let tempValid = getValidAnswersArray(td, currentLevel);
             playTurn();
 
 	setTimeout(() => {
-            // Impedisce alla tastiera di aprirsi da sola se sei tra L0 e L5 col microfono acceso
-            if (!(voiceModeActive && currentLevel <= 5)) {
+            // Apre la tastiera per i L0-L5 manuali e per il L6. Mai nel L7 o col microfono acceso.
+            if (currentLevel === 6 || (!voiceModeActive && currentLevel <= 5)) {
                 inputEl.focus();
                 inputEl.click();
             }
@@ -1867,8 +1867,7 @@ function processaRisposta() {
         inputEl.classList.add("warning-flash", "shake");
         setTimeout(() => {
             inputEl.classList.remove("warning-flash", "shake");
-            // Non forza la tastiera se hai il microfono acceso (L0-L5)
-            if (!(voiceModeActive && currentLevel <= 5)) {
+            if (currentLevel === 6 || (!voiceModeActive && currentLevel <= 5)) {
                 inputEl.focus(); 
             }
         }, 400);
@@ -3211,10 +3210,13 @@ if (!window.voiceHooksAdded) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
                 let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-		let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale
+                let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale
+                let numValide = currentTurnData.validAnswersCache.length;
+                let incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
+                
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
-                    parla(`Ti sei arreso. La risposta era ${correctAns}.${testoVite}`, function() {
+                    parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000);
                     });
                 }, 200);
@@ -3232,17 +3234,19 @@ if (!window.voiceHooksAdded) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
                 let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-                let correctAns = rndAns.split(" (")[0]; // Legge solo la nazione o la capitale
+                let correctAns = rndAns.split(" (")[0]; 
                 
-                // FIX LIVELLO 0: Se sei al Livello 0, legge la prima risposta valida generata (che è quella associata all'immagine)
+                // FIX LIVELLO 0: Se sei al Livello 0, legge la prima risposta valida generata
                 if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
                      correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
                 }
                 
+                let numValide = currentTurnData.validAnswersCache.length;
+                let incipit = (numValide > 1) ? `Sbagliato, potevi dire: ${correctAns}.` : `Sbagliato, era ${correctAns}.`;
+                
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
-                    // Al Livello 6 non dice le vite rimanenti (perché è Morte Improvvisa e se sbagli sei morto subito, quindi window.pendingDefeat intercetta prima)
-                    parla(`Sbagliato, era ${correctAns}.${testoVite}`, function() {
+                    parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000); 
                     });
                 }, 200);
@@ -3259,9 +3263,16 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) {
                 setTimeout(() => nextTurnMulti(), 800);
             } else {
+                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+                let correctAns = rndAns.split(" (")[0]; 
+                
+                let numValide = currentTurnData.validAnswersCache.length;
+                let baseText = reason.includes("Tempo scaduto") ? "Tempo scaduto" : "Sbagliato";
+                let incipit = (numValide > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
+
                 setTimeout(() => {
                     let testoVite = vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`;
-                    parla(`Sbagliato.${testoVite}`, function() {
+                    parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000);
                     });
                 }, 200);
@@ -3314,7 +3325,6 @@ if (!window.voiceHooksAdded) {
         let esattePrima = esatte;
         let vitePrima = vite; 
         let comboPrima = comboInserted.length;
-        let puntiPrima = punteggio; 
         
         origProcessaRisposta(); 
         
@@ -3335,41 +3345,47 @@ if (!window.voiceHooksAdded) {
 
             let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
 
-        // 1. CASO VITTORIA TURNO: Se abbiamo indovinato la domanda singola o COMPLETATO la combo
-        if (esatte > esattePrima) {
-            let puntiGuadagnati = punteggio - puntiPrima;
-            let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
+            // CASO 1: Domanda singola superata (NON COMBO)
+            if (!isMulti && esatte > esattePrima) {
+                // Il testo dei punti per la singola va messo solo se non siamo a Morte Improvvisa
+                let puntiGuadagnati = parseInt(document.getElementById("event-badge")?.innerText.match(/\+(\d+)/)?.[1]) || 50; 
+                let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto!`;
+                
+                let badgeEl = document.getElementById("event-badge");
+                let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
+                let extraTesto = "";
 
-            let badgeEl = document.getElementById("event-badge");
-            let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
-            let extraTesto = "";
+                if (badgeTesto.includes("audacia")) extraTesto += " Audacia.";
+                if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Pigrizia.";
+                if (badgeTesto.includes("vita extra")) extraTesto += " Vita extra.";
 
-            if (badgeTesto.includes("audacia")) extraTesto += " Doppio punteggio per audacia.";
-            if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
-            if (badgeTesto.includes("vita extra")) extraTesto += " Hai ottenuto una vita extra.";
+                testoEsatto += extraTesto;
 
-            testoEsatto += extraTesto;
+                setTimeout(() => {
+                    parla(testoEsatto, function() {
+                        setTimeout(() => nextTurnMulti(), 300);
+                    });
+                }, 150);
+                return;
+            }
 
-            setTimeout(() => {
-                parla(testoEsatto, function() {
-                    setTimeout(() => nextTurnMulti(), 300);
-                });
-            }, 150);
-            return;
-        }
+            // CASO 2: Stiamo accumulando risposte per una combo (non ancora finita)
+            if (isMulti && comboInserted.length > comboPrima) {
+                // LA COMBO È FINITA? Se sì, usciamo e lasciamo parlare 'eseguiValidazioneMultipla'
+                if (comboInserted.length === currentTurnData.numReq) return; 
 
-        // 2. CASO COMBO IN CORSO: Se stiamo accumulando risposte per una combo (non ancora finita)
-        if (isMulti && comboInserted.length > comboPrima) {
-            setTimeout(() => {
-                parla("Presa.", function() {
-                    if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
-                });
-            }, 150);
-            return;
-        }
+                // ALTRIMENTI: Diciamo "Presa" e riapriamo l'audio per la prossima risposta
+                setTimeout(() => {
+                    parla("Presa.", function() {
+                        if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
+                    });
+                }, 150);
+                return;
+            }
 
-        // 3. Fallback: Se c'è stato un errore o un duplicato, riattiva il microfono
-        if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
+            // CASO 3: Fallback (errore logico, input duplicato, o non riconosciuto)
+            // L'audio si è chiuso, lo riapriamo
+            if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
         }
     };
 }
