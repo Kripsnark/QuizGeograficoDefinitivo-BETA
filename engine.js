@@ -79,23 +79,6 @@ try {
     debiti = [];
 }
 
-// --- FUNZIONI FANTASMA RIPRISTINATE E CORRETTE ---
-function checkInit(country, matchedStr, req) {
-    if (!req) return true;
-    let stringaDaTestare = matchedStr || country.nome; 
-    let pulito = stringaDaTestare.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return pulito.startsWith(req.toLowerCase());
-}
-
-function checkCapInit(country, matchedStr, req) {
-    if (!req) return true;
-    // FIX: Se l'utente digita lo stato anziché la capitale, usa la capitale di default per il controllo
-    let stringaDaTestare = matchedStr || country.capitale; 
-    if (!stringaDaTestare) return false;
-    let pulito = stringaDaTestare.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return pulito.startsWith(req.toLowerCase());
-}
-
 // --- MOTORE RECUPERO DEBITI ---
 function gestisciDebito(esatto) {
     if (!currentTurnData) return;
