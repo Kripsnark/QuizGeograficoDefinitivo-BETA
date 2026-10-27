@@ -82,7 +82,7 @@ try {
 // --- MOTORE RECUPERO DEBITI ---
 function gestisciDebito(esatto) {
     if (!currentTurnData) return;
-    if (currentLevel >= 1 && currentLevel <= 4 && !esatto) {
+    if (currentLevel >= 1 && currentLevel <= 5 && !esatto) { // <-- AGGIORNATO QUI
         let esistente = debiti.find(d => d.tdData.targetNode.sigla === currentTurnData.targetNode.sigla && d.tdData.format === currentTurnData.format);
         if (esistente) {
             esistente.progress = 0;
@@ -448,15 +448,15 @@ window.checkAutoSave = function() {
 
 window.startRecuperoGame = function() {
     if (debiti.length < 5) {
-        alert("Non hai abbastanza debiti da recuperare (Minimo 5). Gioca i livelli 1-4 per affrontarne di nuovi!");
+        alert("Non hai abbastanza debiti da recuperare (Minimo 5). Gioca per affrontarne di nuovi!");
         return;
     }
     document.body.style.overscrollBehavior = "none"; 
     currentLevel = 8;
-    vite = 99; // Vite infinite, l'obiettivo è imparare
+    vite = 99; 
     
-    // Calcola il limite massimo di turni dinamicamente (Errori x 2)
-    window.maxTurniVendetta = Math.min(30, debiti.length * 2);
+    // Calcola il limite massimo di turni dinamicamente (Errori x 2, con un minimo di 10)
+    window.maxTurniVendetta = Math.max(10, Math.min(30, debiti.length * 2));
     
     debugGameLog = `=== GEOQUIZ DEBUG LOG ===\nData: ${new Date().toLocaleString()}\nModalità: RECUPERO DEBITI\n\n`;
                 
@@ -539,19 +539,21 @@ if (btnVendetta) {
         }
 
         window.playAgain = function() {
-            let lvlToRestart = currentLevel; 
-            resetGame(); 
-            
-            setTimeout(() => {
-                if (lvlToRestart === 5) {
-                    startCustomGame();
-                } else if (lvlToRestart === 6) {
-                    startLevel6Game();
-                } else {
-                    startGame(lvlToRestart); 
-                }
-            }, 50);
-        };
+    let lvlToRestart = currentLevel; 
+    resetGame(); 
+    
+    setTimeout(() => {
+        if (lvlToRestart === 5) {
+            startCustomGame();
+        } else if (lvlToRestart === 6) {
+            startLevel6Game();
+        } else if (lvlToRestart === 8) {
+            startRecuperoGame(); // <-- FIX RIGIOCA PER I DEBITI
+        } else {
+            startGame(lvlToRestart); 
+        }
+    }, 50);
+};
 
         function getPreposizioneArea(area) {
             if (!area) return "";
@@ -1930,7 +1932,7 @@ td.buildQuestionText = (num) => {
                     timerBar.style.width = "0%";
                     
                     // FIX: Capisce se sei in una Combo o in una Morte Improvvisa
-                    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+                    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
                     if (isMulti) {
                         eseguiValidazioneMultipla(true); 
                     } else {
@@ -1969,7 +1971,7 @@ td.buildQuestionText = (num) => {
         });
 
         function aggiornaComboUI() {
-            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
             if (!isMulti || currentTurnData.numReq === 1) {
                 comboTracker.style.display = "none";
                 return;
@@ -2071,7 +2073,7 @@ td.buildQuestionText = (num) => {
     currentStreak = 0;
     aggiornaUI();
     
-    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
     let insertedStr = isMulti && comboInserted.length > 0 ? " (Trovate: " + comboInserted.map(s => s.toUpperCase()).join(", ") + ")" : "";
     
     let domPulita = currentTurnData.questionText.replace(/<[^>]*>?/gm, ''); 
@@ -2109,11 +2111,16 @@ gestisciDebito(false);
             // SCUDO ANTI-DOMANDE FANTASMA: Se la partita è finita, abortisce immediatamente
             if (document.getElementById("game-over-screen").style.display === "flex") return;
 	
-	if (currentLevel === 8 && (logQuestionCounter >= window.maxTurniVendetta || debiti.length === 0)) {
-        window.pendingVictory = true;
-        popolaGameOver(true);
-        return;
-    }
+            // SCUDO AUTO-SAVE LIVELLO 8: Ricalcola il timer massimo se si riprende la partita
+            if (currentLevel === 8 && typeof window.maxTurniVendetta === 'undefined') {
+                window.maxTurniVendetta = Math.max(10, Math.min(30, debiti.length * 2));
+            }
+
+            if (currentLevel === 8 && (logQuestionCounter >= window.maxTurniVendetta || debiti.length === 0)) {
+                window.pendingVictory = true;
+                popolaGameOver(true);
+                return;
+            }
 
             turnStartTime = Date.now();
             bandieraContainer.style.display = "none";
@@ -2204,7 +2211,7 @@ gestisciDebito(false);
             
             surrenderBtn.style.display = "block";
             
-            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
             let useTimer = (currentLevel === 4 || currentLevel === 6 || (currentLevel === 5 && customConfig.timer));
 
             if (isMulti) {
@@ -2300,7 +2307,7 @@ function processaRisposta() {
     let inputStr = inputEl.value.trim().toLowerCase();
     if (!inputStr) return;
 
-    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+    let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
     let useTimer = (currentLevel === 4 || currentLevel === 6 || (currentLevel === 5 && customConfig.timer));
 
     if (useTimer && timerState === "reading") activateMainTimer();
@@ -3870,7 +3877,7 @@ if (!window.voiceHooksAdded) {
             if (window.pendingDefeat) return; 
             if (vite < vitePrima) return; 
 
-            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1));
+            let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
 
             // CASO 1: Domanda singola superata (NON COMBO)
             if (!isMulti && esatte > esattePrima) {
