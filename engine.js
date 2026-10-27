@@ -3827,7 +3827,7 @@ if (!window.voiceHooksAdded) {
                 } else {
                     if (badgeTesto.includes("fotofinish")) extraTesto += " Salvo al fotofinisc.";
                     if (badgeTesto.includes("audacia")) extraTesto += " Bonus audacia, punti raddoppiati.";
-                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Déjà vu, punteggio dimezzato.";
+                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += "Punteggio dimezzato per PIGRIZIA.";
                 }
                 
                 if (badgeTesto.includes("vita extra")) extraTesto += " Hai guadagnato una vita.";
