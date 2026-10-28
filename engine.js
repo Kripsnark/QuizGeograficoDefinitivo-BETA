@@ -41,7 +41,7 @@ function playSound(nomeSuono) {
     
     // Regolazione dinamica dei volumi
     if (nomeSuono === "battito") {
-        EffettiSonori[nomeSuono].volume = 0.15; // Abbassa il battito
+        EffettiSonori[nomeSuono].volume = 0.10; // Abbassa il battito
     } else {
         EffettiSonori[nomeSuono].volume = 1.0; // Tutti gli altri suoni al 100%
     }
@@ -677,9 +677,15 @@ if (btnVendetta) {
             let td;
             
             if (currentLevel === 8) {
-                let dIdx = Math.floor(Math.random() * debiti.length);
-                td = Object.assign({}, debiti[dIdx].tdData);
-                td.debitoIndex = dIdx;
+                let validDebts = debiti;
+                if (voiceModeActive) {
+                    validDebts = debiti.filter(d => ![9, 10, 13].includes(d.tdData.format));
+                    if (validDebts.length === 0) validDebts = debiti; // Fallback di sicurezza
+                }
+                let rndIdx = Math.floor(Math.random() * validDebts.length);
+                let realIdx = debiti.indexOf(validDebts[rndIdx]);
+                td = Object.assign({}, validDebts[rndIdx].tdData);
+                td.debitoIndex = realIdx;
                 return td; // Il clone ha già il testo pronto, usciamo subito!
             }
             
@@ -1993,11 +1999,25 @@ td.buildQuestionText = (num) => {
                     let existMatch = findCountryByInput(pulitoStr, currentLevel);
                     
                     if (existMatch) {
-                        let isCap = currentTurnData.format === 0 || currentTurnData.format === 6 || currentTurnData.format === 10 || (currentTurnData.format === 12 && currentTurnData.f12AskCapital);
-                        if (currentTurnData.isComboInception && (currentTurnData.format === 1 || currentTurnData.format === 9)) isCap = false; 
-                        else if (currentTurnData.isComboInception && (currentTurnData.format === 0 || currentTurnData.format === 10)) isCap = true;
-
-                        let correctText = isCap && existMatch.capitale ? existMatch.capitale : existMatch.nome;
+                        // FIX: Calcola l'effettiva intenzione dell'utente basata sulla distanza di Levenshtein
+                        let nameDist = 999;
+                        [existMatch.nome.toLowerCase(), ...existMatch.alias_paese].forEach(n => {
+                            if (typeof isDoppelganger !== 'undefined' && isDoppelganger(pulitoStr, n)) return;
+                            let d = levenshteinDistance(pulitoStr, n);
+                            if (d <= getLevenshteinTolerance(n, currentLevel) && d < nameDist) nameDist = d;
+                        });
+                        
+                        let capDist = 999;
+                        if (existMatch.capitale) {
+                            [existMatch.capitale.toLowerCase(), ...existMatch.alias_capitale].forEach(c => {
+                                if (typeof isDoppelganger !== 'undefined' && isDoppelganger(pulitoStr, c)) return;
+                                let d = levenshteinDistance(pulitoStr, c);
+                                if (d <= getLevenshteinTolerance(c, currentLevel) && d < capDist) capDist = d;
+                            });
+                        }
+                        
+                        // Mostra esattamente quello a cui l'utente si è avvicinato di più
+                        let correctText = (capDist < nameDist && existMatch.capitale) ? existMatch.capitale : existMatch.nome;
                         correctText = correctText.replace(/\*/g, '').toUpperCase();
 
                         htmlStr += `<div style="display:flex; flex-direction:column; align-items:center; background:#1a1a1a; padding:6px; border-radius:6px; border:1px solid #444; width:65px; height:70px; justify-content:flex-end;">
@@ -2313,12 +2333,27 @@ function processaRisposta() {
     if (useTimer && timerState === "reading") activateMainTimer();
 
     if (isMulti) {
-        if (comboInserted.map(s => s.toLowerCase()).includes(inputStr)) {
-            inputEl.classList.add("shake");
-            setTimeout(()=> inputEl.classList.remove("shake"), 400);
+        let inputStrClean = inputStr.toLowerCase();
+        let alreadyInCombo = comboInserted.map(s => s.toLowerCase()).includes(inputStrClean);
+        let isDuplicateComboL8 = false;
+
+        if (currentLevel === 8 && currentTurnData.maxPossible > 1 && !alreadyInCombo) {
+            let tempRes = checkSingleAnswer(inputStrClean, currentTurnData, currentLevel);
+            if (tempRes.isCorrect && nazioniUsate.includes(tempRes.matchedCountry.sigla)) {
+                isDuplicateComboL8 = true;
+            }
+        }
+
+        if (alreadyInCombo || isDuplicateComboL8) {
+            inputEl.classList.add("shake", "warning-flash");
+            setTimeout(()=> inputEl.classList.remove("shake", "warning-flash"), 400);
             inputEl.value = "";
+            let oldPlaceholder = inputEl.placeholder;
+            inputEl.placeholder = isDuplicateComboL8 ? "L'hai già usata, CAMBIA!" : "Risposta già inserita!";
+            setTimeout(() => { if (inputEl.placeholder === "L'hai già usata, CAMBIA!" || inputEl.placeholder === "Risposta già inserita!") inputEl.placeholder = oldPlaceholder; }, 1500);
             return; 
         }
+        
         comboInserted.push(inputEl.value.trim()); 
         totalAnswersSubmitted++; 
         inputEl.value = "";
@@ -2330,7 +2365,9 @@ function processaRisposta() {
 
     let res = checkSingleAnswer(inputStr, currentTurnData, currentLevel);
     
-    if (currentLevel === 6 && res.isCorrect && !isMulti && nazioniUsate.includes(res.matchedCountry.sigla)) {
+    let isDuplicateL8 = (currentLevel === 8 && res.isCorrect && !isMulti && currentTurnData.maxPossible > 1 && nazioniUsate.includes(res.matchedCountry.sigla));
+    
+    if ((currentLevel === 6 && res.isCorrect && !isMulti && nazioniUsate.includes(res.matchedCountry.sigla)) || isDuplicateL8) {
         let wasActive = (timerState === "active");
         let currentQ = logQuestionCounter; 
         
@@ -2347,7 +2384,7 @@ function processaRisposta() {
         inputEl.classList.add("warning-flash", "shake");
         setTimeout(() => {
             inputEl.classList.remove("warning-flash", "shake");
-            if (currentLevel === 6 || (!voiceModeActive && currentLevel <= 5)) {
+            if (currentLevel === 6 || currentLevel === 8 || (!voiceModeActive && currentLevel <= 5)) {
                 inputEl.focus(); 
             }
         }, 400);
@@ -2399,8 +2436,8 @@ function processaRisposta() {
 
         // --- NUOVO CALCOLO PUNTEGGI IBRIDO ---
         let puntiGuadagnati = 0;
-        if (currentLevel === 0) {
-            puntiGuadagnati = 50;
+        if (currentLevel === 0 || currentLevel === 8) {
+            puntiGuadagnati = (currentLevel === 8) ? 0 : 50;
         } else {
             let isComboMode = (currentLevel === 4) || (currentLevel === 5 && customConfig.maxCombo > 1);
             
@@ -2425,7 +2462,7 @@ function processaRisposta() {
         let badgeBorder = "#555";
         let virtualLevel = currentLevel === 5 ? (customConfig.difficolta === 'facile' ? 1 : (customConfig.difficolta === 'medio' ? 2 : 3)) : currentLevel;
 
-        if (currentLevel !== 0) {
+        if (currentLevel !== 0 && currentLevel !== 8) {
             if (virtualLevel < 3 && res.matchedCountry.livello > virtualLevel) { 
                 puntiGuadagnati *= 2; 
                 badgeText += "⭐ OTTIMA SCELTA! (Bonus Audacia x2)<br>";
@@ -2440,7 +2477,7 @@ function processaRisposta() {
         
         punteggio += puntiGuadagnati;
 
-gestisciDebito(true);
+        gestisciDebito(true);
 
         debugGameLog += `-> ESITO [${actionTime}s] [${puntiGuadagnati}pti]: ✅ CORRETTO (Input: ` + inputStr + " -> Riconosciuto: " + res.matchedCountry.nome + ")\n\n";
 
@@ -2556,8 +2593,11 @@ gestisciDebito(true);
             if (currentLevel === 0) {
                 badgeText = `<span style="color:#4caf50; font-size:18px;">✅ Corretto! +${puntiGuadagnati}pt</span><br>` + badgeText;
                 UI.mostraSuccesso(null, "", badgeText, "#4caf50");
+            } else if (currentLevel === 8) {
+                badgeText = `<span style="color:#ff9800; font-size:18px;">✅ DEBITO SALDATO!</span><br>` + badgeText;
+                UI.mostraSuccesso(null, nomeInserito, badgeText, "#ff9800");
             } else {
-                let pti = currentLevel === 6 ? null : puntiGuadagnati;
+                let pti = (currentLevel === 6) ? null : puntiGuadagnati;
                 UI.mostraSuccesso(pti, nomeInserito, badgeText, badgeBorder);
             }
         }
@@ -2690,6 +2730,7 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             if (lazyNames.length > 0) { badgeText += `⚠️ DÉJÀ VU su ${lazyNames.join(", ")} (-50%)<br>`; if (!isGrazia && audaceNames.length === 0) badgeBorder = "#ff9800"; }
         }
         
+        if (currentLevel === 8) puntiRound = 0; // Azzera i punti per il Livello 8
         punteggio += puntiRound;
         
         gestisciDebito(true);
@@ -2789,7 +2830,7 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             document.getElementById("ritirati-btn").style.display = "block";
             document.getElementById("continua-btn").style.display = "block";
         } else {
-            let pti = currentLevel === 6 ? null : puntiRound;
+            let pti = (currentLevel === 6 || currentLevel === 8) ? null : puntiRound;
             UI.mostraSuccesso(pti, nomiTrovati, badgeText, badgeBorder, badgeBg, badgeTxtColor);
         }
     }
@@ -3895,7 +3936,7 @@ if (!window.voiceHooksAdded) {
                 } else {
                     if (badgeTesto.includes("fotofinish")) extraTesto += " Salvo al fotofinisc.";
                     if (badgeTesto.includes("audacia")) extraTesto += " Bonus audacia, punti raddoppiati.";
-                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Déjà vu, punteggio dimezzato.";
+                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
                 }
                 
                 if (badgeTesto.includes("vita extra")) extraTesto += " Hai guadagnato una vita.";
