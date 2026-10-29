@@ -1894,14 +1894,12 @@ td.buildQuestionText = (num) => {
             if (currentLevel === 6) {
                 // SE C'È LA VOCE, ASPETTA CHE FINISCA DI PARLARE
                 if (voiceModeActive) {
-                    timerBar.style.backgroundColor = "#2196f3"; 
-                    timerStatus.innerText = "ASCOLTA LA DOMANDA...";
-                } else {
-                    // SE GIOCHI A MANO, IL TIMER PARTE ALL'ISTANTE (NESSUNA TREGUA)
-                    activateMainTimer();
-                }
+                timerBar.style.backgroundColor = "#2196f3"; 
+                timerStatus.innerText = "ASCOLTA LA DOMANDA...";
+                // Il timer partirà solo quando la voce avrà finito
+            } else if (currentLevel === 6) {
+                activateMainTimer();
             } else {
-                // LIVELLI 4-5: Tregua Lettura fissa di 5 secondi
                 timerBar.style.backgroundColor = "#2196f3"; 
                 timerStatus.innerText = "TREGUA LETTURA (5s)";
                 readingTimeout = setTimeout(() => {
@@ -2040,6 +2038,7 @@ td.buildQuestionText = (num) => {
         }
 
         function nextTurnMulti() {
+            clearTimeout(actionTimeout);
             window.isTransitioning = false; // SBLOCCA LUCCHETTO
             if (window.pendingVictory) {
                 window.pendingVictory = false;
@@ -2081,7 +2080,8 @@ td.buildQuestionText = (num) => {
     }
 
         function surrenderTurn() {
-    if (inputEl.disabled && errPanel.style.display === "flex") return; 
+            clearTimeout(actionTimeout);
+            if (inputEl.disabled && errPanel.style.display === "flex") return; 
     
     triggerVibration([100, 50, 100]);
     let surrTime = ((Date.now() - turnStartTime) / 1000).toFixed(1);
@@ -2191,19 +2191,19 @@ gestisciDebito(false);
                         parla(introduzione, function() {
                             parla(bersaglio, function() {
                                 if (assistantRec && !isListening) innescaMicrofonoConDing();
-                                if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                                if (timerState === "reading") activateMainTimer();
                             }, true, slowSpeed); 
                         }, true); 
                     } else {
                         parla(testoDaLeggere, function() {
                             if (assistantRec && !isListening) innescaMicrofonoConDing();
-                            if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                            if (timerState === "reading") activateMainTimer();
                         }, true);
                     }
                 } else {
                     parla(testoDaLeggere, function() {
                         if (assistantRec && !isListening) innescaMicrofonoConDing();
-                        if (currentLevel === 6 && timerState === "reading") activateMainTimer();
+                        if (timerState === "reading") activateMainTimer();
                     }, true);
                 }
             }
@@ -2324,7 +2324,8 @@ gestisciDebito(false);
         }
 
 function processaRisposta() {
-    let inputStr = inputEl.value.trim().toLowerCase();
+            clearTimeout(actionTimeout);
+            let inputStr = inputEl.value.trim().toLowerCase();
     if (!inputStr) return;
 
     let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
@@ -2335,22 +2336,14 @@ function processaRisposta() {
     if (isMulti) {
         let inputStrClean = inputStr.toLowerCase();
         let alreadyInCombo = comboInserted.map(s => s.toLowerCase()).includes(inputStrClean);
-        let isDuplicateComboL8 = false;
 
-        if (currentLevel === 8 && currentTurnData.maxPossible > 1 && !alreadyInCombo) {
-            let tempRes = checkSingleAnswer(inputStrClean, currentTurnData, currentLevel);
-            if (tempRes.isCorrect && nazioniUsate.includes(tempRes.matchedCountry.sigla)) {
-                isDuplicateComboL8 = true;
-            }
-        }
-
-        if (alreadyInCombo || isDuplicateComboL8) {
+        if (alreadyInCombo) {
             inputEl.classList.add("shake", "warning-flash");
             setTimeout(()=> inputEl.classList.remove("shake", "warning-flash"), 400);
             inputEl.value = "";
             let oldPlaceholder = inputEl.placeholder;
-            inputEl.placeholder = isDuplicateComboL8 ? "L'hai già usata, CAMBIA!" : "Risposta già inserita!";
-            setTimeout(() => { if (inputEl.placeholder === "L'hai già usata, CAMBIA!" || inputEl.placeholder === "Risposta già inserita!") inputEl.placeholder = oldPlaceholder; }, 1500);
+            inputEl.placeholder = "Risposta già inserita!";
+            setTimeout(() => { if (inputEl.placeholder === "Risposta già inserita!") inputEl.placeholder = oldPlaceholder; }, 1500);
             return; 
         }
         
@@ -3694,8 +3687,20 @@ if (SpeechRecognition) {
         }
 
         // --- INTERCETTAZIONE NUOVI COMANDI EXTRA IN PARTITA ---
-        if (parolaDetta.includes("ripeti") || parolaDetta.includes("domanda")) {
+        if (parolaDetta.includes("ripeti") || (parolaDetta.includes("domanda") && parolaDetta.length < 15)) {
+            let wasTimerActive = (timerState === "active" || timerState === "reading");
+            if (wasTimerActive) {
+                stopTimer();
+                timerContainer.style.display = "block";
+                timerBar.style.backgroundColor = "#2196f3";
+                timerStatus.innerText = "RILETTURA...";
+            }
+            
             parla(currentTurnData.questionText, function() {
+                if (wasTimerActive && !window.pendingDefeat) {
+                    timerState = "reading"; 
+                    activateMainTimer();
+                }
                 if (assistantRec && !isListening) { window.innescaMicrofonoConDing(); }
             });
             return;
@@ -4003,3 +4008,18 @@ if (!window.voiceHooksAdded) {
 setTimeout(() => {
     if (typeof checkAutoSave === 'function') checkAutoSave();
 }, 400);
+
+// --- FIX ESTRAZIONE LOG DI TEST (Scavalca lo storico globale) ---
+window.scaricaLog = function() {
+    if (!debugGameLog) {
+        alert("Nessun log disponibile per questa partita.");
+        return;
+    }
+    let blob = new Blob([debugGameLog], { type: "text/plain" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    let d = new Date();
+    let ds = d.toLocaleDateString('it-IT').replace(/\//g, '-') + "_" + d.toTimeString().split(' ')[0].replace(/:/g, '-');
+    link.download = `GeoQuiz_Log_L${currentLevel}_${ds}.txt`;
+    link.click();
+};
