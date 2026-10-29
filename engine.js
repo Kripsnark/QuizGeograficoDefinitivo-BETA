@@ -86,10 +86,11 @@ function gestisciDebito(esatto) {
         let esistente = debiti.find(d => d.tdData.targetNode.sigla === currentTurnData.targetNode.sigla && d.tdData.format === currentTurnData.format);
         if (esistente) {
             esistente.progress = 0;
+            esistente.sigleUsate = []; // Resetta la memoria locale
         } else {
             let clone = { ...currentTurnData };
             delete clone.buildQuestionText; 
-            debiti.push({ tdData: clone, progress: 0 });
+            debiti.push({ tdData: clone, progress: 0, sigleUsate: [] }); // Inizializza memoria locale
             if (debiti.length > 50) debiti.shift(); 
         }
         localStorage.setItem('geoQuizDebiti', JSON.stringify(debiti));
@@ -101,6 +102,7 @@ function gestisciDebito(esatto) {
             if (deb.progress >= 2) debiti.splice(currentTurnData.debitoIndex, 1);
         } else {
             deb.progress = 0; 
+            deb.sigleUsate = []; // Resetta la memoria locale se sbagli
         }
         localStorage.setItem('geoQuizDebiti', JSON.stringify(debiti));
     }
@@ -2257,7 +2259,7 @@ gestisciDebito(false);
                 timerContainer.style.display = "none";
             }
             
-            if(currentLevel === 5 || currentLevel === 7) document.getElementById("termina-custom-btn").style.display = "block";
+            if(currentLevel === 5 || currentLevel === 7 || currentLevel === 8) document.getElementById("termina-custom-btn").style.display = "block";
 
 	    let mcContainer = document.getElementById("mc-container");
             
@@ -2356,7 +2358,13 @@ function processaRisposta() {
 
     let res = checkSingleAnswer(inputStr, currentTurnData, currentLevel);
     
-    let isDuplicateL8 = (currentLevel === 8 && res.isCorrect && !isMulti && currentTurnData.maxPossible > 1 && nazioniUsate.includes(res.matchedCountry.sigla));
+    let isDuplicateL8 = false;
+    if (currentLevel === 8 && res.isCorrect && !isMulti && currentTurnData.maxPossible > 1) {
+        let deb = debiti[currentTurnData.debitoIndex];
+        if (deb && deb.sigleUsate && deb.sigleUsate.includes(res.matchedCountry.sigla)) {
+            isDuplicateL8 = true;
+        }
+    }
     
     if ((currentLevel === 6 && res.isCorrect && !isMulti && nazioniUsate.includes(res.matchedCountry.sigla)) || isDuplicateL8) {
         let wasActive = (timerState === "active");
@@ -2400,6 +2408,16 @@ function processaRisposta() {
         
         let sigla = res.matchedCountry.sigla;
 
+        // --- SALVATAGGIO SIGLA NELLA MEMORIA DEL DEBITO L8 ---
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined) {
+            let deb = debiti[currentTurnData.debitoIndex];
+            if (deb) {
+                if (!deb.sigleUsate) deb.sigleUsate = [];
+                if (!deb.sigleUsate.includes(sigla)) deb.sigleUsate.push(sigla);
+            }
+        }
+        // -----------------------------------------------------
+
         // --- DINAMICA ALIAS SEGRETO ---
         // Se la nazione indovinata non era tra le "ufficiali" calcolate originariamente dal motore:
         if (currentTurnData.validSiglas && !currentTurnData.validSiglas.includes(sigla)) {
@@ -2424,6 +2442,12 @@ function processaRisposta() {
         esatte++;
         currentStreak++;
         if (currentStreak > bestStreak) bestStreak = currentStreak;
+
+        // --- CONTROLLO STATO DEBITO PRIMA DI AGGIORNARLO ---
+        let isDebitoSaldato = false;
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined && debiti[currentTurnData.debitoIndex]) {
+            isDebitoSaldato = (debiti[currentTurnData.debitoIndex].progress === 1);
+        }
 
         // --- NUOVO CALCOLO PUNTEGGI IBRIDO ---
         let puntiGuadagnati = 0;
@@ -2585,7 +2609,9 @@ function processaRisposta() {
                 badgeText = `<span style="color:#4caf50; font-size:18px;">✅ Corretto! +${puntiGuadagnati}pt</span><br>` + badgeText;
                 UI.mostraSuccesso(null, "", badgeText, "#4caf50");
             } else if (currentLevel === 8) {
-                badgeText = `<span style="color:#ff9800; font-size:18px;">✅ DEBITO SALDATO!</span><br>` + badgeText;
+                if (isDebitoSaldato) {
+                    badgeText = `<span style="color:#ff9800; font-size:16px; font-weight:bold;">✅ DEBITO SALDATO!</span><br>` + badgeText;
+                }
                 UI.mostraSuccesso(null, nomeInserito, badgeText, "#ff9800");
             } else {
                 let pti = (currentLevel === 6) ? null : puntiGuadagnati;
@@ -2721,6 +2747,11 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             if (lazyNames.length > 0) { badgeText += `⚠️ DÉJÀ VU su ${lazyNames.join(", ")} (-50%)<br>`; if (!isGrazia && audaceNames.length === 0) badgeBorder = "#ff9800"; }
         }
         
+        let isDebitoSaldato = false;
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined && debiti[currentTurnData.debitoIndex]) {
+            isDebitoSaldato = (debiti[currentTurnData.debitoIndex].progress === 1);
+        }
+
         if (currentLevel === 8) puntiRound = 0; // Azzera i punti per il Livello 8
         punteggio += puntiRound;
         
@@ -2821,8 +2852,15 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             document.getElementById("ritirati-btn").style.display = "block";
             document.getElementById("continua-btn").style.display = "block";
         } else {
-            let pti = (currentLevel === 6 || currentLevel === 8) ? null : puntiRound;
-            UI.mostraSuccesso(pti, nomiTrovati, badgeText, badgeBorder, badgeBg, badgeTxtColor);
+            if (currentLevel === 8) {
+                if (isDebitoSaldato) {
+                    badgeText = `<span style="color:#ff9800; font-size:16px; font-weight:bold;">✅ DEBITO SALDATO!</span><br>` + badgeText;
+                }
+                UI.mostraSuccesso(null, nomiTrovati, badgeText, "#ff9800", badgeBg, badgeTxtColor);
+            } else {
+                let pti = (currentLevel === 6) ? null : puntiRound;
+                UI.mostraSuccesso(pti, nomiTrovati, badgeText, badgeBorder, badgeBg, badgeTxtColor);
+            }
         }
     }
 }
@@ -3156,6 +3194,11 @@ gestisciDebito(false);
                                  </div>`;
                 });
                 errorLogEl.innerHTML = errorHtml;
+            }
+
+            // AGGIUNTA TASTO LOG DINAMICO PER IL LIVELLO 8
+            if (currentLevel === 8) {
+                errorLogEl.innerHTML += `<div style="margin-top: 20px; text-align: center;"><button onclick="window.scaricaLog()" style="background:#2196f3; color:#fff; border:none; padding:12px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:15px; width:100%; box-shadow:0 2px 5px rgba(0,0,0,0.3);">🐞 SCARICA LOG DI TEST</button></div>`;
             }
 
             for (let chiave in nazioniIgnorateCount) {
@@ -3867,23 +3910,23 @@ if (!window.voiceHooksAdded) {
                 window.isTransitioning = true; // SBLOCCA LUCCHETTO ANTI-DOPPIONI
                 
                 let puntiGuadagnati = punteggio - puntiPrima;
-                let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
+                let testoEsatto = (currentLevel === 6 || currentLevel === 8) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
                 
                 let badgeEl = document.getElementById("event-badge");
                 let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
-                let extraTesto = "";
+                let frasiExtra = [];
                 
                 if (badgeTesto.includes("grazia")) {
-                    testoEsatto = `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
+                    testoEsatto = (currentLevel === 6 || currentLevel === 8) ? "Tempo scaduto, ma ti salva la grazia!" : `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
                 } else {
-                    if (badgeTesto.includes("fotofinish")) extraTesto += " Salvo al fotofinisc.";
-                    if (badgeTesto.includes("audacia")) extraTesto += " Bonus audacia, punti raddoppiati.";
-                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += "Punteggio dimezzato per PIGRIZIA.";
+                    if (badgeTesto.includes("fotofinish")) frasiExtra.push("Salvo al fotofinisc.");
+                    if (badgeTesto.includes("audacia")) frasiExtra.push("Bonus audacia, punti raddoppiati.");
+                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) frasiExtra.push("Déjà vu, punteggio dimezzato.");
                 }
                 
-                if (badgeTesto.includes("vita extra")) extraTesto += " Hai guadagnato una vita.";
+                if (badgeTesto.includes("vita extra")) frasiExtra.push("Hai guadagnato una vita.");
                 
-                testoEsatto += extraTesto;
+                if (frasiExtra.length > 0) testoEsatto += " " + frasiExtra.join(" ");
                 
                 setTimeout(() => {
                     parla(testoEsatto, function() {
