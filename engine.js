@@ -1891,9 +1891,7 @@ td.buildQuestionText = (num) => {
             clearTimeout(readingTimeout);
             clearInterval(mainTimerInterval);
             
-            if (currentLevel === 6) {
-                // SE C'È LA VOCE, ASPETTA CHE FINISCA DI PARLARE
-                if (voiceModeActive) {
+            if (voiceModeActive) {
                 timerBar.style.backgroundColor = "#2196f3"; 
                 timerStatus.innerText = "ASCOLTA LA DOMANDA...";
                 // Il timer partirà solo quando la voce avrà finito
