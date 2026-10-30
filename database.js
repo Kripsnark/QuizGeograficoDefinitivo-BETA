@@ -2,7 +2,7 @@
 AF	Afghanistan	Afganistan		Kabul			iran, turkmenistan, uzbekistan, tagikistan, cina, pakistan	Asia, Subcontinente indiano	rosso, nero, verde	bianco	scritta, emblema nazionale		strisce verticali	1
 AL	Albania			Tirana	Irama		Montenegro, Kosovo, Macedonia del Nord, grecia, mare	Europa, Mediterraneo, Balcani	rosso, nero	nero	aquila		lenzuolo rosso	1
 DZ	Algeria			Algeri			marocco, tunisia, libia, niger, mali, mauritania, mare	Africa, Africa settentrionale, Mediterraneo	verde, bianco	rosso	mezzaluna, stella		strisce verticali, mezzaluna rossa, stella rossa	1
-AD	Andorra		Andòra	Andorra la Vella	La Vella, dora la vella	Andòra la Vèglia	francia, spagna	Europa, Penisola Iberica	blu, giallo, rosso		emblema nazionale		strisce verticali	2
+AD	Andorra		Andòra	Andorra la Vella	La Vella, dora la vella, pandora ravenna, pandora la vella, vella	Andòra la Vèglia	francia, spagna	Europa, Penisola Iberica	blu, giallo, rosso		emblema nazionale		strisce verticali	2
 AO	Angola			Luanda			namibia, zambia, repubblica democratica del congo, congo, mare	Africa, Africa Centrale	rosso, nero	giallo	machete, arma, ruota dentata, stella		strisce orizzontali, stella gialla	2
 AI	Anguilla			The Valley				Nord America, caraibi	blu		emblema nazionale, delfino, animale, union jack	x		3
 AG	Antigua e Barbuda	Antigua, Barbuda		Saint John's	St John's, Saint Johns, St Johns, Saint Jones			Nord America, caraibi	rosso, nero, giallo, blu, bianco		sole			2

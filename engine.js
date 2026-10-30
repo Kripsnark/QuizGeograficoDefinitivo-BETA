@@ -3196,11 +3196,6 @@ gestisciDebito(false);
                 errorLogEl.innerHTML = errorHtml;
             }
 
-            // AGGIUNTA TASTO LOG DINAMICO PER IL LIVELLO 8
-            if (currentLevel === 8) {
-                errorLogEl.innerHTML += `<div style="margin-top: 20px; text-align: center;"><button onclick="window.scaricaLog()" style="background:#2196f3; color:#fff; border:none; padding:12px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:15px; width:100%; box-shadow:0 2px 5px rgba(0,0,0,0.3);">🐞 SCARICA LOG DI TEST</button></div>`;
-            }
-
             for (let chiave in nazioniIgnorateCount) {
                 if (nazioniDigitateCount[chiave] && nazioniDigitateCount[chiave] > 0) {
                     delete nazioniIgnorateCount[chiave];
@@ -3910,7 +3905,7 @@ if (!window.voiceHooksAdded) {
                 window.isTransitioning = true; // SBLOCCA LUCCHETTO ANTI-DOPPIONI
                 
                 let puntiGuadagnati = punteggio - puntiPrima;
-                let testoEsatto = (currentLevel === 6 || currentLevel === 8) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
+                let testoEsatto = (currentLevel === 6 || currentLevel === 8 || puntiGuadagnati === 0) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
                 
                 let badgeEl = document.getElementById("event-badge");
                 let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
@@ -3971,23 +3966,23 @@ if (!window.voiceHooksAdded) {
                 window.isTransitioning = true; // SBLOCCA LUCCHETTO ANTI-DOPPIONI
                 
                 let puntiGuadagnati = punteggio - puntiPrima;
-                let testoEsatto = (currentLevel === 6) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
+                let testoEsatto = (currentLevel === 6 || currentLevel === 8 || puntiGuadagnati === 0) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
                 
                 let badgeEl = document.getElementById("event-badge");
                 let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
-                let extraTesto = "";
+                let frasiExtra = [];
                 
                 if (badgeTesto.includes("grazia")) {
-                    testoEsatto = `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
+                    testoEsatto = (currentLevel === 6 || currentLevel === 8) ? "Tempo scaduto, ma ti salva la grazia!" : `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
                 } else {
-                    if (badgeTesto.includes("fotofinish")) extraTesto += " Salvo al fotofinisc.";
-                    if (badgeTesto.includes("audacia")) extraTesto += " Bonus audacia, punti raddoppiati.";
-                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) extraTesto += " Punteggio dimezzato per pigrizia.";
+                    if (badgeTesto.includes("fotofinish")) frasiExtra.push("Salvo al fotofinisc.");
+                    if (badgeTesto.includes("audacia")) frasiExtra.push("Bonus audacia, punti raddoppiati.");
+                    if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) frasiExtra.push("Déjà vu, punteggio dimezzato.");
                 }
                 
-                if (badgeTesto.includes("vita extra")) extraTesto += " Hai guadagnato una vita.";
+                if (badgeTesto.includes("vita extra")) frasiExtra.push("Hai guadagnato una vita.");
                 
-                testoEsatto += extraTesto;
+                if (frasiExtra.length > 0) testoEsatto += " " + frasiExtra.join(" ");
 
                 setTimeout(() => {
                     parla(testoEsatto, function() {
