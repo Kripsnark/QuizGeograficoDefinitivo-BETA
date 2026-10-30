@@ -463,6 +463,7 @@ window.startRecuperoGame = function() {
     }
     debiti = uniqueDebiti;
     localStorage.setItem('geoQuizDebiti', JSON.stringify(debiti));
+    window.initialDebtsCount = debiti.length; // <--- AGGIUNGI QUESTA RIGA PER IL BADGE VENDICATORE
 
     if (debiti.length < 5) {
         alert("Non hai abbastanza debiti da recuperare (Minimo 5). Gioca per affrontarne di nuovi!");
@@ -3049,6 +3050,29 @@ gestisciDebito(false);
             homeBtn.style.display = "none"; 
             
             gameOverScreen.style.display = "flex";
+            
+            // --- GESTIONE BADGE NEUTRI DI SESSIONE ---
+            let sessionBadgesHtml = "";
+            if (typeof window.checkBadges === 'function') {
+                let earned = window.checkBadges({
+                    currentLevel: currentLevel,
+                    esatte: (currentLevel === 8 ? Math.min(esatte, logQuestionCounter) : esatte),
+                    isVictory: isVictory,
+                    debitiIniziali: window.initialDebtsCount || 0,
+                    debitiRimasti: debiti.length
+                });
+                sessionBadgesHtml = window.renderBadgeNotification(earned);
+            }
+            
+            let containerBadges = document.getElementById("game-over-badges");
+            if (!containerBadges) {
+                containerBadges = document.createElement("div");
+                containerBadges.id = "game-over-badges";
+                containerBadges.style.width = "100%";
+                document.getElementById("game-over-msg").after(containerBadges);
+            }
+            containerBadges.innerHTML = sessionBadgesHtml;
+            // ------------------------------------------
             
             let avgTime = totalAnswersSubmitted > 0 ? (totalActiveTimeMs / totalAnswersSubmitted / 1000).toFixed(1) : "0.0";
             let avgTimeFloat = parseFloat(avgTime);

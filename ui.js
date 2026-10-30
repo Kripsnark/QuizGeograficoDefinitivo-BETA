@@ -365,10 +365,11 @@ window.setL6Argomento = function(val) {
 
 window.openRecords = function(defaultTab = 'global') {
     let html = `
-    <div style="display:flex; gap:10px; margin-bottom:15px; width:100%;">
+    <div style="display:flex; gap:5px; margin-bottom:15px; width:100%;">
         <button onclick="renderRecordTab('global')" class="ui-tab-btn ${defaultTab==='global'?'active':''}" id="tab-btn-global">🌍 GLOBALE</button>
         <button onclick="renderRecordTab('levels')" class="ui-tab-btn ${defaultTab==='levels'?'active':''}" id="tab-btn-levels">📊 LIVELLI</button>
         <button onclick="renderRecordTab('logs')" class="ui-tab-btn ${defaultTab==='logs'?'active':''}" id="tab-btn-logs">📜 LOG</button>
+        <button onclick="renderRecordTab('trofei')" class="ui-tab-btn ${defaultTab==='trofei'?'active':''}" id="tab-btn-trofei">🎖️ TROFEI</button>
     </div>
     <div id="record-tab-content"></div>
     `;
@@ -384,7 +385,7 @@ window.openRecords = function(defaultTab = 'global') {
 }
 
 window.renderRecordTab = function(tabName) {
-    ['global', 'levels', 'logs'].forEach(t => document.getElementById(`tab-btn-${t}`).classList.remove('active'));
+    ['global', 'levels', 'logs', 'trofei'].forEach(t => document.getElementById(`tab-btn-${t}`).classList.remove('active'));
     document.getElementById(`tab-btn-${tabName}`).classList.add('active');
     
     let container = document.getElementById("record-tab-content");
@@ -483,6 +484,8 @@ const buildList10 = (arr, color) => {
             }
         });
         html += "</div>";
+    } else if (tabName === 'trofei') {
+        html = window.renderMedagliere();
     }
 
     container.innerHTML = html;
