@@ -102,7 +102,8 @@ function gestisciDebito(esatto) {
             if (deb.progress >= 2) debiti.splice(currentTurnData.debitoIndex, 1);
         } else {
             deb.progress = 0; 
-            deb.sigleUsate = []; // Resetta la memoria locale se sbagli
+            deb.sigleUsate = []; 
+            deb.rinviato = true; // RINVIA AL PROSSIMO RECUPERO DEBITI
         }
         localStorage.setItem('geoQuizDebiti', JSON.stringify(debiti));
     }
@@ -449,10 +450,25 @@ window.checkAutoSave = function() {
         };
 
 window.startRecuperoGame = function() {
+    // PULIZIA CORRUZIONI E FLAG: Rimuove i doppioni storici e resetta i rinvii
+    let uniqueDebiti = [];
+    let visti = new Set();
+    for (let d of debiti) {
+        delete d.rinviato; // Reset rinvio
+        let key = d.tdData.targetNode.sigla + "-" + d.tdData.format;
+        if (!visti.has(key)) {
+            visti.add(key);
+            uniqueDebiti.push(d);
+        }
+    }
+    debiti = uniqueDebiti;
+    localStorage.setItem('geoQuizDebiti', JSON.stringify(debiti));
+
     if (debiti.length < 5) {
         alert("Non hai abbastanza debiti da recuperare (Minimo 5). Gioca per affrontarne di nuovi!");
         return;
     }
+
     document.body.style.overscrollBehavior = "none"; 
     currentLevel = 8;
     vite = 99; 
@@ -679,10 +695,10 @@ if (btnVendetta) {
             let td;
             
             if (currentLevel === 8) {
-                let validDebts = debiti;
+                let validDebts = debiti.filter(d => !d.rinviato);
                 if (voiceModeActive) {
-                    validDebts = debiti.filter(d => ![9, 10, 13].includes(d.tdData.format));
-                    if (validDebts.length === 0) validDebts = debiti; // Fallback di sicurezza
+                    validDebts = validDebts.filter(d => ![9, 10, 13].includes(d.tdData.format));
+                    if (validDebts.length === 0) validDebts = debiti.filter(d => !d.rinviato); // Fallback
                 }
                 let rndIdx = Math.floor(Math.random() * validDebts.length);
                 let realIdx = debiti.indexOf(validDebts[rndIdx]);
@@ -1017,12 +1033,13 @@ td.buildQuestionText = (num) => {
                         else finalQ = td.isComboInception ? `Nomina ${nI_p} che confinano via terra con lo Stato la cui capitale è <strong>${td.targetNode.capitale.toUpperCase()}</strong>.` : "";
                         break;
                     case 2:
+                        let uniciStr = td.targetNode.colori_base.length === 1 ? "UNICO colore di BASE" : "UNICI colori di BASE";
                         if (num === 1) {
                             if (td.f2RequiresSymbol) finalQ = `Nomina 1 ${sT} la cui bandiera ha TRA I COLORI DI BASE ${artCol(td.f2Color || td.targetNode.colori_base[0])} e raffigura l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
-                            else finalQ = `Nomina 1 ${sT} la cui bandiera ha come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
+                            else finalQ = `Nomina 1 ${sT} la cui bandiera ha come ${uniciStr} ${unisci(td.targetNode.colori_base)}.`;
                         } else {
                             if (td.f2RequiresSymbol) finalQ = `Nomina ${sT_p} le cui bandiere hanno TRA I COLORI DI BASE ${artCol(td.f2Color || td.targetNode.colori_base[0])} e raffigurano l'elemento grafico <strong>${td.f2RequiresSymbol.toUpperCase()}</strong>.`;
-                            else finalQ = `Nomina ${sT_p} le cui bandiere hanno come UNICI colori di BASE ${unisci(td.targetNode.colori_base)}.`;
+                            else finalQ = `Nomina ${sT_p} le cui bandiere hanno come ${uniciStr} ${unisci(td.targetNode.colori_base)}.`;
                         }
                         break;
                     case 3:
@@ -2136,7 +2153,9 @@ gestisciDebito(false);
                 window.maxTurniVendetta = Math.max(10, Math.min(30, debiti.length * 2));
             }
 
-            if (currentLevel === 8 && (logQuestionCounter >= window.maxTurniVendetta || debiti.length === 0)) {
+            let debitiGiocabili = currentLevel === 8 ? debiti.filter(d => !d.rinviato) : [];
+            if (currentLevel === 8 && (logQuestionCounter >= window.maxTurniVendetta || debitiGiocabili.length === 0)) {
+                logQuestionCounter = Math.min(logQuestionCounter, window.maxTurniVendetta); // Fix sforamento visivo
                 window.pendingVictory = true;
                 popolaGameOver(true);
                 return;
@@ -2248,9 +2267,10 @@ gestisciDebito(false);
                 timerContainer.style.display = "block";
                 timerBar.style.transition = "width 0.5s ease-in-out";
                 timerBar.style.backgroundColor = "#ff9800"; // Barra Arancione
-                let pct = (logQuestionCounter / window.maxTurniVendetta) * 100;
+                let safeCounter = Math.min(logQuestionCounter, window.maxTurniVendetta);
+                let pct = (safeCounter / window.maxTurniVendetta) * 100;
                 timerBar.style.width = pct + "%";
-                timerStatus.innerText = `DEBITI RESIDUI: ${debiti.length} (Domanda ${logQuestionCounter + 1}/${window.maxTurniVendetta})`;
+                timerStatus.innerText = `DEBITI RESIDUI: ${debiti.length} (Domanda ${safeCounter}/${window.maxTurniVendetta})`;
             } else if (useTimer) {
                 let mathTime = 15 * (currentTurnData.numReq + currentTurnData.numVariables - 1);
                 if (mathTime < 15) mathTime = 15; 
@@ -2338,6 +2358,7 @@ function processaRisposta() {
         let alreadyInCombo = comboInserted.map(s => s.toLowerCase()).includes(inputStrClean);
 
         if (alreadyInCombo) {
+            if (voiceModeActive) parla("Risposta già inserita, cambia.");
             inputEl.classList.add("shake", "warning-flash");
             setTimeout(()=> inputEl.classList.remove("shake", "warning-flash"), 400);
             inputEl.value = "";
@@ -2367,6 +2388,7 @@ function processaRisposta() {
     }
     
     if ((currentLevel === 6 && res.isCorrect && !isMulti && nazioniUsate.includes(res.matchedCountry.sigla)) || isDuplicateL8) {
+        if (voiceModeActive) parla("L'hai già usata, cambia.");
         let wasActive = (timerState === "active");
         let currentQ = logQuestionCounter; 
         
@@ -3121,7 +3143,8 @@ gestisciDebito(false);
                 streakRow.style.display = "none"; 
                 rowTempoTot.style.display = "block"; 
             } else if (currentLevel === 8) {
-                statRow.innerHTML = `Hai risposto correttamente a <strong class="score-highlight">${esatte}</strong> domande di recupero.`;
+                let safeEsatte = Math.min(esatte, logQuestionCounter);
+                statRow.innerHTML = `Hai risposto correttamente a <strong class="score-highlight">${safeEsatte}</strong> domande di recupero.`;
                 streakRow.style.display = "none"; 
                 rowTempoTot.style.display = "block"; 
             } else {
@@ -3160,9 +3183,15 @@ gestisciDebito(false);
                         msgEl.innerHTML = "L'impresa è compiuta.<br>Hai dimostrato una padronanza geografica assoluta.";
                     }
                 } else if (currentLevel === 8) {
-                    titleEl.innerText = "DEBITI AZZERATI!";
-                    titleEl.style.color = "#ff9800"; 
-                    msgEl.innerText = "Hai affrontato e superato i tuoi punti deboli. Ottimo lavoro!";
+                    if (debiti.length === 0) {
+                        titleEl.innerText = "DEBITI AZZERATI!";
+                        titleEl.style.color = "#ff9800"; 
+                        msgEl.innerText = "Hai affrontato e superato tutti i tuoi punti deboli. Ottimo lavoro!";
+                    } else {
+                        titleEl.innerText = "SESSIONE CONCLUSA";
+                        titleEl.style.color = "#ff9800"; 
+                        msgEl.innerText = `Hai saldato alcune pendenze, ma ti restano ancora ${debiti.length} debiti per la prossima volta.`;
+                    }
                 } else {
                     titleEl.innerText = "VITTORIA!";
                     titleEl.style.color = "#4caf50"; 
@@ -3263,7 +3292,8 @@ gestisciDebito(false);
                      debugGameLog += "Esatte: " + esatte + " su " + levelDb.length + " (" + pct + "%)\n";
                 }
             } else if (currentLevel === 8) {
-                debugGameLog += "Esatte: " + esatte + " su " + logQuestionCounter + "\n";
+                let safeEsatte = Math.min(esatte, logQuestionCounter);
+                debugGameLog += "Esatte: " + safeEsatte + " su " + logQuestionCounter + "\n";
             } else {
                 debugGameLog += "Punteggio: " + punteggio + " | Esatte: " + esatte + " su " + logQuestionCounter + " | Serie Max: " + bestStreak + "\n";
             }
@@ -3287,7 +3317,11 @@ gestisciDebito(false);
                         else txt = "Straordinario. Hai completato l'intero database. Nessun territorio al mondo ti è sconosciuto. Sei una leggenda vivente. ";
                     }
                     else if (currentLevel === 8) {
-                        txt = "Bravissimo. Hai eliminato tutti i tuoi errori storici. ";
+                        if (debiti.length === 0) {
+                            txt = "Bravissimo. Hai eliminato tutti i tuoi errori storici. ";
+                        } else {
+                            txt = "Sessione conclusa. Ti restano ancora dei debiti per la prossima volta. ";
+                        }
                     }
                     else txt = "Vittoria! ";
                 } else {
@@ -3298,7 +3332,8 @@ gestisciDebito(false);
                 if (currentLevel === 6) {
                     txt += "Hai indovinato " + esatte + " nazioni su " + levelDb.length + ".";
                 } else if (currentLevel === 8) {
-                    txt += "Hai risposto correttamente a " + esatte + " domande.";
+                    let safeEsatte = Math.min(esatte, logQuestionCounter);
+                    txt += "Hai risposto correttamente a " + safeEsatte + " domande.";
                 } else {
                     txt += "Hai totalizzato " + punteggio + " punti con " + esatte + " risposte esatte.";
                 }
@@ -3732,6 +3767,9 @@ if (SpeechRecognition) {
                 timerStatus.innerText = "RILETTURA...";
             }
             
+            // LUCCHETTO ANTI-FANTASMA: blocca il re-innesco multiplo mentre sta già leggendo
+            if (window.speechSynthesis.speaking) return; 
+            
             parla(currentTurnData.questionText, function() {
                 if (wasTimerActive && !window.pendingDefeat) {
                     timerState = "reading"; 
@@ -3769,15 +3807,15 @@ if (SpeechRecognition) {
         isListening = false;
         let inputEl = document.getElementById("answer-input");
         
-        // IL PARACADUTE ANTI-SILENZIO:
-        // Se il telefono spegne il microfono per pausa troppo lunga, ma stiamo giocando, forziamo il riavvio!
+        // IL PARACADUTE ANTI-SILENZIO ESTESO:
         let gameIsActive = document.getElementById("input-area").style.display === "flex" && inputEl && !inputEl.disabled;
         let continuaBtn = document.getElementById("continua-btn");
         let waitContinua = continuaBtn && continuaBtn.style.display === "block";
         let waitNext = document.getElementById("next-btn") && document.getElementById("next-btn").style.display === "block";
+        let isStartScreen = document.getElementById("start-screen") && document.getElementById("start-screen").style.display === "flex";
         
-        if (voiceModeActive && !window.speechSynthesis.speaking && (gameIsActive || waitContinua) && !waitNext && !window.pendingDefeat && !window.pendingVictory) {
-            // Riavvio ISTANTANEO E SILENZIOSO (10 millisecondi, niente "ding")
+        if (voiceModeActive && !window.speechSynthesis.speaking && (gameIsActive || waitContinua || isStartScreen) && !waitNext && !window.pendingDefeat && !window.pendingVictory) {
+            // Riavvio ISTANTANEO E SILENZIOSO (per dare tempo extra anche nel menu)
             setTimeout(() => {
                 try { assistantRec.start(); } catch(e) {}
             }, 10);
