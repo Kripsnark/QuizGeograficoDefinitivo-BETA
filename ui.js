@@ -616,10 +616,15 @@ window.switchLevelTab = function(lvl) {
 
         // Modificatori L4 / L5
         if (lvl === 4 || lvl === 5) {
-            html += `<div style="display:flex; justify-content:center; gap:20px; font-size:12px; color:#888; border-top:1px dashed #444; padding-top:10px;">`;
+            html += `<div style="display:flex; justify-content:center; gap:20px; font-size:12px; color:#888; border-top:1px dashed #444; padding-top:10px; padding-bottom:5px;">`;
             html += `<span>Fotofinish: <strong style="color:#2196f3;">${s.fotofinish || 0}</strong></span>`;
             html += `<span>Grazie: <strong style="color:#ffd700;">${s.grazie || 0}</strong></span>`;
             html += `</div>`;
+        }
+
+        // --- INIEZIONE STEMMA LIVELLO STORICO IN FONDO ---
+        if (typeof window.renderLevelBadge === 'function') {
+            html += window.renderLevelBadge(s.bestStreak);
         }
     }
     

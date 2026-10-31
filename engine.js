@@ -2345,8 +2345,12 @@ gestisciDebito(false);
         }
 
 function processaRisposta() {
-            clearTimeout(actionTimeout);
-            let inputStr = inputEl.value.trim().toLowerCase();
+    // Lucchetto Assoluto: Se la tastiera è disabilitata (es. il turno è appena finito o si sta ricaricando), scarta immediatamente l'input fantasma o ritardato del microfono.
+    let inputEl = document.getElementById("answer-input");
+    if (inputEl.disabled) return;
+
+    clearTimeout(actionTimeout);
+    let inputStr = inputEl.value.trim().toLowerCase();
     if (!inputStr) return;
 
     let isMulti = (currentLevel === 4 || (currentLevel === 5 && currentTurnData.numReq > 1) || (currentLevel === 8 && currentTurnData.numReq > 1));
@@ -2359,7 +2363,12 @@ function processaRisposta() {
         let alreadyInCombo = comboInserted.map(s => s.toLowerCase()).includes(inputStrClean);
 
         if (alreadyInCombo) {
-            if (voiceModeActive) parla("Risposta già inserita, cambia.");
+            if (voiceModeActive) {
+                try { assistantRec.stop(); isListening = false; } catch(e) {}
+                parla("Già usata.", function() {
+                    if (assistantRec && !isListening) window.innescaMicrofonoConDing();
+                });
+            }
             inputEl.classList.add("shake", "warning-flash");
             setTimeout(()=> inputEl.classList.remove("shake", "warning-flash"), 400);
             inputEl.value = "";
@@ -2389,7 +2398,12 @@ function processaRisposta() {
     }
     
     if ((currentLevel === 6 && res.isCorrect && !isMulti && nazioniUsate.includes(res.matchedCountry.sigla)) || isDuplicateL8) {
-        if (voiceModeActive) parla("L'hai già usata, cambia.");
+        if (voiceModeActive) {
+            try { assistantRec.stop(); isListening = false; } catch(e) {}
+            parla("Già usata.", function() {
+                if (assistantRec && !isListening) window.innescaMicrofonoConDing();
+            });
+        }
         let wasActive = (timerState === "active");
         let currentQ = logQuestionCounter; 
         
@@ -3050,30 +3064,7 @@ gestisciDebito(false);
             homeBtn.style.display = "none"; 
             
             gameOverScreen.style.display = "flex";
-            
-            // --- GESTIONE BADGE NEUTRI DI SESSIONE ---
-            let sessionBadgesHtml = "";
-            if (typeof window.checkBadges === 'function') {
-                let earned = window.checkBadges({
-                    currentLevel: currentLevel,
-                    esatte: (currentLevel === 8 ? Math.min(esatte, logQuestionCounter) : esatte),
-                    isVictory: isVictory,
-                    debitiIniziali: window.initialDebtsCount || 0,
-                    debitiRimasti: debiti.length
-                });
-                sessionBadgesHtml = window.renderBadgeNotification(earned);
-            }
-            
-            let containerBadges = document.getElementById("game-over-badges");
-            if (!containerBadges) {
-                containerBadges = document.createElement("div");
-                containerBadges.id = "game-over-badges";
-                containerBadges.style.width = "100%";
-                document.getElementById("game-over-msg").after(containerBadges);
-            }
-            containerBadges.innerHTML = sessionBadgesHtml;
-            // ------------------------------------------
-            
+                       
             let avgTime = totalAnswersSubmitted > 0 ? (totalActiveTimeMs / totalAnswersSubmitted / 1000).toFixed(1) : "0.0";
             let avgTimeFloat = parseFloat(avgTime);
             document.getElementById("final-avg-time").innerText = avgTime + "s";
@@ -3300,8 +3291,48 @@ gestisciDebito(false);
                             </div>`;
                 top5Container.innerHTML = html;
                 top5Container.style.display = "block";
+            // ... (codice esistente delle top 5)
             } else {
                 top5Container.style.display = "none";
+            }
+
+            // --- ALLINEAMENTO FORZATO MILLIMETRICO DELLE 3 TABELLE ---
+            let logErroriEl = document.getElementById("error-log");
+            let top5El = document.getElementById("top5-nations");
+            
+            [logErroriEl, top5El].forEach(el => {
+                if(el) {
+                    el.style.width = "100%";
+                    el.style.maxWidth = "700px";
+                    el.style.boxSizing = "border-box";
+                    el.style.marginLeft = "auto";
+                    el.style.marginRight = "auto";
+                }
+            });
+
+            // --- INIEZIONE BADGE DI SESSIONE ---
+            let containerBadges = document.getElementById("game-over-badges");
+            if (!containerBadges) {
+                containerBadges = document.createElement("div");
+                containerBadges.id = "game-over-badges";
+                document.getElementById("error-log").before(containerBadges);
+            }
+            if (typeof window.checkBadges === 'function') {
+                let earned = window.checkBadges({
+                    currentLevel: currentLevel,
+                    esatte: (currentLevel === 8 ? Math.min(esatte, logQuestionCounter) : esatte),
+                    isVictory: isVictory,
+                    debitiIniziali: window.initialDebtsCount || 0,
+                    debitiRimasti: debiti.length,
+                    bestStreak: bestStreak,
+                    avgTime: parseFloat(avgTimeFloat),
+                    fotofinish: fotofinishCount,
+                    grazie: grazieRicevuteCount,
+                    cuori: Math.floor(punteggio / 750),
+                    domandeTotali: logQuestionCounter,
+                    hasDejavu: Object.values(nazioniDigitateCount).some(v => v > 1)
+                });
+                containerBadges.innerHTML = window.renderBadgeNotification(earned);
             }
 
             debugGameLog += "========================================\n";
