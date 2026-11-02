@@ -1675,10 +1675,36 @@ td.buildQuestionText = (num) => {
             let bestMatchNameStr = "";
             let bestMatchCapitalStr = "";
 
-            // Il motore guarda tutto il mondo SOLO per le tre casistiche di confine, altrimenti resta nel livello/continente!
-            let searchPool = (td.format === 4 || td.format === 7 || td.isComboInception) ? globalDb : getAnswerPool(level);
+            let searchPool = globalDb;
+            
+            // --- FIX LIVELLO 0: Restringe il bacino SOLO alle 3 nazioni dei bottoni ---
+            if (level === 0) {
+                // Genera la lista delle 3 sigle esatte mostrate sullo schermo
+                let sigleOpzioniL0 = Array.from(document.querySelectorAll('.mc-option-btn'))
+                    .map(btn => {
+                        if (td.format === 13) {
+                            let imgMatch = btn.innerHTML.match(/GIF\/(.+?)\.jpg/i);
+                            return imgMatch ? imgMatch[1].toUpperCase() : null;
+                        } else {
+                            // Cerca in tutto il DB globale per risalire alla sigla dal testo mostrato
+                            let testMatch = globalDb.find(n => 
+                                (n.capitale && n.capitale.toLowerCase() === btn.innerText.toLowerCase()) || 
+                                n.nome.toLowerCase() === btn.innerText.toLowerCase()
+                            );
+                            return testMatch ? testMatch.sigla : null;
+                        }
+                    }).filter(s => s !== null);
+
+                // Filtra il bacino di ricerca mantenendo SOLO le 3 nazioni dei bottoni
+                searchPool = globalDb.filter(c => sigleOpzioniL0.includes(c.sigla));
+            } else {
+                // Motore Standard per gli altri livelli
+                searchPool = (td.format === 4 || td.format === 7 || td.isComboInception) ? globalDb : getAnswerPool(level);
+            }
             
             for (let country of searchPool) {
+                // ... Il resto della funzione prosegue inalterato ...
+                if (td.negColor && (country.colori_base.includes(td.negColor) || country.colori_emblema.includes(td.negColor))) continue;
                 if (td.negColor && (country.colori_base.includes(td.negColor) || country.colori_emblema.includes(td.negColor))) continue;
                 
                 if (td.negBorders && td.negBorders.length > 0) {
