@@ -3372,7 +3372,7 @@ gestisciDebito(false);
                 let earned = window.checkBadges({
                     currentLevel: currentLevel,
                     esatte: (currentLevel === 8 ? Math.min(esatte, logQuestionCounter) : esatte),
-                    isVictory: isVictory,
+                    isVictory: (isVictory || endlessVittoriaSbloccata),
                     debitiIniziali: window.initialDebtsCount || 0,
                     debitiRimasti: debiti.length,
                     bestStreak: bestStreak,
