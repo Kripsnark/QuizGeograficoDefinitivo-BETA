@@ -87,9 +87,10 @@ window.checkBadges = function(gameData) {
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
     
+    // NESSUN div avvolgente! Restituiamo solo il contenuto, 
+    // perché il div contenitore in engine.js ha già la classe "game-over-section"
     let html = `
-    <div class="game-over-section">
-        <h3 style="color:#ffd700;">🏆 TROFEI DI SESSIONE</h3>
+        <h3 style="color:#ffd700; margin:0 0 15px 0; font-size:18px; text-transform:uppercase; text-align:center;">🏆 TROFEI DI SESSIONE</h3>
         <div class="badge-list-container">
     `;
     
@@ -111,7 +112,7 @@ window.renderBadgeNotification = function(earnedArray) {
         `;
     });
     
-    html += `</div></div>`;
+    html += `</div>`;
     return html;
 };
 

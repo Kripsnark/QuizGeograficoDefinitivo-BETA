@@ -2204,14 +2204,18 @@ gestisciDebito(false);
                     if (startTag !== -1 && endTag !== -1) {
                         let introduzione = testoDaLeggere.substring(0, startTag);
                         let bersaglio = testoDaLeggere.substring(startTag + 8, endTag);
+                        let chiusura = testoDaLeggere.substring(endTag + 9); // IL FIX: Salva e legge le opzioni finali!
                         
                         let currentDefaultSpeed = typeof voiceSpeed !== 'undefined' ? voiceSpeed : 1.0;
                         let slowSpeed = currentDefaultSpeed * 0.8;
                         
                         parla(introduzione, function() {
                             parla(bersaglio, function() {
-                                if (assistantRec && !isListening) innescaMicrofonoConDing();
-                                if (timerState === "reading") activateMainTimer();
+                                // Legge il resto della frase e le alternative prima di accendere il microfono
+                                parla(chiusura, function() {
+                                    if (assistantRec && !isListening) innescaMicrofonoConDing();
+                                    if (timerState === "reading") activateMainTimer();
+                                }, true);
                             }, true, slowSpeed); 
                         }, true); 
                     } else {
@@ -3310,12 +3314,14 @@ gestisciDebito(false);
                 }
             });
 
-            // --- INIEZIONE BADGE DI SESSIONE ---
+            // --- INIEZIONE BADGE DI SESSIONE SOTTO LE TOP 5 ---
             let containerBadges = document.getElementById("game-over-badges");
             if (!containerBadges) {
                 containerBadges = document.createElement("div");
                 containerBadges.id = "game-over-badges";
-                document.getElementById("error-log").before(containerBadges);
+                containerBadges.className = "game-over-section"; // Assegna il CSS unificato!
+                // Lo agganciamo ESATTAMENTE sotto Top 5 Nations
+                document.getElementById("top5-nations").after(containerBadges);
             }
             if (typeof window.checkBadges === 'function') {
                 let earned = window.checkBadges({
@@ -3332,7 +3338,14 @@ gestisciDebito(false);
                     domandeTotali: logQuestionCounter,
                     hasDejavu: Object.values(nazioniDigitateCount).some(v => v > 1)
                 });
-                containerBadges.innerHTML = window.renderBadgeNotification(earned);
+                
+                // Nascondiamo l'intero box se non ci sono trofei, così non resta un buco vuoto
+                if (earned && earned.length > 0) {
+                     containerBadges.style.display = "block";
+                     containerBadges.innerHTML = window.renderBadgeNotification(earned);
+                } else {
+                     containerBadges.style.display = "none";
+                }
             }
 
             debugGameLog += "========================================\n";

@@ -261,13 +261,6 @@ body {
 #game-over-msg { color: #ffd700; font-size: 18px; margin-bottom: 15px; font-weight: bold; text-align: center; }
 #game-over-stats { font-size: 20px; color: #ccc; margin-bottom: 20px; display:flex; flex-direction:column; gap:10px; align-items:center; width:100%; }
 
-#error-log { background-color: #1e1e1e; border-radius: 8px; padding: 20px; width: 100%; max-width: 700px; max-height: 40vh; overflow-y: auto; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-.error-item { border-bottom: 1px solid #333; padding: 15px 0; }
-.error-item:last-child { border-bottom: none; }
-.error-q { font-size: 16px; color: #ddd; margin-bottom: 8px; }
-.error-user-input { font-size: 14px; color: #f44336; margin-bottom: 4px; }
-.error-valid-answers { font-size: 18px; color: #4caf50; font-weight: bold; }
-
 /* Pulsanti Schermata Game Over */
 .game-over-actions {
     display: flex; 
@@ -414,6 +407,16 @@ table.db-table th.sticky-col { z-index: 4; background-color: #333 !important; }
     text-transform: uppercase; 
     text-align: center;
 }
+
+/* Error Log e Voci Errori */
+#error-log.game-over-section {
+    background-color: #1a1a1a;
+}
+.error-item { border-bottom: 1px solid #333; padding: 15px 0; }
+.error-item:last-child { border-bottom: none; }
+.error-q { font-size: 16px; color: #ddd; margin-bottom: 8px; }
+.error-user-input { font-size: 14px; color: #f44336; margin-bottom: 4px; }
+.error-valid-answers { font-size: 18px; color: #4caf50; font-weight: bold; }
 
 /* ========================================= */
 /*           TROFEI E BADGE                  */
