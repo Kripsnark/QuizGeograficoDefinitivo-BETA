@@ -146,6 +146,8 @@ window.addEventListener('popstate', function(event) {
 
 document.addEventListener('touchmove', function(e) {
     if (document.getElementById("start-screen").style.display === "flex") return; 
+    // IL FIX: Spegne il blocco touch durante il Game Over per permettere lo scorrimento
+    if (document.getElementById("game-over-screen").style.display === "flex") return; 
     if (e.target.closest('.db-table-container') || e.target.closest('#modal-body') || e.target.closest('#error-log') || e.target.closest('#top5-nations')) return;
     e.preventDefault();
 }, { passive: false });
@@ -3084,6 +3086,8 @@ gestisciDebito(false);
             clearAutoSave();
             playSound(isVictory ? "vittoria" : "sconfitta");
             
+            document.body.style.overscrollBehavior = "auto";
+            
             document.getElementById("header").style.display = "none";
             document.getElementById("question").style.display = "none";
             document.getElementById("input-area").style.display = "none";
@@ -3097,11 +3101,14 @@ gestisciDebito(false);
                        
             let avgTime = totalAnswersSubmitted > 0 ? (totalActiveTimeMs / totalAnswersSubmitted / 1000).toFixed(1) : "0.0";
             let avgTimeFloat = parseFloat(avgTime);
+            
+            // --- REGOLA FERREA TEMPO: Valido SOLO con almeno 5 esatte! ---
+            let validAvgTime = (esatte >= 5) ? avgTimeFloat : 0;
+            
             document.getElementById("final-avg-time").innerText = avgTime + "s";
             
             let isNewRecord = false;
 
-            // SCUDO LIVELLO 8: Nessun record, nessuna statistica globale registrata
             if (currentLevel !== 8) {
                 if (!statsByLevel[currentLevel]) {
                     statsByLevel[currentLevel] = { plays: 0, bestScore: 0, bestStreak: 0, bestAvgTime: 0, fotofinish: 0, grazie: 0 };
@@ -3126,9 +3133,10 @@ gestisciDebito(false);
                 }
                 if (bestStreak > statsByLevel[currentLevel].bestStreak) statsByLevel[currentLevel].bestStreak = bestStreak;
                 
-                if (avgTimeFloat > 0 && esatte >= 5) {
-                    if (statsByLevel[currentLevel].bestAvgTime === 0 || avgTimeFloat < statsByLevel[currentLevel].bestAvgTime) {
-                        statsByLevel[currentLevel].bestAvgTime = avgTimeFloat;
+                // Aggiornamento Tempo Medio Livello proteso
+                if (validAvgTime > 0) {
+                    if (statsByLevel[currentLevel].bestAvgTime === 0 || validAvgTime < statsByLevel[currentLevel].bestAvgTime) {
+                        statsByLevel[currentLevel].bestAvgTime = validAvgTime;
                     }
                 }
                 
@@ -3149,9 +3157,19 @@ gestisciDebito(false);
                     statsByLevel[currentLevel].grazie += grazieRicevuteCount;
                 }
 
+                // AGGIORNAMENTO GLOBALE
                 if (currentLevel !== 0 && currentLevel !== 5 && currentLevel !== 6) {
                     if (punteggio > allTimeBestScore) allTimeBestScore = punteggio;
                     if (bestStreak > allTimeBestStreak) allTimeBestStreak = bestStreak;
+                    
+                    // Fix salvataggio globale Tempo Medio: scarta lo spam di clic!
+                    if (validAvgTime > 0) {
+                        if (typeof window.allTimeBestAvgTime === 'undefined') window.allTimeBestAvgTime = 0;
+                        if (window.allTimeBestAvgTime === 0 || validAvgTime < window.allTimeBestAvgTime) {
+                            window.allTimeBestAvgTime = validAvgTime;
+                        }
+                    }
+                    
                     allTimeFotofinish += fotofinishCount;
                     allTimeGrazie += grazieRicevuteCount;
                     for (let sigla in nazioniDigitateCount) { allTimeNazioniCount[sigla] = (allTimeNazioniCount[sigla] || 0) + nazioniDigitateCount[sigla]; }
@@ -3340,15 +3358,16 @@ gestisciDebito(false);
                 }
             });
 
-            // --- INIEZIONE BADGE DI SESSIONE SOTTO LE TOP 5 ---
+// --- INIEZIONE BADGE DI SESSIONE E SALVATAGGIO LOG ---
             let containerBadges = document.getElementById("game-over-badges");
             if (!containerBadges) {
                 containerBadges = document.createElement("div");
                 containerBadges.id = "game-over-badges";
-                containerBadges.className = "game-over-section"; // Assegna il CSS unificato!
-                // Lo agganciamo ESATTAMENTE sotto Top 5 Nations
+                containerBadges.className = "game-over-section";
                 document.getElementById("top5-nations").after(containerBadges);
             }
+            
+            let stringaBadgeLog = "Nessuno";
             if (typeof window.checkBadges === 'function') {
                 let earned = window.checkBadges({
                     currentLevel: currentLevel,
@@ -3357,18 +3376,24 @@ gestisciDebito(false);
                     debitiIniziali: window.initialDebtsCount || 0,
                     debitiRimasti: debiti.length,
                     bestStreak: bestStreak,
-                    avgTime: parseFloat(avgTimeFloat),
+                    avgTime: validAvgTime,
                     fotofinish: fotofinishCount,
                     grazie: grazieRicevuteCount,
                     cuori: Math.floor(punteggio / 750),
                     domandeTotali: logQuestionCounter,
-                    hasDejavu: Object.values(nazioniDigitateCount).some(v => v > 1)
+                    hasDejavu: Object.values(nazioniDigitateCount).some(v => v > 1),
+                    erroriTotali: erroriCommessi.length
                 });
                 
-                // Nascondiamo l'intero box se non ci sono trofei, così non resta un buco vuoto
                 if (earned && earned.length > 0) {
                      containerBadges.style.display = "block";
                      containerBadges.innerHTML = window.renderBadgeNotification(earned);
+                     
+                     // Estrae in formato testuale i badge ottenuti per scriverli nel Log
+                     stringaBadgeLog = earned.map(b => {
+                         let livelloT = b.tier === 4 ? "Speciale" : (b.tier === 3 ? "Oro" : (b.tier === 2 ? "Argento" : "Bronzo"));
+                         return `${BADGE_INFO[b.id].title} (${livelloT})`;
+                     }).join(", ");
                 } else {
                      containerBadges.style.display = "none";
                 }
@@ -3400,6 +3425,7 @@ gestisciDebito(false);
                 debugGameLog += "Top 20 Usate: " + (logUsate.length > 0 ? logUsate.map(u => u.nome + " (" + u.count + ")").join(", ") : "Nessuna") + "\n";
                 debugGameLog += "Top 20 Ignorate: " + (logIgnorate.length > 0 ? logIgnorate.map(i => i.nome + " (" + i.count + ")").join(", ") : "Nessuna") + "\n";
             }
+            debugGameLog += "Trofei Sbloccati: " + stringaBadgeLog + "\n";
             debugGameLog += "========================================\n";
 
             if (voiceModeActive) {

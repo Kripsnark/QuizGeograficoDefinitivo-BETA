@@ -10,74 +10,112 @@ const SVG_ICONS = {
     grazia: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a10.06 10.06 1 0 0-20 0Z"></path><path d="M12 12v8a2 2 0 0 0 4 0"></path><path d="M12 2v1"></path></svg>`,
     infermiere: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path><line x1="12" y1="8" x2="12" y2="14"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg>`,
     veterano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-    lucido: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon></svg>`
+    lucido: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon></svg>`,
+    infallibile: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>`
 };
 
 const BADGE_INFO = {
     vendicatore: { title: "Vendicatore", desc: "Azzera 6+ debiti", tiers: [1, 3, 10] },
     conquistatore: { title: "Conquistatore", desc: "Vinci un livello", tiers: [1, 3, 10] },
-    maratoneta: { title: "Maratoneta", desc: "Risposte esatte totali", tiers: [2, 30, 60] },
-    inarrestabile: { title: "Inarrestabile", desc: "Serie consecutiva", tiers: [10, 25, 50] },
-    scheggia: { title: "Scheggia", desc: "Tempo medio per risposta", tiers: [15, 10, 5], isInverse: true },
+    maratoneta: { title: "Maratoneta", desc: "Risposte esatte totali", tiers: [16, 31, 61] },
+    inarrestabile: { title: "Inarrestabile", desc: "Serie consecutiva", tiers: [15, 30, 50] },
+    scheggia: { title: "Scheggia", desc: "Tempo medio (Soglie dimezzate L0)", tiers: [15, 10, 5], isInverse: true },
     fotofinish: { title: "Fotoreporter", desc: "Salvataggi al fotofinish", tiers: [1, 3, 5] },
     grazia: { title: "Intoccabile", desc: "Meno grazie ricevute", tiers: [2, 1, 0], isInverse: true },
     infermiere: { title: "Croce Rossa", desc: "Cuori extra guadagnati", tiers: [3, 5, 10] },
-    veterano: { title: "Veterano", desc: "Domande giocate", tiers: [30, 80, 150] },
-    lucido: { title: "Mente Lucida", desc: "Nessun Dejavu", tiers: [1, 1, 1], isSpecial: true } 
+    veterano: { title: "Veterano", desc: "Domande giocate", tiers: [36, 80, 150] },
+    lucido: { title: "Mente Lucida", desc: "Nessun Dejavu", tiers: [1, 1, 1], isSpecial: true },
+    infallibile: { title: "Infallibile", desc: "Vittoria senza errori", tiers: [1, 1, 1], isSpecial: true }
 };
 
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
 
 window.checkBadges = function(gameData) {
-    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu } = gameData;
+    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali } = gameData;
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
-    const assegnaTier = (id, rawValue, tier, motivo, isInverse = false) => {
+    const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
         sessionEarned.push({ id, tier, motivo });
         
         let currentBest = userBadges[id] !== undefined ? userBadges[id] : (isInverse ? 9999 : 0);
         
-        if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
+        if (isCumulative) {
+            userBadges[id] = currentBest + rawValue;
+            storicoAggiornato = true;
+        } else if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
             userBadges[id] = rawValue;
             storicoAggiornato = true;
         }
     };
 
-    if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
-    else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
-    else if (esatte >= 2) assegnaTier('maratoneta', esatte, 1, "Superate le 2 risposte");
+    if (currentLevel !== 0) {
+        if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
+        else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
+        else if (esatte >= 15) assegnaTier('maratoneta', esatte, 1, "Superate le 15 risposte");
+    }
 
     if (bestStreak >= 50) assegnaTier('inarrestabile', bestStreak, 3, "Serie di 50 risposte");
-    else if (bestStreak >= 25) assegnaTier('inarrestabile', bestStreak, 2, "Serie di 25 risposte");
-    else if (bestStreak >= 10) assegnaTier('inarrestabile', bestStreak, 1, "Serie di 10 risposte");
+    else if (bestStreak >= 30) assegnaTier('inarrestabile', bestStreak, 2, "Serie di 30 risposte");
+    else if (bestStreak >= 15) assegnaTier('inarrestabile', bestStreak, 1, "Serie di 15 risposte");
 
     if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
     else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
-    else if (domandeTotali >= 30) assegnaTier('veterano', domandeTotali, 1, "Giocate 30 domande");
+    else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
 
     if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
     else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
     else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
 
-    if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
-    else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
-    else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
+    if (esatte >= 10) {
+        if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
+        else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
+        else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
 
-    if (esatte >= 5 && avgTime > 0) {
-        if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio < 5s", true);
-        else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio < 10s", true);
-        else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio < 15s", true);
+        if (avgTime > 0) {
+            if (currentLevel === 0) {
+                if (avgTime <= 2.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 2.5s (Lv0)", true);
+                else if (avgTime <= 5) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 5s (Lv0)", true);
+                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
+            } else {
+                if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
+                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 10s", true);
+                else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 15s", true);
+            }
+        }
     }
 
-    if ((currentLevel === 4 || currentLevel === 5) && domandeTotali >= 10) {
+    if ((currentLevel === 4 || currentLevel === 5) && esatte >= 40) {
         if (grazie <= 0) assegnaTier('grazia', grazie, 3, "Nessuna grazia ricevuta", true);
         else if (grazie <= 1) assegnaTier('grazia', grazie, 2, "Solo 1 grazia ricevuta", true);
         else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
     }
 
-    if (!hasDejavu && domandeTotali >= 10) {
-        assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 10+ domande");
+    if (currentLevel === 8) {
+        let debitiSaldati = debitiIniziali - debitiRimasti;
+        if (debitiSaldati >= 10) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 10+ debiti");
+        else if (debitiSaldati >= 3) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 3+ debiti");
+        else if (debitiSaldati >= 1) assegnaTier('vendicatore', debitiSaldati, 1, "Saldato 1 debito");
+    }
+
+    if (isVictory && currentLevel !== 0 && currentLevel !== 8) {
+        let winsAttuali = (userBadges.conquistatore || 0);
+        let tierConq = 0;
+        let motivoConq = "";
+        
+        if (winsAttuali + 1 >= 10) { tierConq = 3; motivoConq = "10 Vittorie Assolute"; }
+        else if (winsAttuali + 1 >= 3) { tierConq = 2; motivoConq = "3 Vittorie Assolute"; }
+        else { tierConq = 1; motivoConq = "Prima Vittoria Assoluta"; }
+        
+        assegnaTier('conquistatore', 1, tierConq, motivoConq, false, true);
+    }
+
+    if (!hasDejavu && domandeTotali >= 50) {
+        assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 50+ domande");
+    }
+
+    if (isVictory && erroriTotali === 0 && currentLevel !== 0 && currentLevel !== 8) {
+        assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
     }
 
     if (storicoAggiornato) localStorage.setItem('geoQuizBadges', JSON.stringify(userBadges));
@@ -87,10 +125,9 @@ window.checkBadges = function(gameData) {
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
     
-    // NESSUN div avvolgente! Restituiamo solo il contenuto, 
-    // perché il div contenitore in engine.js ha già la classe "game-over-section"
     let html = `
-        <h3 style="color:#ffd700; margin:0 0 15px 0; font-size:18px; text-transform:uppercase; text-align:center;">🏆 TROFEI DI SESSIONE</h3>
+    <div class="game-over-section">
+        <h3 style="color:#ffd700;">🏆 TROFEI DI SESSIONE</h3>
         <div class="badge-list-container">
     `;
     
@@ -112,7 +149,7 @@ window.renderBadgeNotification = function(earnedArray) {
         `;
     });
     
-    html += `</div>`;
+    html += `</div></div>`;
     return html;
 };
 
@@ -160,16 +197,16 @@ window.renderMedagliere = function() {
 };
 
 window.renderLevelBadge = function(bestStreak) {
-    if (!bestStreak || bestStreak < BADGE_INFO.maratoneta.tiers[0]) return "";
+    if (!bestStreak || bestStreak < BADGE_INFO.inarrestabile.tiers[0]) return "";
     
-    let tier = bestStreak >= BADGE_INFO.maratoneta.tiers[2] ? 3 : (bestStreak >= BADGE_INFO.maratoneta.tiers[1] ? 2 : 1);
+    let tier = bestStreak >= BADGE_INFO.inarrestabile.tiers[2] ? 3 : (bestStreak >= BADGE_INFO.inarrestabile.tiers[1] ? 2 : 1);
     let color = tier === 3 ? "#ffd700" : (tier === 2 ? "#c0c0c0" : "#cd7f32");
-    let info = BADGE_INFO.maratoneta;
+    let info = BADGE_INFO.inarrestabile;
     
     let html = `<div class="level-badge-row">`;
     html += `<div class="level-badge-inner" style="border-left:3px solid ${color};">
                 <div class="level-badge-left">
-                    <div class="level-badge-icon" style="color:${color};">${SVG_ICONS.maratoneta}</div>
+                    <div class="level-badge-icon" style="color:${color};">${SVG_ICONS.inarrestabile}</div>
                     <span class="level-badge-title" style="color:${color};">${info.title}</span>
                     <span class="level-badge-desc">- ${info.desc}</span>
                 </div>
