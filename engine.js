@@ -3918,10 +3918,6 @@ if (SpeechRecognition) {
         let inputEl = document.getElementById("answer-input");
         if(inputEl) inputEl.value = parolaDetta;
         
-        // Gestione risposte normali
-        let inputEl = document.getElementById("answer-input");
-        if(inputEl) inputEl.value = parolaDetta;
-        
         if (document.getElementById("continua-btn").style.display === "block") {
             // IL FIX: Richiede l'intenzione esplicita, non basta un fruscio
             if (parolaDetta.includes("continua") || parolaDetta.includes("sfida")) continuaSfida();
