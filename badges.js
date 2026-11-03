@@ -11,35 +11,39 @@ const SVG_ICONS = {
     infermiere: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path><line x1="12" y1="8" x2="12" y2="14"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg>`,
     veterano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
     lucido: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon></svg>`,
-    infallibile: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>`
+    infallibile: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>`,
+    fenice: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 3.5-5 9 0 4.5 3 6.5 5 11 2-4.5 5-6.5 5-11 0-5.5-5-9-5-9z"></path></svg>`,
+    cyborg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>`,
+    sestosenso: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
 };
 
 const BADGE_INFO = {
-    vendicatore: { title: "Vendicatore", desc: "Azzera 6+ debiti", tiers: [1, 3, 10] },
-    conquistatore: { title: "Conquistatore", desc: "Vinci un livello", tiers: [1, 3, 10] },
-    maratoneta: { title: "Maratoneta", desc: "Risposte esatte totali", tiers: [16, 31, 61] },
-    inarrestabile: { title: "Inarrestabile", desc: "Serie consecutiva", tiers: [15, 30, 50] },
-    scheggia: { title: "Scheggia", desc: "Tempo medio (Soglie dimezzate L0)", tiers: [15, 10, 5], isInverse: true },
-    fotofinish: { title: "Fotoreporter", desc: "Salvataggi al fotofinish", tiers: [1, 3, 5] },
-    grazia: { title: "Intoccabile", desc: "Meno grazie ricevute", tiers: [2, 1, 0], isInverse: true },
-    infermiere: { title: "Croce Rossa", desc: "Cuori extra guadagnati", tiers: [3, 5, 10] },
-    veterano: { title: "Veterano", desc: "Domande giocate", tiers: [36, 80, 150] },
-    lucido: { title: "Mente Lucida", desc: "Nessun Dejavu", tiers: [1, 1, 1], isSpecial: true },
-    infallibile: { title: "Infallibile", desc: "Vittoria senza errori", tiers: [1, 1, 1], isSpecial: true }
+    vendicatore: { title: "Visto Rinnovato", desc: "Azzera debiti: la burocrazia è sistemata", tiers: [1, 3, 10] },
+    conquistatore: { title: "Esploratore", desc: "Vinci un livello: hai mappato un'area", tiers: [1, 3, 10] },
+    maratoneta: { title: "Giramondo", desc: "Risposte totali: viaggi in continuazione", tiers: [16, 31, 61] },
+    inarrestabile: { title: "Senza Scalo", desc: "Serie esatta: volo diretto senza fermarsi", tiers: [15, 30, 50] },
+    scheggia: { title: "Teletrasporto", desc: "Tempo medio: non usi l'aereo (Soglie L0 dimezzate)", tiers: [15, 10, 5], isInverse: true },
+    fotofinish: { title: "Scatto al Gate", desc: "Salvataggi in extremis: passi all'ultimo secondo", tiers: [1, 3, 5] },
+    grazia: { title: "Viaggio in Solitaria", desc: "Meno grazie: fai a meno della guida turistica", tiers: [2, 1, 0], isInverse: true },
+    infermiere: { title: "Assicurazione di Viaggio", desc: "Cuori extra: copertura perfetta per gli imprevisti", tiers: [3, 5, 10] },
+    veterano: { title: "Passaporto Pieno", desc: "Domande giocate: riempi il passaporto di timbri", tiers: [35, 80, 150] },
+    lucido: { title: "GPS Umano", desc: "Zero Déjà vu: non passi mai due volte dalla stessa strada", tiers: [1, 1, 1], isSpecial: true },
+    infallibile: { title: "Rotta Perfetta", desc: "Vittoria a 0 errori: itinerario calcolato al millimetro", tiers: [1, 1, 1], isSpecial: true },
+    fenice: { title: "Sopravvissuto", desc: "Serie con 1 vita: perso nel nulla ma continui ad andare", tiers: [3, 5, 10] },
+    cyborg: { title: "Autopilota", desc: "Senza Scalo ORO + Teletrasporto ORO (Macchina perfetta)", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
+    sestosenso: { title: "Volo alla Cieca", desc: "Leggenda a L7: navighi a intuito senza guardare", tiers: [1, 1, 1], isSpecial: true, isSecret: true }
 };
 
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
 
 window.checkBadges = function(gameData) {
-    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali } = gameData;
+    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali, bestStreakOneLife, punteggio } = gameData;
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
         sessionEarned.push({ id, tier, motivo });
-        
         let currentBest = userBadges[id] !== undefined ? userBadges[id] : (isInverse ? 9999 : 0);
-        
         if (isCumulative) {
             userBadges[id] = currentBest + rawValue;
             storicoAggiornato = true;
@@ -118,6 +122,23 @@ window.checkBadges = function(gameData) {
         assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
     }
 
+    // ==========================================
+    // INIEZIONE TROFEI IMPOSSIBILI E SEGRETI
+    // ==========================================
+    if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
+    else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
+    else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
+
+    let hasInarrestabileOro = bestStreak >= 50;
+    let hasScheggiaOro = (esatte >= 10 && avgTime > 0 && ((currentLevel === 0 && avgTime <= 2.5) || (currentLevel !== 0 && avgTime <= 5)));
+    if (hasInarrestabileOro && hasScheggiaOro) {
+        assegnaTier('cyborg', 1, 4, "Riflessi inumani (Combo Oro)");
+    }
+
+    if (currentLevel === 7 && punteggio >= 10000) {
+        assegnaTier('sestosenso', 1, 4, "Leggenda senza mani");
+    }
+
     if (storicoAggiornato) localStorage.setItem('geoQuizBadges', JSON.stringify(userBadges));
     return sessionEarned; 
 };
@@ -162,6 +183,9 @@ window.renderMedagliere = function() {
         let count = userBadges[b];
         let tiers = info.tiers;
         
+        // IL FIX: Nasconde completamente i trofei segreti se non li hai ancora sbloccati
+        if (info.isSecret && (count === undefined || count === 0)) return;
+        
         let color = "#333"; let borderColor = "#333"; let opacity = "0.4"; let bg = "#1a1a1a";
         let recordText = count !== undefined && count !== 9999 ? `Record: ${count}` : "Non sbloccato";
         
@@ -198,19 +222,18 @@ window.renderMedagliere = function() {
 
 window.renderLevelBadge = function(bestStreak) {
     if (!bestStreak || bestStreak < BADGE_INFO.inarrestabile.tiers[0]) return "";
-    
     let tier = bestStreak >= BADGE_INFO.inarrestabile.tiers[2] ? 3 : (bestStreak >= BADGE_INFO.inarrestabile.tiers[1] ? 2 : 1);
     let color = tier === 3 ? "#ffd700" : (tier === 2 ? "#c0c0c0" : "#cd7f32");
     let info = BADGE_INFO.inarrestabile;
     
-    let html = `<div class="level-badge-row">`;
-    html += `<div class="level-badge-inner" style="border-left:3px solid ${color};">
-                <div class="level-badge-left">
-                    <div class="level-badge-icon" style="color:${color};">${SVG_ICONS.inarrestabile}</div>
-                    <span class="level-badge-title" style="color:${color};">${info.title}</span>
-                    <span class="level-badge-desc">- ${info.desc}</span>
-                </div>
-                <span class="level-badge-record">Record: ${bestStreak}</span>
-             </div></div>`;
+    let html = `<div class="level-badge-row">
+                <div class="level-badge-inner" style="border-left:3px solid ${color};">
+                    <div class="level-badge-left">
+                        <div class="level-badge-icon" style="color:${color};">${SVG_ICONS.inarrestabile}</div>
+                        <span class="level-badge-title" style="color:${color};">${info.title}</span>
+                        <span class="level-badge-desc">- ${info.desc}</span>
+                    </div>
+                    <span class="level-badge-record">Record: ${bestStreak}</span>
+                </div></div>`;
     return html;
 };
