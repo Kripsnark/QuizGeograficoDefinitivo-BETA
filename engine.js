@@ -115,6 +115,7 @@ let currentStreakOneLife = 0;
 let bestStreakOneLife = 0;
 let fotofinishCount = 0;
 let grazieRicevuteCount = 0;
+let dejavuPenalties = 0;
 
 let timerState = "stopped"; 
 let readingTimeout = null;
@@ -529,7 +530,7 @@ window.startRecuperoGame = function() {
             homeBtn.style.display = "none"; 
             
             vite = 3; esatte = 0; punteggio = 0; prossimoCuore = 750;
-            currentStreak = 0; bestStreak = 0; fotofinishCount = 0; grazieRicevuteCount = 0;
+            currentStreak = 0; bestStreak = 0; fotofinishCount = 0; grazieRicevuteCount = 0; dejavuPenalties = 0;
             currentStreakOneLife = 0; bestStreakOneLife = 0;
             erroriCommessi = []; comboInserted = []; nazioniUsate = [];
             logQuestionCounter = 0; 
@@ -2565,9 +2566,10 @@ function processaRisposta() {
             }
             if (isLazy) {
                 puntiGuadagnati = Math.floor(puntiGuadagnati / 2);
-                badgeText += "⚠️ DÉJÀ VU! (Malus pigrizia)<br>";
-                badgeBorder = "#ff9800";
-            }
+        	badgeText += "⚠️ DÉJÀ VU! (Malus pigrizia)<br>";
+           	badgeBorder = "#ff9800";
+          	dejavuPenalties++;
+       	    }
         }
         
         punteggio += puntiGuadagnati;
@@ -2832,7 +2834,11 @@ function eseguiValidazioneMultipla(isTimeout = false) {
             puntiRound = Math.round(puntiRound / 5) * 5; if (puntiRound < 5) puntiRound = 5;
             
             if (audaceNames.length > 0) { badgeText += `⭐ AUDACIA su ${audaceNames.join(", ")} (x2)<br>`; if (!isGrazia) badgeBorder = "#ffd700"; }
-            if (lazyNames.length > 0) { badgeText += `⚠️ DÉJÀ VU su ${lazyNames.join(", ")} (-50%)<br>`; if (!isGrazia && audaceNames.length === 0) badgeBorder = "#ff9800"; }
+            if (lazyNames.length > 0) { 
+            badgeText += `⚠️ DÉJÀ VU su ${lazyNames.join(", ")} (-50%)<br>`; 
+            if (!isGrazia && audaceNames.length === 0) badgeBorder = "#ff9800"; 
+            dejavuPenalties++;
+            }
         }
         
         let isDebitoSaldato = false;
@@ -3138,6 +3144,27 @@ gestisciDebito(false);
                 }
             }
 
+            // GESTIONE SERIE CONSECUTIVE GLOBALI (L1-L4)
+            let nationStreaks = JSON.parse(localStorage.getItem('geoQuizNationStreaks')) || {};
+            let maxPendolare = 0;
+            let maxRotta = 0;
+
+            if (currentLevel >= 1 && currentLevel <= 4) {
+                for (let sigla in nazioniDigitateCount) {
+                    if (!nationStreaks[sigla]) nationStreaks[sigla] = { inserted: 0, ignored: 0 };
+                    nationStreaks[sigla].inserted++;
+                    nationStreaks[sigla].ignored = 0;
+                    if (nationStreaks[sigla].inserted > maxPendolare) maxPendolare = nationStreaks[sigla].inserted;
+                }
+                for (let sigla in nazioniIgnorateCount) {
+                    if (!nationStreaks[sigla]) nationStreaks[sigla] = { inserted: 0, ignored: 0 };
+                    nationStreaks[sigla].ignored++;
+                    nationStreaks[sigla].inserted = 0;
+                    if (nationStreaks[sigla].ignored > maxRotta) maxRotta = nationStreaks[sigla].ignored;
+                }
+                localStorage.setItem('geoQuizNationStreaks', JSON.stringify(nationStreaks));
+            }
+
             let allUsate = Object.keys(nazioniDigitateCount).map(chiave => {
                 let n = globalDb.find(c => c.sigla === chiave || c.nome === chiave);
                 return { nome: n ? n.nome : chiave, count: nazioniDigitateCount[chiave], sigla: n ? n.sigla : chiave };
@@ -3151,6 +3178,11 @@ gestisciDebito(false);
             }).sort((a, b) => b.count - a.count);
             let sortedIgnorate = allIgnorate.slice(0, 5); 
             let logIgnorate = allIgnorate.slice(0, 20);
+
+            let maxVoloDiLinea = Object.keys(nazioniDigitateCount).length > 0 ? Math.max(...Object.values(nazioniDigitateCount)) : 0;
+            let maxBlacklist = Object.keys(nazioniIgnorateCount).length > 0 ? Math.max(...Object.values(nazioniIgnorateCount)) : 0;
+            let top1UsataVal = sortedUsate.length > 0 ? sortedUsate[0].count : 0;
+            let top1IgnorataVal = sortedIgnorate.length > 0 ? sortedIgnorate[0].count : 0;
 
             // Calcolo Badge Logico
             let stringaBadgeLog = "Nessuno";
@@ -3168,10 +3200,16 @@ gestisciDebito(false);
                     grazie: grazieRicevuteCount,
                     cuori: Math.floor(punteggio / 750),
                     domandeTotali: logQuestionCounter,
-                    hasDejavu: Object.values(nazioniDigitateCount).some(v => v > 1),
+                    hasDejavu: (dejavuPenalties > 0),
                     erroriTotali: erroriCommessi.length,
                     bestStreakOneLife: bestStreakOneLife,
-                    punteggio: punteggio
+                    punteggio: punteggio,
+                    maxVoloDiLinea: maxVoloDiLinea,
+                    maxBlacklist: maxBlacklist,
+                    top1UsataVal: top1UsataVal,
+                    top1IgnorataVal: top1IgnorataVal,
+                    maxPendolare: maxPendolare,
+                    maxRotta: maxRotta
                 });
                 
                 if (earned && earned.length > 0) {
@@ -3597,13 +3635,28 @@ async function gestisciSchermo(attivo) {
     }
 }
 
-// RIATTIVA IL WAKELOCK SE TORNI AL BROWSER DOPO AVER ABBASSATO LA TENDINA
+// GESTIONE STANDBY: Mette in pausa il tempo e il timer se si abbassa l'app o si spegne lo schermo
+let backgroundStartTime = 0;
 document.addEventListener("visibilitychange", async () => {
-    if (wakeLock !== null && document.visibilityState === "visible" && voiceModeActive) {
-        try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+    if (document.visibilityState === "hidden") {
+        backgroundStartTime = Date.now();
+        if (timerState === "active") clearInterval(mainTimerInterval);
+    } else if (document.visibilityState === "visible") {
+        if (backgroundStartTime > 0) {
+            let timeAway = Date.now() - backgroundStartTime;
+            if (turnStartTime > 0) turnStartTime += timeAway; // Cancella il tempo in background dal timer della domanda
+            
+            if (timerState === "active") {
+                timerState = "paused"; // Forza il motore a ricreare un intervallo pulito
+                activateMainTimer();
+            }
+            backgroundStartTime = 0;
+        }
+        if (wakeLock !== null && voiceModeActive) {
+            try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+        }
     }
 });
-
 
 function creaBottoneAssistente() {
     let oldBtn = document.getElementById("assistant-btn");
