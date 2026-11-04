@@ -1684,25 +1684,8 @@ td.buildQuestionText = (num) => {
             let searchPool = globalDb;
             
             // --- FIX LIVELLO 0: Restringe il bacino SOLO alle 3 nazioni dei bottoni ---
-            if (level === 0) {
-                // Genera la lista delle 3 sigle esatte mostrate sullo schermo
-                let sigleOpzioniL0 = Array.from(document.querySelectorAll('.mc-option-btn'))
-                    .map(btn => {
-                        if (td.format === 13) {
-                            let imgMatch = btn.innerHTML.match(/GIF\/(.+?)\.jpg/i);
-                            return imgMatch ? imgMatch[1].toUpperCase() : null;
-                        } else {
-                            // Cerca in tutto il DB globale per risalire alla sigla dal testo mostrato
-                            let testMatch = globalDb.find(n => 
-                                (n.capitale && n.capitale.toLowerCase() === btn.innerText.toLowerCase()) || 
-                                n.nome.toLowerCase() === btn.innerText.toLowerCase()
-                            );
-                            return testMatch ? testMatch.sigla : null;
-                        }
-                    }).filter(s => s !== null);
-
-                // Filtra il bacino di ricerca mantenendo SOLO le 3 nazioni dei bottoni
-                searchPool = globalDb.filter(c => sigleOpzioniL0.includes(c.sigla));
+            if (level === 0 && td.sigleOpzioniL0) {
+                searchPool = globalDb.filter(c => td.sigleOpzioniL0.includes(c.sigla));
             } else {
                 // Motore Standard per gli altri livelli
                 searchPool = (td.format === 4 || td.format === 7 || td.isComboInception) ? globalDb : getAnswerPool(level);
@@ -2219,6 +2202,7 @@ gestisciDebito(false);
             let opzioniL0 = [];
             if (currentLevel === 0) {
                 opzioniL0 = generaDistrattori(currentTurnData);
+                currentTurnData.sigleOpzioniL0 = opzioniL0.map(o => o.sigla);
             }
 
             if (voiceModeActive) {
