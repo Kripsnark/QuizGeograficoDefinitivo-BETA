@@ -31,7 +31,7 @@ const BADGE_INFO = {
     fotofinish: { title: "Scatto al Gate", desc: "Salvataggi in extremis: passi all'ultimo secondo", tiers: [1, 3, 5] },
     grazia: { title: "Viaggio in Solitaria", desc: "Meno grazie: fai a meno della guida turistica", tiers: [2, 1, 0], isInverse: true },
     infermiere: { title: "Assicurazione di Viaggio", desc: "Cuori extra: copertura perfetta per gli imprevisti", tiers: [3, 5, 10] },
-    veterano: { title: "Passaporto Pieno", desc: "Domande giocate: riempi il passaporto di timbri", tiers: [35, 80, 150] },
+    veterano: { title: "Passaporto Pieno", desc: "Domande giocate: riempi il passaporto di timbri", tiers: [36, 80, 150] },
     lucido: { title: "GPS Umano", desc: "Zero Déjà vu: non passi mai due volte dalla stessa strada", tiers: [1, 1, 1], isSpecial: true },
     infallibile: { title: "Rotta Perfetta", desc: "Vittoria a 0 errori: itinerario calcolato al millimetro", tiers: [1, 1, 1], isSpecial: true },
     fenice: { title: "Sopravvissuto", desc: "Serie con 1 vita: perso nel nulla ma continui ad andare", tiers: [3, 5, 10] },
@@ -88,8 +88,8 @@ window.checkBadges = function(gameData) {
 
         if (avgTime > 0) {
             if (currentLevel === 0) {
-                if (avgTime <= 2.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 2.5s (Lv0)", true);
-                else if (avgTime <= 5) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 5s (Lv0)", true);
+                if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
+                else if (avgTime <= 4) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 4s (Lv0)", true);
                 else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
             } else {
                 if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
