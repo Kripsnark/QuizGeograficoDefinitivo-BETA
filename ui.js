@@ -423,7 +423,7 @@ const buildList10 = (arr, color) => {
                 <div style="display:flex; flex-direction:column;"><span>Partite</span><strong style="font-size:16px; color:#fff;">${globalPlays}</strong></div>
                 <div style="display:flex; flex-direction:column;"><span>Record Assoluto</span><strong style="font-size:16px; color:#fff;">${allTimeBestScore}</strong></div>
                 <div style="display:flex; flex-direction:column;"><span>Serie Max</span><strong style="font-size:16px; color:#fff;">${allTimeBestStreak}</strong></div>
-                <div style="display:flex; flex-direction:column;"><span>Tempo Medio</span><strong style="font-size:16px; color:#fff;">${allTimeBestAvgTime > 0 ? allTimeBestAvgTime + "s" : "-"}</strong></div>
+                <div style="display:flex; flex-direction:column;"><span>Tempo Record</span><strong style="font-size:16px; color:#fff;">${allTimeBestAvgTime > 0 ? allTimeBestAvgTime + "s" : "-"}</strong></div>
             </div>
         </div>
         <div style="display:flex; gap:15px;">
@@ -440,7 +440,7 @@ const buildList10 = (arr, color) => {
 
         html += `
         <div style="display:flex; gap:5px; margin-bottom:10px; flex-wrap:wrap; justify-content:center;">
-            ${visibleLevels.map(l => `<button onclick="switchLevelTab(${l})" class="ui-tab-btn" id="lvl-btn-${l}" style="padding:6px; font-size:11px;">${l===5?'CUST':l===6?'SUDDEN':(l===7?'L7':'L'+l)}</button>`).join('')}
+            ${visibleLevels.map(l => `<button onclick="switchLevelTab(${l})" class="ui-tab-btn" id="lvl-btn-${l}" style="padding:6px; font-size:11px;">${l===5?'L5':l===6?'L6':(l===7?'L7':'L'+l)}</button>`).join('')}
         </div>
         <div id="level-detail-container" style="background:#2a2a2a; border:1px solid #444; border-radius:6px; padding:15px; text-align:center;">
             <!-- Contenuto dinamico -->
@@ -558,7 +558,7 @@ window.switchLevelTab = function(lvl) {
         html += `<div style="display:flex; justify-content:space-around; font-size:12px; color:#aaa; margin-bottom:10px;">`;
         html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Partite</span><strong style="font-size:18px; color:#fff;">${s.plays}</strong></div>`;
         html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Sopravvivenza Max</span><strong style="font-size:18px; color:#fff;">${s.bestStreak} Naz.</strong></div>`;
-        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Medio</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Record</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
         html += `</div>`;
 
     } else {
@@ -611,7 +611,7 @@ window.switchLevelTab = function(lvl) {
         html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Partite</span><strong style="font-size:18px; color:#fff;">${s.plays}</strong></div>`;
         html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Record</span><strong style="font-size:18px; color:#fff;">${s.plays > 0 ? s.bestScore : '-'}</strong></div>`;
         html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Serie Max</span><strong style="font-size:18px; color:#fff;">${s.bestStreak}</strong></div>`;
-        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Medio</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center;"><span>Tempo Record</span><strong style="font-size:18px; color:#fff;">${s.bestAvgTime > 0 ? s.bestAvgTime + "s" : "-"}</strong></div>`;
         html += `</div>`;
 
         // Modificatori L4 / L5
