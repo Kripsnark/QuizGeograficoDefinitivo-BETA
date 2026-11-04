@@ -3133,7 +3133,7 @@ gestisciDebito(false);
             let maxPendolare = 0;
             let maxRotta = 0;
 
-            if (currentLevel >= 1 && currentLevel <= 4) {
+            if ((currentLevel >= 1 && currentLevel <= 4) || currentLevel === 7) {
                 for (let sigla in nazioniDigitateCount) {
                     if (!nationStreaks[sigla]) nationStreaks[sigla] = { inserted: 0, ignored: 0 };
                     nationStreaks[sigla].inserted++;
