@@ -15,7 +15,7 @@ const SVG_ICONS = {
     fenice: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 3.5-5 9 0 4.5 3 6.5 5 11 2-4.5 5-6.5 5-11 0-5.5-5-9-5-9z"></path></svg>`,
     cyborg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>`,
     sestosenso: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
-vololinea: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 3.5 3.5 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>`,
+    vololinea: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 3.5 3.5 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>`,
     blacklist: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`,
     hub: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
     rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l4-4-4-4"></path><path d="M20 12H11"></path><path d="M7 12h.01"></path><path d="M3 12h.01"></path></svg>`,
@@ -39,9 +39,9 @@ const BADGE_INFO = {
     sestosenso: { title: "Volo alla Cieca", desc: "Leggenda a L7: navighi a intuito senza guardare", tiers: [1, 1, 1], isSpecial: true, isSecret: true },	
     vololinea: { title: "Volo di Linea", desc: "Usa la stessa nazione in una partita", tiers: [4, 7, 10] },
     blacklist: { title: "Blacklist Doganale", desc: "Ignora la stessa nazione in una partita", tiers: [4, 7, 10] },
-    hub: { title: "Hub Principale", desc: "La Top 1 Usata supera la Top 1 Ignorata", tiers: [1, 1, 1] },
-    rotta: { title: "Rotta Abbandonata", desc: "Ignora nazione in 10 partite di fila (L1-L4)", tiers: [1, 1, 1] },
-    pendolare: { title: "Pendolare", desc: "Usa nazione in più partite di fila (L1-L4)", tiers: [3, 7, 20] }
+    hub: { title: "Hub Principale", desc: "Top 1 Usata DOPPIA rispetto a Top 1 Ignorata", tiers: [1, 1, 1] },
+    rotta: { title: "Rotta Abbandonata", desc: "Ignora nazione in 10 partite consecutive (L1-L4, L7)", tiers: [1, 1, 1] },
+    pendolare: { title: "Pendolare", desc: "Usa nazione in più partite consecutive (L1-L4, L7)", tiers: [3, 7, 20] }
 };
 
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
@@ -51,8 +51,11 @@ window.checkBadges = function(gameData) {
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
+    // NUOVA LOGICA: Salva SEMPRE il risultato di sessione per la schermata finale.
+    // L'aggiornamento in localStorage (Bacheca Permanente) avviene solo se c'è un vero record/upgrade.
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
-        sessionEarned.push({ id, tier, motivo });
+        sessionEarned.push({ id, tier, motivo }); // Appare SEMPRE a schermo a fine partita
+        
         let currentBest = userBadges[id] !== undefined ? userBadges[id] : (isInverse ? 9999 : 0);
         if (isCumulative) {
             userBadges[id] = currentBest + rawValue;
@@ -113,8 +116,8 @@ window.checkBadges = function(gameData) {
     else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
     else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
 
-    if (top1UsataVal >= 3 && top1UsataVal > top1IgnorataVal) {
-        assegnaTier('hub', 1, 3, "Top 1 usata maggiore della Top 1 ignorata");
+    if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
+        assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
     }
 
     if (maxRotta >= 10) {
