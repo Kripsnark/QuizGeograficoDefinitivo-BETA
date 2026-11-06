@@ -3193,7 +3193,9 @@ gestisciDebito(false);
                     top1UsataVal: top1UsataVal,
                     top1IgnorataVal: top1IgnorataVal,
                     maxPendolare: maxPendolare,
-                    maxRotta: maxRotta
+                    maxRotta: maxRotta,
+                    nazioniDigitate: Object.keys(nazioniDigitateCount),
+                    nazioniDigitateCount: nazioniDigitateCount
                 });
                 
                 if (earned && earned.length > 0) {
