@@ -24,69 +24,69 @@ const SVG_ICONS = {
 };
 
 const BADGE_INFO = {
-    vendicatore: { title: "Visto Rinnovato", desc: "Azzera debiti: la burocrazia è sistemata", tiers: [1, 3, 10] },
-    conquistatore: { title: "Esploratore", desc: "Vinci un livello: hai mappato un'area", tiers: [1, 3, 10] },
-    maratoneta: { title: "Millemiglia", desc: "Risposte totali: viaggi in continuazione", tiers: [16, 31, 61] },
-    inarrestabile: { title: "Senza Scalo", desc: "Serie esatta: volo diretto senza fermarsi", tiers: [15, 30, 50] },
-    scheggia: { title: "Teletrasporto", desc: "Tempo medio: non usi l'aereo (Soglie L0 dimezzate)", tiers: [15, 10, 5], isInverse: true },
-    fotofinish: { title: "Scatto al Gate", desc: "Salvataggi in extremis: passi all'ultimo secondo", tiers: [1, 3, 5] },
-    grazia: { title: "Viaggio in Solitaria", desc: "Meno grazie: fai a meno della guida turistica", tiers: [2, 1, 0], isInverse: true },
-    infermiere: { title: "Assicurazione di Viaggio", desc: "Cuori extra: copertura perfetta per gli imprevisti", tiers: [3, 5, 10] },
-    veterano: { title: "Passaporto Pieno", desc: "Domande giocate: riempi il passaporto di timbri", tiers: [36, 80, 150] },
-    lucido: { title: "GPS Umano", desc: "Zero Déjà vu: non passi mai due volte dalla stessa strada", tiers: [1, 1, 1], isSpecial: true },
-    infallibile: { title: "Rotta Perfetta", desc: "Vittoria a 0 errori: itinerario calcolato al millimetro", tiers: [1, 1, 1], isSpecial: true },
-    fenice: { title: "Sopravvissuto", desc: "Serie con 1 vita: perso nel nulla ma continui ad andare", tiers: [3, 5, 10] },
-    cyborg: { title: "Autopilota", desc: "Senza Scalo ORO + Teletrasporto ORO (Macchina perfetta)", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
-    sestosenso: { title: "Volo alla Cieca", desc: "Leggenda a L7: navighi a intuito senza guardare", tiers: [1, 1, 1], isSpecial: true, isSecret: true },	
-    vololinea: { title: "Volo di Linea", desc: "Usa la stessa nazione in una partita", tiers: [4, 7, 10] },
-    blacklist: { title: "Blacklist Doganale", desc: "Ignora la stessa nazione in una partita", tiers: [4, 7, 10] },
-    hub: { title: "Hub Principale", desc: "Top 1 Usata DOPPIA rispetto a Top 1 Ignorata", tiers: [1, 1, 1], isSpecial: true },
-    rotta: { title: "Rotta Abbandonata", desc: "Ignora nazione in 10 partite consecutive (L1-L4, L7)", tiers: [1, 1, 1], isSpecial: true },
-    pendolare: { title: "Pendolare", desc: "Usa nazione in più partite consecutive (L1-L4, L7)", tiers: [3, 7, 20] },
-    magellano: { title: "Giro del Mondo", desc: "Usa ogni singola nazione del gioco", tiers: [1, 4, 10] }
+    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [1, 3, 10] },
+    conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
+    maratoneta: { title: "Millemiglia", flavor: "Viaggi in continuazione senza stancarti.", req: "Raggiungi un alto numero di risposte esatte in una singola partita.", tiers: [16, 31, 61] },
+    inarrestabile: { title: "Senza Scalo", flavor: "Un volo diretto lunghissimo.", req: "Mantieni una lunga serie di risposte esatte consecutive.", tiers: [15, 30, 50] },
+    scheggia: { title: "Teletrasporto", flavor: "Non usi l'aereo, ti teletrasporti.", req: "Mantieni un tempo medio di risposta bassissimo a fine partita.", tiers: [15, 10, 5], isInverse: true },
+    fotofinish: { title: "Scatto al Gate", flavor: "Passi i controlli all'ultimo secondo.", req: "Salvati dallo scadere del timer negli ultimi istanti per più volte.", tiers: [1, 3, 5] },
+    grazia: { title: "Viaggio in Solitaria", flavor: "Fai a meno della guida turistica.", req: "Supera i turni combo senza ricevere Grazie dal sistema.", tiers: [2, 1, 0], isInverse: true },
+    infermiere: { title: "Assicurazione di Viaggio", flavor: "Copertura perfetta per gli imprevisti.", req: "Accumula cuori extra totalizzando punti a scaglioni di 750.", tiers: [3, 5, 10] },
+    veterano: { title: "Passaporto Pieno", flavor: "Riempi il passaporto di timbri.", req: "Gioca un altissimo numero di domande totali in una partita.", tiers: [36, 80, 150] },
+    lucido: { title: "GPS Umano", flavor: "Non passi mai due volte dalla stessa strada.", req: "Gioca almeno 50 domande senza mai subire la penalità pigrizia (Déjà vu).", tiers: [1, 1, 1], isSpecial: true },
+    infallibile: { title: "Rotta Perfetta", flavor: "Itinerario calcolato al millimetro.", req: "Vinci una partita senza commettere nessun errore.", tiers: [1, 1, 1], isSpecial: true },
+    fenice: { title: "Sopravvissuto", flavor: "Perso nel nulla ma continui ad andare.", req: "Costruisci una serie di risposte esatte avendo un solo cuore rimasto.", tiers: [3, 5, 10] },
+    cyborg: { title: "Autopilota", flavor: "La macchina da quiz perfetta.", req: "Ottieni contemporaneamente l'Oro in Senza Scalo e l'Oro in Teletrasporto.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
+    sestosenso: { title: "Volo alla Cieca", flavor: "Navighi a intuito senza guardare.", req: "Ottieni la Vittoria Leggendaria (10.000 pt) nel Livello 7.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },	
+    vololinea: { title: "Volo di Linea", flavor: "Prendi sempre la stessa tratta.", req: "Usa la stessa nazione ripetutamente nella stessa partita.", tiers: [4, 7, 10] },
+    blacklist: { title: "Blacklist Doganale", flavor: "Ti rifiutano il visto in continuazione.", req: "Ignora la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
+    hub: { title: "Hub Principale", flavor: "Tutti i tuoi voli passano da qui.", req: "La nazione più usata in partita deve doppiare la più ignorata (min. 5 usi).", tiers: [1, 1, 1], isSpecial: true },
+    rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive (Storico).", tiers: [1, 1, 1], isSpecial: true },
+    pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive (Storico).", tiers: [3, 7, 20] },
+    magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco (Statistica Globale).", tiers: [1, 4, 10] }
 };
 
 // --- MAPPATURA TROFEI REGIONALI SEGRETI ---
 const CONQUISTE_AREE = {
-    "europa": { id: "area_europa", title: "Dominatore del Vecchio Mondo", desc: "Hai sottomesso l'intero continente antico." },
-    "asia": { id: "area_asia", title: "Gran Khan", desc: "Il più vasto impero della storia è tuo." },
-    "africa": { id: "area_africa", title: "Leone d'Africa", desc: "Il continente originario si inchina a te." },
-    "americhe": { id: "area_americhe", title: "Sovrano del Nuovo Mondo", desc: "Da un polo all'altro, le Americhe sono tue." },
-    "nord america": { id: "area_nordamerica", title: "Padre Fondatore", desc: "Padrone incontrastato del grande nord." },
-    "sud america": { id: "area_sudamerica", title: "Libertador Supremo", desc: "Hai forgiato il destino del continente sud." },
-    "america centrale": { id: "area_centroamerica", title: "Dominatore dell'Istmo", desc: "Padrone del ponte di terra tra i due mondi." },
-    "oceania": { id: "area_oceania", title: "Navigatore Polinesiano", desc: "Signore degli atolli e degli oceani sconfinati." },
-    "caraibi": { id: "area_caraibi", title: "Re dei Pirati", desc: "Ogni isola caraibica è il tuo covo." },
-    "ande": { id: "area_ande", title: "Sapa Inca", desc: "Imperatore delle vette sudamericane." },
-    "amazzonia": { id: "area_amazzonia", title: "Sciamano della Selva", desc: "I segreti del polmone verde sono tuoi." },
-    "mediterraneo": { id: "area_mediterraneo", title: "Imperatore Romano", desc: "Hai ripristinato il dominio sul Mare Nostrum." },
-    "balcani": { id: "area_balcani", title: "Zar dei Balcani", desc: "Hai unificato la polveriera d'Europa." },
-    "paesi baltici": { id: "area_baltici", title: "Cavaliere Teutonico", desc: "Conquista le repubbliche del freddo nord." },
-    "benelux": { id: "area_benelux", title: "Granduca di Borgogna", desc: "Le terre basse sono sotto il tuo dominio." },
-    "caucaso": { id: "area_caucaso", title: "Signore delle Montagne", desc: "Hai domato le cime inespugnabili d'oriente." },
-    "medio oriente": { id: "area_medioriente", title: "Sultano Supremo", desc: "Sovrano assoluto della mezzaluna fertile." },
-    "penisola arabica": { id: "area_arabia", title: "Emiro Assoluto", desc: "Controlla ogni duna della Penisola Arabica." },
-    "penisola scandinava": { id: "area_scandinavia", title: "Jarl del Nord", desc: "Le gelide terre vichinghe ti appartengono." },
-    "penisola iberica": { id: "area_iberica", title: "Conquistador", desc: "Padrone incontrastato oltre le Colonne d'Ercole." },
-    "penisola indocinese": { id: "area_indocina", title: "Re del Mekong", desc: "Signore delle antiche valli orientali." },
-    "subcontinente indiano": { id: "area_india", title: "Maharaja", desc: "Sovrano indiscusso delle Indie." },
-    "sud-est asiatico": { id: "area_sudestasia", title: "Domatore di Tigri", desc: "Signore delle giungle e dei monsoni." },
-    "asia centrale": { id: "area_asiacentrale", title: "Signore della Steppa", desc: "I signori dei cavalli galoppano per te." },
-    "asia orientale": { id: "area_asiaest", title: "Dragone d'Oriente", desc: "Il Sole sorge e tramonta sul tuo impero." },
-    "africa settentrionale": { id: "area_africanord", title: "Faraone del Deserto", desc: "Domina le immense sabbie del nord." },
-    "africa occidentale": { id: "area_africaovest", title: "Mansa dell'Impero", desc: "Signore incontrastato delle rotte dell'oro." },
-    "africa orientale": { id: "area_africaest", title: "Sultano di Zanzibar", desc: "Domina i venti e i mercati della costa Swahili." },
-    "africa meridionale": { id: "area_africasud", title: "Re Zulu", desc: "Guerriero supremo delle terre del sud." },
-    "africa centrale": { id: "area_africacentro", title: "Signore dell'Equatore", desc: "Padrone assoluto del cuore selvaggio del continente." },
-    "corno d'africa": { id: "area_corno", title: "Negus dei Re", desc: "Sovrano dei grandi altopiani e del mar Rosso." },
-    "golfo di guinea": { id: "area_guinea", title: "Oba del Benin", desc: "Signore indiscusso delle ricche coste d'avorio." }
+    "europa": { id: "area_europa", title: "Dominatore del Vecchio Mondo", flavor: "Hai sottomesso l'intero continente antico.", req: "Nomina tutte le nazioni dell'Europa in una singola partita." },
+    "asia": { id: "area_asia", title: "Gran Khan", flavor: "Il più vasto impero della storia è tuo.", req: "Nomina tutte le nazioni dell'Asia in una singola partita." },
+    "africa": { id: "area_africa", title: "Leone d'Africa", flavor: "Il continente originario si inchina a te.", req: "Nomina tutte le nazioni dell'Africa in una singola partita." },
+    "americhe": { id: "area_americhe", title: "Sovrano del Nuovo Mondo", flavor: "Da un polo all'altro, le Americhe sono tue.", req: "Nomina tutte le nazioni delle Americhe in una singola partita." },
+    "nord america": { id: "area_nordamerica", title: "Padre Fondatore", flavor: "Padrone incontrastato del grande nord.", req: "Nomina tutte le nazioni del Nord America in una singola partita." },
+    "sud america": { id: "area_sudamerica", title: "Libertador Supremo", flavor: "Hai forgiato il destino del continente sud.", req: "Nomina tutte le nazioni del Sud America in una singola partita." },
+    "america centrale": { id: "area_centroamerica", title: "Dominatore dell'Istmo", flavor: "Padrone del ponte di terra tra i due mondi.", req: "Nomina tutte le nazioni dell'America Centrale in una singola partita." },
+    "oceania": { id: "area_oceania", title: "Navigatore Polinesiano", flavor: "Signore degli atolli e degli oceani sconfinati.", req: "Nomina tutte le nazioni dell'Oceania in una singola partita." },
+    "caraibi": { id: "area_caraibi", title: "Re dei Pirati", flavor: "Ogni isola caraibica è il tuo covo.", req: "Nomina tutte le nazioni dei Caraibi in una singola partita." },
+    "ande": { id: "area_ande", title: "Sapa Inca", flavor: "Imperatore delle vette sudamericane.", req: "Nomina tutte le nazioni andine in una singola partita." },
+    "amazzonia": { id: "area_amazzonia", title: "Sciamano della Selva", flavor: "I segreti del polmone verde sono tuoi.", req: "Nomina tutte le nazioni dell'Amazzonia in una singola partita." },
+    "mediterraneo": { id: "area_mediterraneo", title: "Imperatore Romano", flavor: "Hai ripristinato il dominio sul Mare Nostrum.", req: "Nomina tutte le nazioni del bacino Mediterraneo in una singola partita." },
+    "balcani": { id: "area_balcani", title: "Zar dei Balcani", flavor: "Hai unificato la polveriera d'Europa.", req: "Nomina tutte le nazioni dei Balcani in una singola partita." },
+    "paesi baltici": { id: "area_baltici", title: "Cavaliere Teutonico", flavor: "Conquista le repubbliche del freddo nord.", req: "Nomina tutte le nazioni dei Paesi Baltici in una singola partita." },
+    "benelux": { id: "area_benelux", title: "Granduca di Borgogna", flavor: "Le terre basse sono sotto il tuo dominio.", req: "Nomina le nazioni del Benelux in una singola partita." },
+    "caucaso": { id: "area_caucaso", title: "Signore delle Montagne", flavor: "Hai domato le cime inespugnabili d'oriente.", req: "Nomina tutte le nazioni del Caucaso in una singola partita." },
+    "medio oriente": { id: "area_medioriente", title: "Sultano Supremo", flavor: "Sovrano assoluto della mezzaluna fertile.", req: "Nomina tutte le nazioni del Medio Oriente in una singola partita." },
+    "penisola arabica": { id: "area_arabia", title: "Emiro Assoluto", flavor: "Controlla ogni duna della Penisola Arabica.", req: "Nomina tutte le nazioni della Penisola Arabica in una singola partita." },
+    "penisola scandinava": { id: "area_scandinavia", title: "Jarl del Nord", flavor: "Le gelide terre vichinghe ti appartengono.", req: "Nomina tutte le nazioni della Penisola Scandinava in una singola partita." },
+    "penisola iberica": { id: "area_iberica", title: "Conquistador", flavor: "Padrone incontrastato oltre le Colonne d'Ercole.", req: "Nomina tutte le nazioni della Penisola Iberica in una singola partita." },
+    "penisola indocinese": { id: "area_indocina", title: "Re del Mekong", flavor: "Signore delle antiche valli orientali.", req: "Nomina tutte le nazioni della Penisola Indocinese in una singola partita." },
+    "subcontinente indiano": { id: "area_india", title: "Maharaja", flavor: "Sovrano indiscusso delle Indie.", req: "Nomina tutte le nazioni del Subcontinente Indiano in una singola partita." },
+    "sud-est asiatico": { id: "area_sudestasia", title: "Domatore di Tigri", flavor: "Signore delle giungle e dei monsoni.", req: "Nomina tutte le nazioni del Sud-Est Asiatico in una singola partita." },
+    "asia centrale": { id: "area_asiacentrale", title: "Signore della Steppa", flavor: "I signori dei cavalli galoppano per te.", req: "Nomina tutte le nazioni dell'Asia Centrale in una singola partita." },
+    "asia orientale": { id: "area_asiaest", title: "Dragone d'Oriente", flavor: "Il Sole sorge e tramonta sul tuo impero.", req: "Nomina tutte le nazioni dell'Asia Orientale in una singola partita." },
+    "africa settentrionale": { id: "area_africanord", title: "Faraone del Deserto", flavor: "Domina le immense sabbie del nord.", req: "Nomina tutte le nazioni dell'Africa Settentrionale in una singola partita." },
+    "africa occidentale": { id: "area_africaovest", title: "Mansa dell'Impero", flavor: "Signore incontrastato delle rotte dell'oro.", req: "Nomina tutte le nazioni dell'Africa Occidentale in una singola partita." },
+    "africa orientale": { id: "area_africaest", title: "Sultano di Zanzibar", flavor: "Domina i venti e i mercati della costa Swahili.", req: "Nomina tutte le nazioni dell'Africa Orientale in una singola partita." },
+    "africa meridionale": { id: "area_africasud", title: "Re Zulu", flavor: "Guerriero supremo delle terre del sud.", req: "Nomina tutte le nazioni dell'Africa Meridionale in una singola partita." },
+    "africa centrale": { id: "area_africacentro", title: "Signore dell'Equatore", flavor: "Padrone assoluto del cuore selvaggio del continente.", req: "Nomina tutte le nazioni dell'Africa Centrale in una singola partita." },
+    "corno d'africa": { id: "area_corno", title: "Negus dei Re", flavor: "Sovrano dei grandi altopiani e del mar Rosso.", req: "Nomina tutte le nazioni del Corno d'Africa in una singola partita." },
+    "golfo di guinea": { id: "area_guinea", title: "Oba del Benin", flavor: "Signore indiscusso delle ricche coste d'avorio.", req: "Nomina tutte le nazioni del Golfo di Guinea in una singola partita." }
 };
 
 const SVG_CORONA = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="2 20 22 20 20 6 16 11 12 4 8 11 4 6 2 20"></polygon></svg>`;
 
 Object.values(CONQUISTE_AREE).forEach(data => {
     SVG_ICONS[data.id] = SVG_CORONA;
-    BADGE_INFO[data.id] = { title: data.title, desc: data.desc, tiers: [1, 1, 1], isSpecial: true, isSecret: true };
+    BADGE_INFO[data.id] = { title: data.title, flavor: data.flavor, req: data.req, tiers: [1, 1, 1], isSpecial: true, isSecret: true };
 });
 
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
@@ -97,7 +97,12 @@ window.checkBadges = function(gameData) {
     let storicoAggiornato = false;
 
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
+        // 1. Il trofeo viene SEMPRE mostrato nel pop-up a fine partita
         sessionEarned.push({ id, tier, motivo }); 
+        
+        // 2. SCUDO STORICO: Se siamo nei livelli 0, 5, 6 o 8, il trofeo NON viene salvato 
+        // nella bacheca globale. L'unica eccezione è il "Vendicatore", esclusivo del Livello 8.
+        if ([0, 5, 6, 8].includes(currentLevel) && id !== 'vendicatore') return;
         
         let currentBest = userBadges[id] !== undefined ? userBadges[id] : (isInverse ? 9999 : 0);
         if (isCumulative) {
@@ -109,6 +114,13 @@ window.checkBadges = function(gameData) {
         }
     };
 
+    // ==========================================
+    // 1. TROFEI UNIVERSALI
+    // ==========================================
+    if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
+    else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
+    else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
+
     if (currentLevel !== 0) {
         if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
         else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
@@ -119,58 +131,13 @@ window.checkBadges = function(gameData) {
     else if (bestStreak >= 30) assegnaTier('inarrestabile', bestStreak, 2, "Serie di 30 risposte");
     else if (bestStreak >= 15) assegnaTier('inarrestabile', bestStreak, 1, "Serie di 15 risposte");
 
-    if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
-    else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
-    else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
-
-    if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
-    else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
-    else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
-
-    if (esatte >= 10) {
-        if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
-        else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
-        else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
-
-        if (avgTime > 0) {
-            if (currentLevel === 0) {
-                if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
-                else if (avgTime <= 4) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 4s (Lv0)", true);
-                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
-            } else {
-                if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
-                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 10s", true);
-                else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 15s", true);
-            }
-        }
+    if (isVictory && erroriTotali === 0 && currentLevel !== 0) {
+        assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
     }
 
-    if ((currentLevel === 4 || currentLevel === 5) && esatte >= 40) {
-        if (grazie <= 0) assegnaTier('grazia', grazie, 3, "Nessuna grazia ricevuta", true);
-        else if (grazie <= 1) assegnaTier('grazia', grazie, 2, "Solo 1 grazia ricevuta", true);
-        else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
-    }
-
-    if (maxVoloDiLinea >= 10) assegnaTier('vololinea', maxVoloDiLinea, 3, "Nazione usata 10 volte");
-    else if (maxVoloDiLinea >= 7) assegnaTier('vololinea', maxVoloDiLinea, 2, "Nazione usata 7 volte");
-    else if (maxVoloDiLinea >= 4) assegnaTier('vololinea', maxVoloDiLinea, 1, "Nazione usata 4 volte");
-
-    if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
-    else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
-    else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
-
-    if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
-        assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
-    }
-
-    if (maxRotta >= 10) {
-        assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive");
-    }
-
-    if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive");
-    else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive");
-    else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive");
-
+    // ==========================================
+    // 2. TROFEO ESCLUSIVO LIVELLO 8 (Recupero Debiti)
+    // ==========================================
     if (currentLevel === 8) {
         let debitiSaldati = debitiIniziali - debitiRimasti;
         if (debitiSaldati >= 10) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 10+ debiti");
@@ -178,67 +145,108 @@ window.checkBadges = function(gameData) {
         else if (debitiSaldati >= 1) assegnaTier('vendicatore', debitiSaldati, 1, "Saldato 1 debito");
     }
 
-    if (isVictory && currentLevel !== 0 && currentLevel !== 8) {
-        let winsAttuali = (userBadges.conquistatore || 0);
-        let tierConq = 0;
-        let motivoConq = "";
-        
-        if (winsAttuali + 1 >= 10) { tierConq = 3; motivoConq = "10 Vittorie Assolute"; }
-        else if (winsAttuali + 1 >= 3) { tierConq = 2; motivoConq = "3 Vittorie Assolute"; }
-        else { tierConq = 1; motivoConq = "Prima Vittoria Assoluta"; }
-        
-        assegnaTier('conquistatore', 1, tierConq, motivoConq, false, true);
-    }
-
-    if (!hasDejavu && domandeTotali >= 50 && currentLevel !== 0 && currentLevel !== 4) {
-        assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 50+ domande");
-    }
-
-    if (isVictory && erroriTotali === 0 && currentLevel !== 0 && currentLevel !== 8) {
-        assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
-    }
-
-    if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
-    else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
-    else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
-
-    let hasInarrestabileOro = bestStreak >= 50;
-    let hasScheggiaOro = (esatte >= 10 && avgTime > 0 && ((currentLevel === 0 && avgTime <= 2.5) || (currentLevel !== 0 && avgTime <= 5)));
-    if (hasInarrestabileOro && hasScheggiaOro) {
-        assegnaTier('cyborg', 1, 4, "Riflessi inumani (Combo Oro)");
-    }
-
-    if (currentLevel === 7 && punteggio >= 10000) {
-        assegnaTier('sestosenso', 1, 4, "Leggenda senza mani");
-    }
-
     // ==========================================
-    // INIEZIONE TROFEI REGIONALI (CONQUISTE STORICHE)
+    // 3. TROFEI STANDARD / INCOMPATIBILI CON L8
     // ==========================================
-    if (gameData.nazioniDigitate && gameData.nazioniDigitate.length > 0) {
-        let sigleGiocate = gameData.nazioniDigitate.map(s => s.toLowerCase());
-        
-        for (let areaKey in CONQUISTE_AREE) {
-            let dataArea = CONQUISTE_AREE[areaKey];
-            
-            let nazioniInArea = globalDb.filter(c => c.aree && c.aree.some(a => a.toLowerCase() === areaKey));
-            
-            if (nazioniInArea.length > 1) {
-                let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
-                
-                if (conquistata) {
-                    assegnaTier(dataArea.id, 1, 4, dataArea.desc);
+    if (currentLevel !== 8) {
+        if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
+        else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
+        else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
+
+        if (esatte >= 10) {
+            if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
+            else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
+            else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
+
+            if (avgTime > 0) {
+                if (currentLevel === 0) {
+                    if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
+                    else if (avgTime <= 4) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 4s (Lv0)", true);
+                    else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
+                } else {
+                    if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
+                    else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 10s", true);
+                    else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 15s", true);
                 }
             }
         }
-    }
+
+        if ((currentLevel === 4 || currentLevel === 5) && esatte >= 40) {
+            if (grazie <= 0) assegnaTier('grazia', grazie, 3, "Nessuna grazia ricevuta", true);
+            else if (grazie <= 1) assegnaTier('grazia', grazie, 2, "Solo 1 grazia ricevuta", true);
+            else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
+        }
+
+        if (maxVoloDiLinea >= 10) assegnaTier('vololinea', maxVoloDiLinea, 3, "Nazione usata 10 volte");
+        else if (maxVoloDiLinea >= 7) assegnaTier('vololinea', maxVoloDiLinea, 2, "Nazione usata 7 volte");
+        else if (maxVoloDiLinea >= 4) assegnaTier('vololinea', maxVoloDiLinea, 1, "Nazione usata 4 volte");
+
+        if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
+        else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
+        else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
+
+        if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
+            assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
+        }
+
+        if (maxRotta >= 10) {
+            assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive");
+        }
+
+        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive");
+        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive");
+        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive");
+
+        if (isVictory && currentLevel !== 0) {
+            let winsAttuali = (userBadges.conquistatore || 0);
+            let tierConq = 0;
+            let motivoConq = "";
+            
+            if (winsAttuali + 1 >= 10) { tierConq = 3; motivoConq = "10 Vittorie Assolute"; }
+            else if (winsAttuali + 1 >= 3) { tierConq = 2; motivoConq = "3 Vittorie Assolute"; }
+            else { tierConq = 1; motivoConq = "Prima Vittoria Assoluta"; }
+            
+            assegnaTier('conquistatore', 1, tierConq, motivoConq, false, true);
+        }
+
+        if (!hasDejavu && domandeTotali >= 50 && currentLevel !== 0 && currentLevel !== 4) {
+            assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 50+ domande");
+        }
+
+        if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
+        else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
+        else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
+
+        let hasInarrestabileOro = bestStreak >= 50;
+        let hasScheggiaOro = (esatte >= 10 && avgTime > 0 && ((currentLevel === 0 && avgTime <= 2.5) || (currentLevel !== 0 && avgTime <= 5)));
+        if (hasInarrestabileOro && hasScheggiaOro) {
+            assegnaTier('cyborg', 1, 4, "Riflessi inumani (Combo Oro)");
+        }
+
+        if (currentLevel === 7 && punteggio >= 10000) {
+            assegnaTier('sestosenso', 1, 4, "Leggenda senza mani");
+        }
+
+        // --- Conquiste Regionali ---
+        if (gameData.nazioniDigitate && gameData.nazioniDigitate.length > 0) {
+            let sigleGiocate = gameData.nazioniDigitate.map(s => s.toLowerCase());
+            for (let areaKey in CONQUISTE_AREE) {
+                let dataArea = CONQUISTE_AREE[areaKey];
+                let nazioniInArea = globalDb.filter(c => c.aree && c.aree.some(a => a.toLowerCase() === areaKey));
+                
+                if (nazioniInArea.length > 1) {
+                    let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
+                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.desc);
+                }
+            }
+        }
+    } 
 
     // ==========================================
-    // TROFEO GIRO DEL MONDO (MAGELLANO)
+    // 4. GIRO DEL MONDO
     // ==========================================
     let globalNations = typeof allTimeNazioniCount !== 'undefined' ? { ...allTimeNazioniCount } : {};
     
-    // Aggiunge temporaneamente i dati della run corrente per il calcolo a fine partita
     if (gameData.nazioniDigitateCount) {
         for (let sigla in gameData.nazioniDigitateCount) {
             globalNations[sigla] = (globalNations[sigla] || 0) + gameData.nazioniDigitateCount[sigla];
@@ -259,9 +267,50 @@ window.checkBadges = function(gameData) {
     else if (minUsoGlobale >= 4) assegnaTier('magellano', minUsoGlobale, 2, "Hai usato tutte le 253 nazioni almeno 4 volte");
     else if (minUsoGlobale >= 1) assegnaTier('magellano', minUsoGlobale, 1, "Hai usato tutte le 253 nazioni almeno 1 volta");
 
-
     if (storicoAggiornato) localStorage.setItem('geoQuizBadges', JSON.stringify(userBadges));
     return sessionEarned; 
+};
+
+// --- FUNZIONE PER MOSTRARE IL POP-UP DEI DETTAGLI ---
+window.showBadgeDetails = function(badgeId) {
+    let info = BADGE_INFO[badgeId];
+    let count = userBadges[badgeId];
+    let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
+    
+    if (info.isSecret && !isUnlocked) return; // Non fa niente se clicchi il vuoto di un trofeo segreto
+    
+    let tiersHtml = "";
+    if (!info.isSpecial) {
+        let op = info.isInverse ? "≤" : "≥";
+        tiersHtml = `
+        <div style="background:#1a1a1a; padding:10px; border-radius:6px; text-align:left; margin-top:15px; font-size:14px; border:1px solid #333;">
+            <div style="color:#cd7f32; margin-bottom:4px;"><strong>BRONZO:</strong> ${op} ${info.tiers[0]}</div>
+            <div style="color:#c0c0c0; margin-bottom:4px;"><strong>ARGENTO:</strong> ${op} ${info.tiers[1]}</div>
+            <div style="color:#ffd700;"><strong>ORO:</strong> ${op} ${info.tiers[2]}</div>
+        </div>`;
+    }
+    
+    let recordHtml = "";
+    if (isUnlocked) {
+        let recordVal = (badgeId === 'scheggia') ? count + "s" : count;
+        recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#4caf50; letter-spacing:1px;">RECORD ATTUALE: ${recordVal}</div>`;
+    } else {
+        recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#f44336; letter-spacing:1px;">NON ANCORA SBLOCCATO</div>`;
+    }
+
+    let html = `
+    <div style="text-align:center;">
+        <div style="width:80px; height:80px; margin:0 auto; color:#ffd700;">
+            ${SVG_ICONS[badgeId]}
+        </div>
+        <p style="font-style:italic; color:#888; font-size:15px;">"${info.flavor}"</p>
+        <hr style="border:0; border-top:1px dashed #444; margin:15px 0;">
+        <p style="color:#fff; font-size:15px; line-height:1.4;"><strong>Cosa devi fare:</strong><br>${info.req}</p>
+        ${tiersHtml}
+        ${recordHtml}
+    </div>`;
+    
+    openModal(info.title.toUpperCase(), html);
 };
 
 window.renderBadgeNotification = function(earnedArray) {
@@ -275,7 +324,6 @@ window.renderBadgeNotification = function(earnedArray) {
     
     earnedArray.forEach(b => {
         let info = BADGE_INFO[b.id];
-        // Colore Azzurro (#4fc3f7) per i trofei unici (Tier 4 / isSpecial)
         let color = b.tier === 4 ? "#4fc3f7" : (b.tier === 3 ? "#ffd700" : (b.tier === 2 ? "#c0c0c0" : "#cd7f32"));
         let bgLight = b.tier === 4 ? "rgba(79, 195, 247, 0.15)" : (b.tier === 3 ? "rgba(255, 215, 0, 0.08)" : (b.tier === 2 ? "rgba(192, 192, 192, 0.08)" : "rgba(205, 127, 50, 0.08)"));
         
@@ -303,7 +351,6 @@ window.renderMedagliere = function() {
     Object.keys(BADGE_INFO).forEach(b => {
         let info = BADGE_INFO[b];
         let count = userBadges[b];
-        let tiers = info.tiers;
         
         if (info.isSecret && (count === undefined || count === 0)) return;
         
@@ -312,20 +359,20 @@ window.renderMedagliere = function() {
         
         if (info.isSpecial) {
             if (count > 0) { 
-                color = "#0277bd"; // Testo e icona blu scuro
-                borderColor = "#4fc3f7"; // Bordo azzurro vivace
+                color = "#0277bd"; 
+                borderColor = "#4fc3f7"; 
                 opacity = "1"; 
-                bg = "#e1f5fe"; // Sfondo azzurrino tenue
+                bg = "#e1f5fe"; 
                 recordText = "Sbloccato"; 
             }
         } else if (info.isInverse) {
-            if (count !== undefined && count <= tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
-            else if (count !== undefined && count <= tiers[1]) { color = "#121212"; borderColor = "#c0c0c0"; opacity = "1"; bg = "#c0c0c0"; } 
-            else if (count !== undefined && count <= tiers[0]) { color = "#121212"; borderColor = "#cd7f32"; opacity = "1"; bg = "#cd7f32"; } 
+            if (count !== undefined && count <= info.tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
+            else if (count !== undefined && count <= info.tiers[1]) { color = "#121212"; borderColor = "#c0c0c0"; opacity = "1"; bg = "#c0c0c0"; } 
+            else if (count !== undefined && count <= info.tiers[0]) { color = "#121212"; borderColor = "#cd7f32"; opacity = "1"; bg = "#cd7f32"; } 
         } else {
-            if (count !== undefined && count >= tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
-            else if (count !== undefined && count >= tiers[1]) { color = "#121212"; borderColor = "#c0c0c0"; opacity = "1"; bg = "#c0c0c0"; } 
-            else if (count !== undefined && count >= tiers[0]) { color = "#121212"; borderColor = "#cd7f32"; opacity = "1"; bg = "#cd7f32"; } 
+            if (count !== undefined && count >= info.tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
+            else if (count !== undefined && count >= info.tiers[1]) { color = "#121212"; borderColor = "#c0c0c0"; opacity = "1"; bg = "#c0c0c0"; } 
+            else if (count !== undefined && count >= info.tiers[0]) { color = "#121212"; borderColor = "#cd7f32"; opacity = "1"; bg = "#cd7f32"; } 
         }
         
         let hasBadge = opacity === "1";
@@ -334,10 +381,10 @@ window.renderMedagliere = function() {
         
         if (b === 'scheggia' && count !== undefined && count !== 9999) recordText = `Record: ${count}s`;
         
-        html += `<div class="medagliere-item" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity};">
+        html += `<div class="medagliere-item" onclick="window.showBadgeDetails('${b}')" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity}; cursor:pointer; transition:transform 0.1s;">
                     <div class="medagliere-icon" style="color:${color};">${SVG_ICONS[b]}</div>
                     <div class="medagliere-title" style="color:${headerColor};">${info.title}</div>
-                    <div class="medagliere-desc" style="color:${descColor};">${info.desc}</div>
+                    <div class="medagliere-desc" style="color:${descColor};">${info.flavor}</div>
                     <div class="medagliere-record">${recordText}</div>
                  </div>`;
     });
@@ -358,7 +405,7 @@ window.renderLevelBadge = function(bestStreak) {
                     <div class="level-badge-left">
                         <div class="level-badge-icon" style="color:${color};">${SVG_ICONS.inarrestabile}</div>
                         <span class="level-badge-title" style="color:${color};">${info.title}</span>
-                        <span class="level-badge-desc">- ${info.desc}</span>
+                        <span class="level-badge-desc">- ${info.flavor}</span>
                     </div>
                     <span class="level-badge-record">Record: ${bestStreak}</span>
                 </div></div>`;
