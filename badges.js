@@ -402,6 +402,9 @@ if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
     
+    // Ordina i trofei dal più prezioso (4: Speciale) al meno prezioso (1: Bronzo)
+    earnedArray.sort((a, b) => b.tier - a.tier);
+    
     let html = `
     <div class="game-over-section">
         <h3 style="color:#ffd700;">🏆 TROFEI DI SESSIONE</h3>
@@ -413,15 +416,13 @@ window.renderBadgeNotification = function(earnedArray) {
         let color = b.tier === 4 ? "#4fc3f7" : (b.tier === 3 ? "#ffd700" : (b.tier === 2 ? "#c0c0c0" : "#cd7f32"));
         let bgLight = b.tier === 4 ? "rgba(79, 195, 247, 0.15)" : (b.tier === 3 ? "rgba(255, 215, 0, 0.08)" : (b.tier === 2 ? "rgba(192, 192, 192, 0.08)" : "rgba(205, 127, 50, 0.08)"));
         
-        let newTag = b.isNewTier ? `<span style="background-color:#f44336; color:#fff; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:4px; margin-left:8px; box-shadow:0 0 5px rgba(244,67,54,0.6); vertical-align:middle; display:inline-block; transform:translateY(-1px);">✨ NUOVO</span>` : "";
-
         html += `
             <div class="session-badge-item" style="background-color:${bgLight}; border-left:4px solid ${color};">
                 <div class="session-badge-icon" style="color:${color};">
                     ${SVG_ICONS[b.id]}
                 </div>
                 <div class="session-badge-text-col">
-                    <span class="session-badge-title" style="color:${color};">${info.title} ${newTag}</span>
+                    <span class="session-badge-title" style="color:${color};">${info.title}</span>
                     <span class="session-badge-desc">${b.motivo}</span>
                 </div>
             </div>
