@@ -98,21 +98,43 @@ window.checkBadges = function(gameData) {
     let storicoAggiornato = false;
 
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
-        // 1. Il trofeo viene SEMPRE mostrato nel pop-up a fine partita
-        sessionEarned.push({ id, tier, motivo }); 
-        
-        // 2. SCUDO STORICO: Se siamo nei livelli 0, 5, 6 o 8, il trofeo NON viene salvato 
-        // nella bacheca globale. L'unica eccezione è il "Vendicatore", esclusivo del Livello 8.
-        if ([0, 5, 6, 8].includes(currentLevel) && id !== 'vendicatore') return;
-        
-        let currentBest = userBadges[id] !== undefined ? userBadges[id] : (isInverse ? 9999 : 0);
-        if (isCumulative) {
-            userBadges[id] = currentBest + rawValue;
-            storicoAggiornato = true;
-        } else if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
-            userBadges[id] = rawValue;
-            storicoAggiornato = true;
+        let isSandbox = [0, 5, 6, 8].includes(currentLevel) && id !== 'vendicatore';
+        let isNewTier = false;
+
+        if (!isSandbox) {
+            let oldTier = 0;
+            let info = BADGE_INFO[id];
+            let oldVal = userBadges[id];
+
+            if (oldVal !== undefined && oldVal !== 9999 && oldVal !== 0) {
+                if (info.isSpecial) {
+                    oldTier = 4;
+                } else if (isInverse) {
+                    if (oldVal <= info.tiers[2]) oldTier = 3;
+                    else if (oldVal <= info.tiers[1]) oldTier = 2;
+                    else if (oldVal <= info.tiers[0]) oldTier = 1;
+                } else {
+                    if (oldVal >= info.tiers[2]) oldTier = 3;
+                    else if (oldVal >= info.tiers[1]) oldTier = 2;
+                    else if (oldVal >= info.tiers[0]) oldTier = 1;
+                }
+            }
+
+            if (tier > oldTier) {
+                isNewTier = true;
+            }
+
+            let currentBest = oldVal !== undefined ? oldVal : (isInverse ? 9999 : 0);
+            if (isCumulative) {
+                userBadges[id] = currentBest + rawValue;
+                storicoAggiornato = true;
+            } else if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
+                userBadges[id] = rawValue;
+                storicoAggiornato = true;
+            }
         }
+        
+        sessionEarned.push({ id, tier, motivo, isNewTier }); 
     };
 
     // ==========================================
@@ -135,14 +157,12 @@ window.checkBadges = function(gameData) {
     if (isVictory && erroriTotali === 0 && currentLevel !== 0) {
         assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
         
-        // TRACCIAMENTO ASCENSIONE GEOGRAFICA (Solo L1, L2, L3, L4)
         if (currentLevel >= 1 && currentLevel <= 4) {
             let perfectLevels = JSON.parse(localStorage.getItem('geoQuizPerfectLevels')) || [];
             if (!perfectLevels.includes(currentLevel)) {
                 perfectLevels.push(currentLevel);
                 localStorage.setItem('geoQuizPerfectLevels', JSON.stringify(perfectLevels));
             }
-            // Quando l'array contiene 4 livelli unici, sblocca il meta-trofeo
             if (perfectLevels.length === 4) {
                 assegnaTier('ascensione', 1, 4, "Hai vinto tutti i livelli principali senza errori!");
             }
@@ -150,7 +170,7 @@ window.checkBadges = function(gameData) {
     }
 
     // ==========================================
-    // 2. TROFEO ESCLUSIVO LIVELLO 8 (Recupero Debiti)
+    // 2. TROFEO ESCLUSIVO LIVELLO 8
     // ==========================================
     if (currentLevel === 8) {
         let debitiSaldati = debitiIniziali - debitiRimasti;
@@ -241,7 +261,6 @@ window.checkBadges = function(gameData) {
             assegnaTier('sestosenso', 1, 4, "Leggenda senza mani");
         }
 
-        // --- Conquiste Regionali ---
         if (gameData.nazioniDigitate && gameData.nazioniDigitate.length > 0) {
             let sigleGiocate = gameData.nazioniDigitate.map(s => s.toLowerCase());
             for (let areaKey in CONQUISTE_AREE) {
@@ -250,7 +269,8 @@ window.checkBadges = function(gameData) {
                 
                 if (nazioniInArea.length > 1) {
                     let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
-                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.desc);
+                    // IL FIX: Sostituito dataArea.desc con dataArea.flavor
+                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.flavor); 
                 }
             }
         }
@@ -285,7 +305,9 @@ window.checkBadges = function(gameData) {
     return sessionEarned; 
 };
 
-// --- FUNZIONE PER MOSTRARE IL POP-UP DEI DETTAGLI ---
+// Variabile globale per salvare lo stato del modale
+window.savedModalState = null;
+
 window.showBadgeDetails = function(badgeId) {
     let info = BADGE_INFO[badgeId];
     let count = userBadges[badgeId];
@@ -295,12 +317,17 @@ window.showBadgeDetails = function(badgeId) {
     
     let tiersHtml = "";
     if (!info.isSpecial) {
-        let op = info.isInverse ? "≤" : "≥";
+        // Sostituzione dei simboli matematici con testo leggibile
+        let opText = info.isInverse ? "Massimo" : "Almeno";
+        
+        // Aggiunge la 's' dei secondi solo per il trofeo Scheggia
+        let formatVal = (val) => badgeId === 'scheggia' ? val + "s" : val;
+
         tiersHtml = `
         <div style="background:#1a1a1a; padding:10px; border-radius:6px; text-align:left; margin-top:15px; font-size:14px; border:1px solid #333;">
-            <div style="color:#cd7f32; margin-bottom:4px;"><strong>BRONZO:</strong> ${op} ${info.tiers[0]}</div>
-            <div style="color:#c0c0c0; margin-bottom:4px;"><strong>ARGENTO:</strong> ${op} ${info.tiers[1]}</div>
-            <div style="color:#ffd700;"><strong>ORO:</strong> ${op} ${info.tiers[2]}</div>
+            <div style="color:#cd7f32; margin-bottom:4px;"><strong>BRONZO:</strong> ${opText} ${formatVal(info.tiers[0])}</div>
+            <div style="color:#c0c0c0; margin-bottom:4px;"><strong>ARGENTO:</strong> ${opText} ${formatVal(info.tiers[1])}</div>
+            <div style="color:#ffd700;"><strong>ORO:</strong> ${opText} ${formatVal(info.tiers[2])}</div>
         </div>`;
     }
     
@@ -312,6 +339,8 @@ window.showBadgeDetails = function(badgeId) {
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#f44336; letter-spacing:1px;">NON ANCORA SBLOCCATO</div>`;
     }
 
+    let backBtnHtml = `<button onclick="window.restoreModalState()" style="margin-top:20px; width:100%; padding:12px; background:#333; color:#fff; border:none; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer;">⬅️ TORNA ALLO STORICO</button>`;
+
     let html = `
     <div style="text-align:center;">
         <div style="width:80px; height:80px; margin:0 auto; color:#ffd700;">
@@ -322,10 +351,53 @@ window.showBadgeDetails = function(badgeId) {
         <p style="color:#fff; font-size:15px; line-height:1.4;"><strong>Cosa devi fare:</strong><br>${info.req}</p>
         ${tiersHtml}
         ${recordHtml}
+        ${backBtnHtml}
     </div>`;
     
-    openModal(info.title.toUpperCase(), html);
+    // --- LOGICA DI SALVATAGGIO STATO MODALE ---
+    let modalBody = document.getElementById('modal-body');
+    let modalTitle = document.getElementById('modal-title');
+    
+    if (modalBody && modalTitle) {
+        // Salva lo stato del Medagliere prima di sovrascriverlo
+        if (!window.savedModalState) {
+            window.savedModalState = {
+                title: modalTitle.innerText,
+                html: modalBody.innerHTML
+            };
+        }
+        modalTitle.innerText = info.title.toUpperCase();
+        modalBody.innerHTML = html;
+    } else {
+        // Fallback di emergenza nel caso manchino gli ID
+        openModal(info.title.toUpperCase(), html);
+    }
 };
+
+window.restoreModalState = function() {
+    if (window.savedModalState) {
+        let modalBody = document.getElementById('modal-body');
+        let modalTitle = document.getElementById('modal-title');
+        if (modalTitle) modalTitle.innerText = window.savedModalState.title;
+        if (modalBody) modalBody.innerHTML = window.savedModalState.html;
+        window.savedModalState = null; // Resetta lo stato
+    } else {
+        if (typeof closeModal === 'function') closeModal();
+    }
+};
+
+// --- HIJACKING DELLA CHIUSURA MODALE ---
+// Sovrascriviamo dolcemente la closeModal originale per farle fare "indietro" se stiamo guardando un badge
+if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal === 'function') {
+    window.originalCloseModal = window.closeModal;
+    window.closeModal = function() {
+        if (window.savedModalState) {
+            window.restoreModalState();
+        } else {
+            window.originalCloseModal();
+        }
+    };
+}
 
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
@@ -341,13 +413,15 @@ window.renderBadgeNotification = function(earnedArray) {
         let color = b.tier === 4 ? "#4fc3f7" : (b.tier === 3 ? "#ffd700" : (b.tier === 2 ? "#c0c0c0" : "#cd7f32"));
         let bgLight = b.tier === 4 ? "rgba(79, 195, 247, 0.15)" : (b.tier === 3 ? "rgba(255, 215, 0, 0.08)" : (b.tier === 2 ? "rgba(192, 192, 192, 0.08)" : "rgba(205, 127, 50, 0.08)"));
         
+        let newTag = b.isNewTier ? `<span style="background-color:#f44336; color:#fff; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:4px; margin-left:8px; box-shadow:0 0 5px rgba(244,67,54,0.6); vertical-align:middle; display:inline-block; transform:translateY(-1px);">✨ NUOVO</span>` : "";
+
         html += `
             <div class="session-badge-item" style="background-color:${bgLight}; border-left:4px solid ${color};">
                 <div class="session-badge-icon" style="color:${color};">
                     ${SVG_ICONS[b.id]}
                 </div>
                 <div class="session-badge-text-col">
-                    <span class="session-badge-title" style="color:${color};">${info.title}</span>
+                    <span class="session-badge-title" style="color:${color};">${info.title} ${newTag}</span>
                     <span class="session-badge-desc">${b.motivo}</span>
                 </div>
             </div>
