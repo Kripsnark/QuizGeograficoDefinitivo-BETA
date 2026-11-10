@@ -20,11 +20,12 @@ const SVG_ICONS = {
     hub: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
     rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l4-4-4-4"></path><path d="M20 12H11"></path><path d="M7 12h.01"></path><path d="M3 12h.01"></path></svg>`,
     pendolare: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 12 2v4a6 6 0 0 1 6 6h4z"></path><path d="M2 12a10 10 0 0 0 10 10v-4a6 6 0 0 1-6-6H2z"></path><polyline points="2 7 2 12 7 12"></polyline><polyline points="22 17 22 12 17 12"></polyline></svg>`,
-    magellano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`
+    magellano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`,
+    ascensione: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"></path></svg>`
 };
 
 const BADGE_INFO = {
-    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [1, 3, 10] },
+    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [8, 15, 27] },
     conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
     maratoneta: { title: "Millemiglia", flavor: "Viaggi in continuazione senza stancarti.", req: "Raggiungi un alto numero di risposte esatte in una singola partita.", tiers: [16, 31, 61] },
     inarrestabile: { title: "Senza Scalo", flavor: "Un volo diretto lunghissimo.", req: "Mantieni una lunga serie di risposte esatte consecutive.", tiers: [15, 30, 50] },
@@ -43,8 +44,8 @@ const BADGE_INFO = {
     hub: { title: "Hub Principale", flavor: "Tutti i tuoi voli passano da qui.", req: "La nazione più usata in partita deve doppiare la più ignorata (min. 5 usi).", tiers: [1, 1, 1], isSpecial: true },
     rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive (Storico).", tiers: [1, 1, 1], isSpecial: true },
     pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive (Storico).", tiers: [3, 7, 20] },
-    magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco (Statistica Globale).", tiers: [1, 4, 10] }
-};
+    magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco (Statistica Globale).", tiers: [1, 4, 10] },
+    ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true }};
 
 // --- MAPPATURA TROFEI REGIONALI SEGRETI ---
 const CONQUISTE_AREE = {
@@ -133,6 +134,19 @@ window.checkBadges = function(gameData) {
 
     if (isVictory && erroriTotali === 0 && currentLevel !== 0) {
         assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
+        
+        // TRACCIAMENTO ASCENSIONE GEOGRAFICA (Solo L1, L2, L3, L4)
+        if (currentLevel >= 1 && currentLevel <= 4) {
+            let perfectLevels = JSON.parse(localStorage.getItem('geoQuizPerfectLevels')) || [];
+            if (!perfectLevels.includes(currentLevel)) {
+                perfectLevels.push(currentLevel);
+                localStorage.setItem('geoQuizPerfectLevels', JSON.stringify(perfectLevels));
+            }
+            // Quando l'array contiene 4 livelli unici, sblocca il meta-trofeo
+            if (perfectLevels.length === 4) {
+                assegnaTier('ascensione', 1, 4, "Hai vinto tutti i livelli principali senza errori!");
+            }
+        }
     }
 
     // ==========================================
@@ -140,9 +154,9 @@ window.checkBadges = function(gameData) {
     // ==========================================
     if (currentLevel === 8) {
         let debitiSaldati = debitiIniziali - debitiRimasti;
-        if (debitiSaldati >= 10) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 10+ debiti");
-        else if (debitiSaldati >= 3) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 3+ debiti");
-        else if (debitiSaldati >= 1) assegnaTier('vendicatore', debitiSaldati, 1, "Saldato 1 debito");
+        if (debitiSaldati >= 27) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 27 debiti");
+        else if (debitiSaldati >= 15) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 15 debiti");
+        else if (debitiSaldati >= 8) assegnaTier('vendicatore', debitiSaldati, 1, "Saldati 8 debiti");
     }
 
     // ==========================================

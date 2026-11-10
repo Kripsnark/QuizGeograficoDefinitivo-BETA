@@ -4009,21 +4009,23 @@ if (!window.voiceHooksAdded) {
         try { assistantRec.stop(); isListening = false; } catch(e) {} 
         origSurrenderTurn();
         if (voiceModeActive) {
-            if (window.pendingDefeat) {
-                setTimeout(() => nextTurnMulti(), 800);
-            } else {
-                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-                let correctAns = rndAns.split(" (")[0]; 
-                let numValide = currentTurnData.validAnswersCache.length;
-                let incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
-                
-                setTimeout(() => {
+            let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+            let correctAns = rndAns.split(" (")[0]; 
+            let numValide = currentTurnData.validAnswersCache.length;
+            let incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
+            
+            setTimeout(() => {
+                if (window.pendingDefeat) {
+                    parla(`${incipit} Partita terminata.`, function() {
+                        setTimeout(() => nextTurnMulti(), 800);
+                    });
+                } else {
                     let testoVite = (currentLevel === 8) ? "" : (vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`);
                     parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000);
                     });
-                }, 200);
-            }
+                }
+            }, 200);
         }
     };
 
@@ -4033,26 +4035,28 @@ if (!window.voiceHooksAdded) {
         try { assistantRec.stop(); isListening = false; } catch(e) {}
         origFailStandard(wrongInput);
         if (voiceModeActive) {
-            if (window.pendingDefeat) {
-                setTimeout(() => nextTurnMulti(), 800);
-            } else {
-                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-                let correctAns = rndAns.split(" (")[0]; 
-                
-                if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
-                     correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
-                }
-                
-                let numValide = currentTurnData.validAnswersCache.length;
-                let incipit = (numValide > 1) ? `Sbagliato, potevi dire: ${correctAns}.` : `Sbagliato, era ${correctAns}.`;
-                
-                setTimeout(() => {
+            let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+            let correctAns = rndAns.split(" (")[0]; 
+            
+            if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
+                 correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
+            }
+            
+            let numValide = currentTurnData.validAnswersCache.length;
+            let incipit = (numValide > 1) ? `Sbagliato, potevi dire: ${correctAns}.` : `Sbagliato, era ${correctAns}.`;
+            
+            setTimeout(() => {
+                if (window.pendingDefeat) {
+                    parla(`${incipit} Game over.`, function() {
+                        setTimeout(() => nextTurnMulti(), 800); 
+                    });
+                } else {
                     let testoVite = (currentLevel === 8) ? "" : (vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`);
                     parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000); 
                     });
-                }, 200);
-            }
+                }
+            }, 200);
         }
     };
 
@@ -4062,36 +4066,38 @@ if (!window.voiceHooksAdded) {
         try { assistantRec.stop(); isListening = false; } catch(e) {}
         origFailMulti(reason, wrongInput);
         if (voiceModeActive) {
-            if (window.pendingDefeat) {
-                setTimeout(() => nextTurnMulti(), 800);
-            } else {
-                let sigleIndovinate = [];
-                comboInserted.forEach(ans => {
-                    let res = checkSingleAnswer(ans, currentTurnData, currentLevel);
-                    if (res.isCorrect) sigleIndovinate.push(res.matchedCountry.sigla);
-                });
+            let sigleIndovinate = [];
+            comboInserted.forEach(ans => {
+                let res = checkSingleAnswer(ans, currentTurnData, currentLevel);
+                if (res.isCorrect) sigleIndovinate.push(res.matchedCountry.sigla);
+            });
 
-                let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
-                    let sigla = currentTurnData.validSiglas[index];
-                    return !sigleIndovinate.includes(sigla);
-                });
+            let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
+                let sigla = currentTurnData.validSiglas[index];
+                return !sigleIndovinate.includes(sigla);
+            });
 
-                if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
+            if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
 
-                let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
-                let correctAns = rndAns.split(" (")[0]; 
-                
-                let numValideRimanenti = risposteNonDette.length;
-                let baseText = reason.includes("Tempo scaduto") ? "Tempo scaduto" : "Sbagliato";
-                let incipit = (numValideRimanenti > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
+            let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
+            let correctAns = rndAns.split(" (")[0]; 
+            
+            let numValideRimanenti = risposteNonDette.length;
+            let baseText = reason.includes("Tempo scaduto") ? "Tempo scaduto" : "Sbagliato";
+            let incipit = (numValideRimanenti > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
 
-                setTimeout(() => {
+            setTimeout(() => {
+                if (window.pendingDefeat) {
+                    parla(`${incipit} Game over.`, function() {
+                        setTimeout(() => nextTurnMulti(), 800);
+                    });
+                } else {
                     let testoVite = (currentLevel === 8) ? "" : (vite === 1 ? " Ti resta una vita." : ` Ti restano ${vite} vite.`);
                     parla(`${incipit}${testoVite}`, function() {
                         setTimeout(() => nextTurnMulti(), 1000);
                     });
-                }, 200);
-            }
+                }
+            }, 200);
         }
     };
 
