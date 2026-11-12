@@ -21,11 +21,12 @@ const SVG_ICONS = {
     rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l4-4-4-4"></path><path d="M20 12H11"></path><path d="M7 12h.01"></path><path d="M3 12h.01"></path></svg>`,
     pendolare: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 12 2v4a6 6 0 0 1 6 6h4z"></path><path d="M2 12a10 10 0 0 0 10 10v-4a6 6 0 0 1-6-6H2z"></path><polyline points="2 7 2 12 7 12"></polyline><polyline points="22 17 22 12 17 12"></polyline></svg>`,
     magellano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`,
-    ascensione: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"></path></svg>`
+    ascensione: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"></path></svg>`,
+    cecchino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`}
 };
 
 const BADGE_INFO = {
-    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [8, 15, 27] },
+    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [4, 8, 14] },
     conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
     maratoneta: { title: "Millemiglia", flavor: "Viaggi in continuazione senza stancarti.", req: "Raggiungi un alto numero di risposte esatte in una singola partita.", tiers: [16, 31, 61] },
     inarrestabile: { title: "Senza Scalo", flavor: "Un volo diretto lunghissimo.", req: "Mantieni una lunga serie di risposte esatte consecutive.", tiers: [15, 30, 50] },
@@ -45,7 +46,9 @@ const BADGE_INFO = {
     rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive (Storico).", tiers: [1, 1, 1], isSpecial: true },
     pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive (Storico).", tiers: [3, 7, 20] },
     magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco (Statistica Globale).", tiers: [1, 4, 10] },
-    ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true }};
+    ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
+    cecchino: { title: "Sestante d'Oro", flavor: "Navighi tra le opzioni con precisione assoluta.", req: "Ottieni punteggio pieno in domande combo da almeno 4 risposte.", tiers: [2, 5, 10] }
+;
 
 // --- MAPPATURA TROFEI REGIONALI SEGRETI ---
 const CONQUISTE_AREE = {
@@ -104,6 +107,10 @@ window.checkBadges = function(gameData) {
         if (!isSandbox) {
             let oldTier = 0;
             let info = BADGE_INFO[id];
+            
+            // IL PARACADUTE: Se ti scordi di aggiungere un badge al dizionario, non crasha più!
+            if (!info) return; 
+
             let oldVal = userBadges[id];
 
             if (oldVal !== undefined && oldVal !== 9999 && oldVal !== 0) {
@@ -174,15 +181,25 @@ window.checkBadges = function(gameData) {
     // ==========================================
     if (currentLevel === 8) {
         let debitiSaldati = debitiIniziali - debitiRimasti;
-        if (debitiSaldati >= 27) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 27 debiti");
-        else if (debitiSaldati >= 15) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 15 debiti");
-        else if (debitiSaldati >= 8) assegnaTier('vendicatore', debitiSaldati, 1, "Saldati 8 debiti");
+        if (debitiSaldati >= 14) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 27 debiti");
+        else if (debitiSaldati >= 8) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 15 debiti");
+        else if (debitiSaldati >= 4) assegnaTier('vendicatore', debitiSaldati, 1, "Saldati 8 debiti");
     }
 
     // ==========================================
-    // 3. TROFEI STANDARD / INCOMPATIBILI CON L8
+    // 3. TROFEI STANDARD E COMBO
     // ==========================================
     if (currentLevel !== 8) {
+        let perfectCombosCount = 0;
+        if (typeof debugGameLog !== 'undefined') {
+            let matches = debugGameLog.match(/\[(400|500)pti\]:\s*✅\s*SUPERATA/g);
+            if (matches) perfectCombosCount = matches.length;
+        }
+
+        if (perfectCombosCount >= 10) assegnaTier('cecchino', perfectCombosCount, 3, "10 Combo Perfette (400/500pt)");
+        else if (perfectCombosCount >= 5) assegnaTier('cecchino', perfectCombosCount, 2, "5 Combo Perfette (400/500pt)");
+        else if (perfectCombosCount >= 2) assegnaTier('cecchino', perfectCombosCount, 1, "2 Combo Perfette (400/500pt)");
+
         if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
         else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
         else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
@@ -269,8 +286,7 @@ window.checkBadges = function(gameData) {
                 
                 if (nazioniInArea.length > 1) {
                     let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
-                    // IL FIX: Sostituito dataArea.desc con dataArea.flavor
-                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.flavor); 
+                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.flavor);
                 }
             }
         }
@@ -302,6 +318,7 @@ window.checkBadges = function(gameData) {
     else if (minUsoGlobale >= 1) assegnaTier('magellano', minUsoGlobale, 1, "Hai usato tutte le 253 nazioni almeno 1 volta");
 
     if (storicoAggiornato) localStorage.setItem('geoQuizBadges', JSON.stringify(userBadges));
+    
     return sessionEarned; 
 };
 
@@ -313,14 +330,11 @@ window.showBadgeDetails = function(badgeId) {
     let count = userBadges[badgeId];
     let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
     
-    if (info.isSecret && !isUnlocked) return; // Non fa niente se clicchi il vuoto di un trofeo segreto
+    if (info.isSecret && !isUnlocked) return; 
     
     let tiersHtml = "";
     if (!info.isSpecial) {
-        // Sostituzione dei simboli matematici con testo leggibile
         let opText = info.isInverse ? "Massimo" : "Almeno";
-        
-        // Aggiunge la 's' dei secondi solo per il trofeo Scheggia
         let formatVal = (val) => badgeId === 'scheggia' ? val + "s" : val;
 
         tiersHtml = `
@@ -354,12 +368,10 @@ window.showBadgeDetails = function(badgeId) {
         ${backBtnHtml}
     </div>`;
     
-    // --- LOGICA DI SALVATAGGIO STATO MODALE ---
     let modalBody = document.getElementById('modal-body');
     let modalTitle = document.getElementById('modal-title');
     
     if (modalBody && modalTitle) {
-        // Salva lo stato del Medagliere prima di sovrascriverlo
         if (!window.savedModalState) {
             window.savedModalState = {
                 title: modalTitle.innerText,
@@ -369,7 +381,6 @@ window.showBadgeDetails = function(badgeId) {
         modalTitle.innerText = info.title.toUpperCase();
         modalBody.innerHTML = html;
     } else {
-        // Fallback di emergenza nel caso manchino gli ID
         openModal(info.title.toUpperCase(), html);
     }
 };
@@ -380,14 +391,12 @@ window.restoreModalState = function() {
         let modalTitle = document.getElementById('modal-title');
         if (modalTitle) modalTitle.innerText = window.savedModalState.title;
         if (modalBody) modalBody.innerHTML = window.savedModalState.html;
-        window.savedModalState = null; // Resetta lo stato
+        window.savedModalState = null; 
     } else {
         if (typeof closeModal === 'function') closeModal();
     }
 };
 
-// --- HIJACKING DELLA CHIUSURA MODALE ---
-// Sovrascriviamo dolcemente la closeModal originale per farle fare "indietro" se stiamo guardando un badge
 if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal === 'function') {
     window.originalCloseModal = window.closeModal;
     window.closeModal = function() {
@@ -402,8 +411,11 @@ if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
     
-    // Ordina i trofei dal più prezioso (4: Speciale) al meno prezioso (1: Bronzo)
-    earnedArray.sort((a, b) => b.tier - a.tier);
+    // Filtro vitale: previene i crash grafici se un badge è assente
+    let validEarned = earnedArray.filter(b => BADGE_INFO[b.id]);
+    if (validEarned.length === 0) return "";
+    
+    validEarned.sort((a, b) => b.tier - a.tier);
     
     let html = `
     <div class="game-over-section">
@@ -411,18 +423,20 @@ window.renderBadgeNotification = function(earnedArray) {
         <div class="badge-list-container">
     `;
     
-    earnedArray.forEach(b => {
+    validEarned.forEach(b => {
         let info = BADGE_INFO[b.id];
         let color = b.tier === 4 ? "#4fc3f7" : (b.tier === 3 ? "#ffd700" : (b.tier === 2 ? "#c0c0c0" : "#cd7f32"));
         let bgLight = b.tier === 4 ? "rgba(79, 195, 247, 0.15)" : (b.tier === 3 ? "rgba(255, 215, 0, 0.08)" : (b.tier === 2 ? "rgba(192, 192, 192, 0.08)" : "rgba(205, 127, 50, 0.08)"));
         
+        let newTag = (b.isNewTier === true) ? `<span style="background-color:#f44336; color:#fff; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:4px; margin-left:8px; box-shadow:0 0 5px rgba(244,67,54,0.6); vertical-align:middle; display:inline-block; transform:translateY(-1px);">✨ NUOVO</span>` : "";
+
         html += `
             <div class="session-badge-item" style="background-color:${bgLight}; border-left:4px solid ${color};">
                 <div class="session-badge-icon" style="color:${color};">
                     ${SVG_ICONS[b.id]}
                 </div>
                 <div class="session-badge-text-col">
-                    <span class="session-badge-title" style="color:${color};">${info.title}</span>
+                    <span class="session-badge-title" style="color:${color};">${info.title} ${newTag}</span>
                     <span class="session-badge-desc">${b.motivo}</span>
                 </div>
             </div>

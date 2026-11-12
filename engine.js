@@ -1422,23 +1422,23 @@ td.buildQuestionText = (num) => {
                 if ([0, 1, 9, 10].includes(format) && !td.isComboInception) {
                     td.numReq = 1; 
                 } else {
-                    // CONTA QUANTE RISPOSTE UNICHE DIGITABILI SONO PRESENTI NELLA TUA DIFFICOLTÀ
                     let localTypeableSet = new Set();
                     td.validSiglas.forEach(s => {
                         let node = levelDb.find(n => n.sigla === s);
                         if (node) {
+                            // COMPATTAZIONE ESTREMA: rimuove tutti gli spazi.
+                            // Così "Basse-Terre" e "Basseterre" diventano un solo bersaglio!
                             if (isCapRequired && node.capitale) {
-                                localTypeableSet.add(normalizzaTesto(node.capitale));
+                                localTypeableSet.add(normalizzaTesto(node.capitale).replace(/\s/g, ''));
                             } else {
-                                localTypeableSet.add(normalizzaTesto(node.nome));
+                                localTypeableSet.add(normalizzaTesto(node.nome).replace(/\s/g, ''));
                             }
                         }
                     });
                     
                     let maxUniche = localTypeableSet.size;
-                    if (maxUniche === 0) maxUniche = 1; // Sicurezza anti-crash
+                    if (maxUniche === 0) maxUniche = 1; 
                     
-                    // IL LIMITE DELLA RICHIESTA ORA USA I NOMI UNICI (maxUniche)
                     let maxR = Math.min(limitCombo, maxUniche); 
                     td.numReq = Math.floor(Math.random() * maxR) + 1;
                 }
@@ -4110,8 +4110,15 @@ if (!window.voiceHooksAdded) {
         origEseguiValidazioneMultipla(isTimeout);
         
         if (voiceModeActive && !window.pendingVictory && !window.pendingDefeat) {
+            // IL FIX: Blocca l'avanzamento forzato se sei diventato Leggenda
+            let btnContinua = document.getElementById("continua-btn");
+            if (btnContinua && btnContinua.style.display === "block") {
+                setTimeout(() => parla("Traguardo raggiunto. Scegli se ritirarti o continuare."), 200);
+                return;
+            }
+
             if (esatte > esattePrima) {
-                window.isTransitioning = true; // SBLOCCA LUCCHETTO ANTI-DOPPIONI
+                window.isTransitioning = true; 
                 
                 let puntiGuadagnati = punteggio - puntiPrima;
                 let testoEsatto = (currentLevel === 6 || currentLevel === 8 || puntiGuadagnati === 0) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
@@ -4120,16 +4127,14 @@ if (!window.voiceHooksAdded) {
                 let badgeTesto = (badgeEl && badgeEl.style.display !== "none") ? badgeEl.innerText.toLowerCase() : "";
                 let frasiExtra = [];
                 
-                if (badgeTesto.includes("grazia")) {
-                    testoEsatto = (currentLevel === 6 || currentLevel === 8) ? "Tempo scaduto, ma ti salva la grazia!" : `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
-                } else {
+                if (badgeTesto.includes("grazia")) testoEsatto = `Tempo scaduto, ma ti salva la grazia! Più ${puntiGuadagnati} punti.`;
+                else {
                     if (badgeTesto.includes("fotofinish")) frasiExtra.push("Salvo al fotofinisc.");
                     if (badgeTesto.includes("audacia")) frasiExtra.push("Bonus audacia, punti raddoppiati.");
                     if (badgeTesto.includes("pigrizia") || badgeTesto.includes("déjà vu")) frasiExtra.push("Déjà vu, punteggio dimezzato.");
                 }
                 
                 if (badgeTesto.includes("vita extra")) frasiExtra.push("Hai guadagnato una vita.");
-                
                 if (frasiExtra.length > 0) testoEsatto += " " + frasiExtra.join(" ");
                 
                 setTimeout(() => {
