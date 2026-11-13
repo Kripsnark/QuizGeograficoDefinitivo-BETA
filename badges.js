@@ -105,17 +105,16 @@ Object.values(CONQUISTE_AREE).forEach(data => {
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
 
 window.checkBadges = function(gameData) {
-    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali, bestStreakOneLife, punteggio, maxVoloDiLinea, maxBlacklist, top1UsataVal, top1IgnorataVal, maxPendolare, maxRotta, risposteEsotiche, sprintBombaExtremis, maxSerieFulminea } = gameData;
+    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali, bestStreakOneLife, punteggio, maxVoloDiLinea, maxBlacklist, top1UsataVal, top1IgnorataVal, maxPendolare, maxRotta, risposteEsotiche, sprintBombaExtremis, maxSerieFulminea, totaleNazioni } = gameData;
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
-        // I Livelli 0, 5, 6, 8 (tranne Visto Rinnovato) non influenzano la BACHECA GLOBALE
         let isSandbox = [0, 5, 6, 8].includes(currentLevel);
         if (isSandbox && id !== 'vendicatore' && id !== 'highlander' && id !== 'artificiere' && id !== 'sangue_freddo' && id !== 'decollo_fallito') {
             isSandbox = true; 
         } else if (id === 'vendicatore' || id === 'highlander' || id === 'artificiere' || id === 'sangue_freddo' || id === 'decollo_fallito') {
-            isSandbox = false; // Questi trofei specifici POSSONO salvare nel globale anche se sono giocati in livelli sandbox
+            isSandbox = false; 
         }
         
         let isNewTier = false;
@@ -158,21 +157,23 @@ window.checkBadges = function(gameData) {
         sessionEarned.push({ id, tier, motivo, isNewTier }); 
     };
 
+    // VETERANO (Passaporto Pieno): L0, L1, L2, L3, L4, L5, L7
     if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
     else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
     else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
 
-    if (currentLevel !== 0) {
-        if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
-        else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
-        else if (esatte >= 15) assegnaTier('maratoneta', esatte, 1, "Superate le 15 risposte");
-    }
+    // MARATONETA (Millemiglia): L0, L1, L2, L3, L4, L5, L7
+    if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
+    else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
+    else if (esatte >= 15) assegnaTier('maratoneta', esatte, 1, "Superate le 15 risposte");
 
+    // INARRESTABILE (Senza Scalo): L0, L1, L2, L3, L4, L5, L7
     if (bestStreak >= 50) assegnaTier('inarrestabile', bestStreak, 3, "Serie di 50 risposte");
     else if (bestStreak >= 30) assegnaTier('inarrestabile', bestStreak, 2, "Serie di 30 risposte");
     else if (bestStreak >= 15) assegnaTier('inarrestabile', bestStreak, 1, "Serie di 15 risposte");
 
-    if (isVictory && erroriTotali === 0 && currentLevel !== 0) {
+    // INFALLIBILE (Rotta Perfetta): L0, L1, L2, L3, L4, L5, L7
+    if (isVictory && erroriTotali === 0) {
         assegnaTier('infallibile', 1, 4, "Vittoria impeccabile senza errori");
         
         if (currentLevel >= 1 && currentLevel <= 4) {
@@ -200,7 +201,6 @@ window.checkBadges = function(gameData) {
         let targetL6 = totaleNazioni || (bacinoCorrente === 'sprint' ? 50 : (bacinoCorrente === 'onu' ? 193 : 253));
         let pctHighlander = Math.floor((bestStreak / targetL6) * 100);
         
-        // HIGHLANDER: Progressione per Bacino (Sprint=1, ONU=2, Totale=3)
         if (pctHighlander >= 75) {
             if (bacinoCorrente === 'totale' || bacinoCorrente === 'globale') {
                 assegnaTier('highlander', 3, 3, "Sopravvissuto al 75% del database Globale");
@@ -223,71 +223,95 @@ window.checkBadges = function(gameData) {
     }
 
     if (currentLevel !== 8 && currentLevel !== 6) {
+        
+        // CECCHINO (Sestante d'oro): L4, L5, L7
         let perfectCombosCount = 0;
         if (typeof debugGameLog !== 'undefined') {
             let matches = debugGameLog.match(/\[(400|500)pti\]:\s*✅\s*SUPERATA/g);
             if (matches) perfectCombosCount = matches.length;
         }
-
         if (perfectCombosCount >= 10) assegnaTier('cecchino', perfectCombosCount, 3, "10 Combo Perfette (400/500pt)");
         else if (perfectCombosCount >= 5) assegnaTier('cecchino', perfectCombosCount, 2, "5 Combo Perfette (400/500pt)");
         else if (perfectCombosCount >= 2) assegnaTier('cecchino', perfectCombosCount, 1, "2 Combo Perfette (400/500pt)");
 
-        if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
-        else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
-        else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
+        // INFERMIERE (Assicurazione di Viaggio): L1, L2, L3, L4, L7
+        if (currentLevel !== 0 && currentLevel !== 5) {
+            if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
+            else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
+            else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
+        }
         
-        if ((currentLevel === 1 || currentLevel === 2) && risposteEsotiche) {
+        // ESPLORATORE ESOTICO: L1, L2, L5
+        if ((currentLevel === 1 || currentLevel === 2 || currentLevel === 5) && risposteEsotiche) {
             if (risposteEsotiche >= 20) assegnaTier('esploratore_esotico', risposteEsotiche, 3, "Inserite 20 nazioni di Livello superiore");
             else if (risposteEsotiche >= 15) assegnaTier('esploratore_esotico', risposteEsotiche, 2, "Inserite 15 nazioni di Livello superiore");
             else if (risposteEsotiche >= 10) assegnaTier('esploratore_esotico', risposteEsotiche, 1, "Inserite 10 nazioni di Livello superiore");
         }
 
-        if (esatte >= 10) {
+        // FOTOFINISH (Scatto al Gate): L4, L5
+        if (esatte >= 10 && (currentLevel === 4 || currentLevel === 5)) {
             if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
             else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
             else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
+        }
 
-            if (avgTime > 0) {
-                if (currentLevel === 0) {
-                    if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
-                    else if (avgTime <= 4) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 4s (Lv0)", true);
-                    else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
-                } else {
-                    if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
-                    else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 10s", true);
-                    else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 15s", true);
-                }
+        // SCHEGGIA (Teletrasporto): L0, L1, L2, L3, L4, L5, L7
+        if (esatte >= 10 && avgTime > 0) {
+            if (currentLevel === 0) {
+                if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
+                else if (avgTime <= 4) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 4s (Lv0)", true);
+                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 10s (Lv0)", true);
+            } else {
+                if (avgTime <= 5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 5s", true);
+                else if (avgTime <= 10) assegnaTier('scheggia', avgTime, 2, "Tempo medio ≤ 10s", true);
+                else if (avgTime <= 15) assegnaTier('scheggia', avgTime, 1, "Tempo medio ≤ 15s", true);
             }
         }
 
+        // GRAZIA (Viaggio in Solitaria): L4, L5
         if ((currentLevel === 4 || currentLevel === 5) && esatte >= 40) {
             if (grazie <= 0) assegnaTier('grazia', grazie, 3, "Nessuna grazia ricevuta", true);
             else if (grazie <= 1) assegnaTier('grazia', grazie, 2, "Solo 1 grazia ricevuta", true);
             else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
         }
 
-        if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte");
-        else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte");
-        else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte");
+        // SECONDA CASA, BLACKLIST, HUB, ROTTA, PENDOLARE, AREE: L1, L2, L3, L4, L7
+        if ([1, 2, 3, 4, 7].includes(currentLevel)) {
+            if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte");
+            else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte");
+            else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte");
 
-        if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
-        else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
-        else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
+            if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
+            else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
+            else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
 
-        if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
-            assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
+            if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
+                assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
+            }
+
+            if (maxRotta >= 10) {
+                assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive");
+            }
+
+            if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive");
+            else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive");
+            else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive");
+            
+            if (gameData.nazioniDigitate && gameData.nazioniDigitate.length > 0) {
+                let sigleGiocate = gameData.nazioniDigitate.map(s => s.toLowerCase());
+                for (let areaKey in CONQUISTE_AREE) {
+                    let dataArea = CONQUISTE_AREE[areaKey];
+                    let nazioniInArea = globalDb.filter(c => c.aree && c.aree.some(a => a.toLowerCase() === areaKey));
+                    if (nazioniInArea.length > 1) {
+                        let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
+                        if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.flavor);
+                    }
+                }
+            }
         }
 
-        if (maxRotta >= 10) {
-            assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive");
-        }
-
-        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive");
-        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive");
-        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive");
-
-        if (isVictory && currentLevel !== 0) {
+        // CONQUISTATORE (Esploratore): L0, L1, L2, L3, L4, L7 (Escluso L5)
+        if (isVictory && currentLevel !== 5) {
             let winsAttuali = (userBadges.conquistatore || 0);
             let tierConq = 0;
             let motivoConq = "";
@@ -299,59 +323,54 @@ window.checkBadges = function(gameData) {
             assegnaTier('conquistatore', 1, tierConq, motivoConq, false, true);
         }
 
-        if (!hasDejavu && domandeTotali >= 50 && currentLevel !== 0 && currentLevel !== 4) {
+        // LUCIDO (GPS Umano): L1, L2, L3, L7
+        if (!hasDejavu && domandeTotali >= 50 && [1, 2, 3, 7].includes(currentLevel)) {
             assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 50+ domande");
         }
 
-        if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
-        else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
-        else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
+        // FENICE (Sopravvissuto): L0, L1, L2, L3, L4, L7 (Escluso L5)
+        if (currentLevel !== 5) {
+            if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
+            else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
+            else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
+        }
 
+        // CYBORG (Autopilota): L3, L4, L7
         let hasInarrestabileOro = bestStreak >= 50;
         let hasScheggiaOro = (esatte >= 10 && avgTime > 0 && ((currentLevel === 0 && avgTime <= 2.5) || (currentLevel !== 0 && avgTime <= 5)));
-        if (hasInarrestabileOro && hasScheggiaOro) {
+        if (hasInarrestabileOro && hasScheggiaOro && [3, 4, 7].includes(currentLevel)) {
             assegnaTier('cyborg', 1, 4, "Riflessi inumani (Combo Oro)");
         }
 
+        // SESTOSENSO (Volo alla Cieca): L7
         if (currentLevel === 7 && punteggio >= 10000) {
             assegnaTier('sestosenso', 1, 4, "Leggenda senza mani");
         }
-
-        if (gameData.nazioniDigitate && gameData.nazioniDigitate.length > 0) {
-            let sigleGiocate = gameData.nazioniDigitate.map(s => s.toLowerCase());
-            for (let areaKey in CONQUISTE_AREE) {
-                let dataArea = CONQUISTE_AREE[areaKey];
-                let nazioniInArea = globalDb.filter(c => c.aree && c.aree.some(a => a.toLowerCase() === areaKey));
-                
-                if (nazioniInArea.length > 1) {
-                    let conquistata = nazioniInArea.every(c => sigleGiocate.includes(c.sigla.toLowerCase()));
-                    if (conquistata) assegnaTier(dataArea.id, 1, 4, dataArea.flavor);
-                }
-            }
-        }
     } 
 
-    let globalNations = typeof allTimeNazioniCount !== 'undefined' ? { ...allTimeNazioniCount } : {};
-    
-    if (gameData.nazioniDigitateCount) {
-        for (let sigla in gameData.nazioniDigitateCount) {
-            globalNations[sigla] = (globalNations[sigla] || 0) + gameData.nazioniDigitateCount[sigla];
+    // MAGELLANO (Giro del Mondo): L1, L2, L3, L4, L7
+    if (currentLevel !== 0 && currentLevel !== 5 && currentLevel !== 6 && currentLevel !== 8) {
+        let globalNations = typeof allTimeNazioniCount !== 'undefined' ? { ...allTimeNazioniCount } : {};
+        if (gameData.nazioniDigitateCount) {
+            for (let sigla in gameData.nazioniDigitateCount) {
+                globalNations[sigla] = (globalNations[sigla] || 0) + gameData.nazioniDigitateCount[sigla];
+            }
         }
-    }
-    
-    let minUsoGlobale = 9999;
-    if (typeof globalDb !== 'undefined' && globalDb.length > 0) {
-        globalDb.forEach(n => {
-            let uso = globalNations[n.sigla] || 0;
-            if (uso < minUsoGlobale) minUsoGlobale = uso;
-        });
-    } else {
-        minUsoGlobale = 0;
-    }
+        
+        let minUsoGlobale = 9999;
+        if (typeof globalDb !== 'undefined' && globalDb.length > 0) {
+            globalDb.forEach(n => {
+                let uso = globalNations[n.sigla] || 0;
+                if (uso < minUsoGlobale) minUsoGlobale = uso;
+            });
+        } else {
+            minUsoGlobale = 0;
+        }
 
-    if (minUsoGlobale >= 10) assegnaTier('magellano', minUsoGlobale, 3, "Hai usato tutte le 253 nazioni almeno 10 volte");
-    else if (minUsoGlobale >= 4) assegnaTier('magellano', minUsoGlobale, 2, "Hai usato tutte le 253 nazioni almeno 4 volte");
-    else if (minUsoGlobale >= 1) assegnaTier('magellano', minUsoGlobale, 1, "Hai usato tutte le 253 nazioni almeno 1 volta");
+        if (minUsoGlobale >= 10) assegnaTier('magellano', minUsoGlobale, 3, "Hai usato tutte le 253 nazioni almeno 10 volte");
+        else if (minUsoGlobale >= 4) assegnaTier('magellano', minUsoGlobale, 2, "Hai usato tutte le 253 nazioni almeno 4 volte");
+        else if (minUsoGlobale >= 1) assegnaTier('magellano', minUsoGlobale, 1, "Hai usato tutte le 253 nazioni almeno 1 volta");
+    }
 
     if (storicoAggiornato) localStorage.setItem('geoQuizBadges', JSON.stringify(userBadges));
     
