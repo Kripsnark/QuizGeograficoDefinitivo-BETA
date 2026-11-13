@@ -625,34 +625,40 @@ window.switchLevelTab = function(lvl) {
         // --- INIEZIONE STEMMI LIVELLO STORICO IN FONDO ---
         let badgeHtml = "";
         
-        // 1. Badge Serie Max (Inarrestabile)
-        if (s.bestStreak >= 10) { // La soglia base del Bronzo
-            let tierS = s.bestStreak >= 50 ? 3 : (s.bestStreak >= 25 ? 2 : 1);
-            let colorS = tierS === 3 ? "#ffd700" : (tierS === 2 ? "#c0c0c0" : "#cd7f32");
-            badgeHtml += `<div class="level-badge-row">
-                            <div class="level-badge-inner" style="border-left:3px solid ${colorS};">
-                                <div class="level-badge-left">
-                                    <div class="level-badge-icon" style="color:${colorS};"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
-                                    <span class="level-badge-title" style="color:${colorS};">INARRESTABILE</span>
-                                </div>
-                                <span class="level-badge-record">Record: ${s.bestStreak}</span>
-                             </div>
-                          </div>`;
-        }
+        // SCUDO: Verifica che il file dei badge sia stato caricato correttamente senza errori
+        if (typeof BADGE_INFO !== 'undefined' && typeof SVG_ICONS !== 'undefined') {
+            
+            // 1. Badge Serie Max (Inarrestabile)
+            let inarInfo = BADGE_INFO.inarrestabile;
+            if (inarInfo && s.bestStreak >= inarInfo.tiers[0]) {
+                let tierS = s.bestStreak >= inarInfo.tiers[2] ? 3 : (s.bestStreak >= inarInfo.tiers[1] ? 2 : 1);
+                let colorS = tierS === 3 ? "#ffd700" : (tierS === 2 ? "#c0c0c0" : "#cd7f32");
+                badgeHtml += `<div class="level-badge-row">
+                                <div class="level-badge-inner" style="border-left:3px solid ${colorS};">
+                                    <div class="level-badge-left">
+                                        <div class="level-badge-icon" style="color:${colorS};">${SVG_ICONS.inarrestabile}</div>
+                                        <span class="level-badge-title" style="color:${colorS};">INARRESTABILE</span>
+                                    </div>
+                                    <span class="level-badge-record">Record: ${s.bestStreak}</span>
+                                 </div>
+                              </div>`;
+            }
 
-        // 2. Badge Tempo Medio (Scheggia)
-        if (s.bestAvgTime > 0 && s.bestAvgTime <= 15) { // La soglia base del Bronzo
-            let tierT = s.bestAvgTime <= 5 ? 3 : (s.bestAvgTime <= 10 ? 2 : 1);
-            let colorT = tierT === 3 ? "#ffd700" : (tierT === 2 ? "#c0c0c0" : "#cd7f32");
-            badgeHtml += `<div class="level-badge-row" style="margin-top:5px;">
-                            <div class="level-badge-inner" style="border-left:3px solid ${colorT};">
-                                <div class="level-badge-left">
-                                    <div class="level-badge-icon" style="color:${colorT};"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-                                    <span class="level-badge-title" style="color:${colorT};">SCHEGGIA</span>
-                                </div>
-                                <span class="level-badge-record">Record: ${s.bestAvgTime}s</span>
-                             </div>
-                          </div>`;
+            // 2. Badge Tempo Medio (Scheggia)
+            let scheInfo = BADGE_INFO.scheggia;
+            if (scheInfo && s.bestAvgTime > 0 && s.bestAvgTime <= scheInfo.tiers[0]) {
+                let tierT = s.bestAvgTime <= scheInfo.tiers[2] ? 3 : (s.bestAvgTime <= scheInfo.tiers[1] ? 2 : 1);
+                let colorT = tierT === 3 ? "#ffd700" : (tierT === 2 ? "#c0c0c0" : "#cd7f32");
+                badgeHtml += `<div class="level-badge-row" style="margin-top:5px;">
+                                <div class="level-badge-inner" style="border-left:3px solid ${colorT};">
+                                    <div class="level-badge-left">
+                                        <div class="level-badge-icon" style="color:${colorT};">${SVG_ICONS.scheggia}</div>
+                                        <span class="level-badge-title" style="color:${colorT};">SCHEGGIA</span>
+                                    </div>
+                                    <span class="level-badge-record">Record: ${s.bestAvgTime}s</span>
+                                 </div>
+                              </div>`;
+            }
         }
 
         if (badgeHtml !== "") {
