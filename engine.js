@@ -2456,9 +2456,27 @@ function processaRisposta() {
 
     totalAnswersSubmitted++;
     totalActiveTimeMs += (Date.now() - turnStartTime);
-    let actionTime = ((Date.now() - turnStartTime) / 1000).toFixed(1);
+    let actionTimeNum = (Date.now() - turnStartTime) / 1000;
+    let actionTime = actionTimeNum.toFixed(1);
 
     if (res.isCorrect) {
+        // --- CALCOLO SEGRETO PER I BADGE DEL LIVELLO 6 ---
+        if (currentLevel === 6) {
+            // ARTIFICIERE: si salva a meno di 2 secondi dall'esplosione!
+            if (activeTimeLeft <= 2) {
+                if (typeof gameData !== 'undefined') gameData.sprintBombaExtremis = (gameData.sprintBombaExtremis || 0) + 1;
+                else window.sprintBombaExtremis = (window.sprintBombaExtremis || 0) + 1;
+            }
+            
+            // SANGUE FREDDO: risponde entro 5 secondi netti
+            if (actionTimeNum <= 5) {
+                window.serieFulminea = (window.serieFulminea || 0) + 1;
+                window.maxSerieFulminea = Math.max((window.maxSerieFulminea || 0), window.serieFulminea);
+            } else {
+                window.serieFulminea = 0; // Se ci metti più di 5s, la serie di Sangue Freddo si spezza
+            }
+        }
+        // -------------------------------------------------
         triggerVibration(30);
         playSound("esatto");
         if (useTimer) stopTimer();
@@ -3195,7 +3213,11 @@ gestisciDebito(false);
                     maxPendolare: maxPendolare,
                     maxRotta: maxRotta,
                     nazioniDigitate: Object.keys(nazioniDigitateCount),
-                    nazioniDigitateCount: nazioniDigitateCount
+                    nazioniDigitateCount: nazioniDigitateCount,
+                    totaleNazioni: levelDb.length,
+                    sprintBombaExtremis: window.sprintBombaExtremis || 0,
+                    maxSerieFulminea: window.maxSerieFulminea || 0,
+                    risposteEsotiche: (window.audaceNamesCount || 0) // Contatore che devi creare se vuoi Mete Esotiche
                 });
                 
                 if (earned && earned.length > 0) {

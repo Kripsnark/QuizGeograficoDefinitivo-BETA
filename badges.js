@@ -11,18 +11,23 @@ const SVG_ICONS = {
     infermiere: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path><line x1="12" y1="8" x2="12" y2="14"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg>`,
     veterano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
     lucido: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon></svg>`,
-    infallibile: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>`,
+    infallibile: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
     fenice: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 3.5-5 9 0 4.5 3 6.5 5 11 2-4.5 5-6.5 5-11 0-5.5-5-9-5-9z"></path></svg>`,
     cyborg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>`,
     sestosenso: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
     secondacasa: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 3.5 3.5 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>`,
     blacklist: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`,
     hub: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
-    rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l4-4-4-4"></path><path d="M20 12H11"></path><path d="M7 12h.01"></path><path d="M3 12h.01"></path></svg>`,
+    rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle><line x1="4" y1="4" x2="20" y2="20"></line></svg>`,
     pendolare: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 12 2v4a6 6 0 0 1 6 6h4z"></path><path d="M2 12a10 10 0 0 0 10 10v-4a6 6 0 0 1-6-6H2z"></path><polyline points="2 7 2 12 7 12"></polyline><polyline points="22 17 22 12 17 12"></polyline></svg>`,
     magellano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`,
     ascensione: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"></path></svg>`,
-    cecchino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`
+    cecchino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`,
+    esploratore_esotico: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 22 22 7 12 2"></polygon><polyline points="2 7 12 7 22 7"></polyline><polyline points="12 22 12 7"></polyline><polyline points="7 2 12 7 17 2"></polyline></svg>`,
+    artificiere: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12a10 10 0 0 1 10-10 10 10 0 0 1 10 10"></path><path d="M12 12v6"></path><path d="M8 16h8"></path><circle cx="12" cy="22" r="2"></circle><path d="M12 2l2-2"></path></svg>`,
+    highlander: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9.5 9L14.5 14"></path><path d="M14.5 9L9.5 14"></path></svg>`,
+    sangue_freddo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"></line><line x1="12" y1="2" x2="15" y2="6"></line><line x1="12" y1="2" x2="9" y2="6"></line><line x1="12" y1="22" x2="15" y2="18"></line><line x1="12" y1="22" x2="9" y2="18"></line><line x1="20.66" y1="7" x2="3.34" y2="17"></line><line x1="20.66" y1="7" x2="17.196" y2="10"></line><line x1="20.66" y1="7" x2="17.196" y2="4"></line><line x1="3.34" y1="17" x2="6.804" y2="14"></line><line x1="3.34" y1="17" x2="6.804" y2="20"></line><line x1="3.34" y1="7" x2="20.66" y2="17"></line><line x1="3.34" y1="7" x2="6.804" y2="10"></line><line x1="3.34" y1="7" x2="6.804" y2="4"></line><line x1="20.66" y1="17" x2="17.196" y2="14"></line><line x1="20.66" y1="17" x2="17.196" y2="20"></line></svg>`,
+    decollo_fallito: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>`
 };
 
 const BADGE_INFO = {
@@ -39,6 +44,11 @@ const BADGE_INFO = {
     secondacasa: { title: "Seconda Casa", flavor: "Torni in quel posto in continuazione.", req: "Usa la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
     blacklist: { title: "Blacklist Doganale", flavor: "Ti rifiutano il visto.", req: "Ignora la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
     hub: { title: "Hub Principale", flavor: "Tutti i tuoi voli passano da qui.", req: "La nazione più usata in partita deve doppiare la più ignorata (min. 5 usi).", tiers: [1, 1, 1], isSpecial: true },
+    esploratore_esotico: { title: "Mete Esotiche", flavor: "Perché accontentarsi di Parigi quando puoi andare a Papeete?", req: "Inserisci nazioni di livello superiore (> L1) anche quando le varianti semplici verrebbero accettate.", tiers: [10, 15, 20] },
+    artificiere: { title: "Artificiere", flavor: "Filo rosso o filo blu?", req: "Salvati a meno di 2 secondi dallo scadere del timer fatale nella Morte Improvvisa.", tiers: [3, 7, 12] },
+    highlander: { title: "Highlander", flavor: "Ne resterà soltanto uno.", req: "Sopravvivi ad almeno il 75% delle nazioni nei tre bacini della Morte Improvvisa.", tiers: [1, 2, 3] },
+    sangue_freddo: { title: "Sangue Freddo", flavor: "L'ansia non fa parte del tuo vocabolario.", req: "Rispondi consecutivamente prima dello scoccare del 5° secondo netto nella Morte Improvvisa.", tiers: [10, 20, 35] },
+    decollo_fallito: { title: "Decollo Fallito", flavor: "Una brevissima apparizione radar.", req: "Perdi una partita nei primissimi 10 turni della Morte Improvvisa.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
     infallibile: { title: "Rotta Perfetta", flavor: "Itinerario calcolato al millimetro.", req: "Vinci una partita senza commettere nessun errore.", tiers: [1, 1, 1], isSpecial: true },
     conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
     cyborg: { title: "Autopilota", flavor: "La macchina da quiz perfetta.", req: "Ottieni contemporaneamente l'Oro in Senza Scalo e l'Oro in Teletrasporto.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
@@ -50,7 +60,6 @@ const BADGE_INFO = {
     ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true }
 };
 
-// --- MAPPATURA TROFEI REGIONALI SEGRETI ---
 const CONQUISTE_AREE = {
     "europa": { id: "area_europa", title: "Dominatore del Vecchio Mondo", flavor: "Hai sottomesso l'intero continente antico.", req: "Nomina tutte le nazioni dell'Europa in una singola partita." },
     "asia": { id: "area_asia", title: "Gran Khan", flavor: "Il più vasto impero della storia è tuo.", req: "Nomina tutte le nazioni dell'Asia in una singola partita." },
@@ -96,18 +105,24 @@ Object.values(CONQUISTE_AREE).forEach(data => {
 let userBadges = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};
 
 window.checkBadges = function(gameData) {
-    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali, bestStreakOneLife, punteggio, maxVoloDiLinea, maxBlacklist, top1UsataVal, top1IgnorataVal, maxPendolare, maxRotta } = gameData;
+    let { currentLevel, esatte, isVictory, debitiIniziali, debitiRimasti, bestStreak, avgTime, fotofinish, grazie, cuori, domandeTotali, hasDejavu, erroriTotali, bestStreakOneLife, punteggio, maxVoloDiLinea, maxBlacklist, top1UsataVal, top1IgnorataVal, maxPendolare, maxRotta, risposteEsotiche, sprintBombaExtremis, maxSerieFulminea } = gameData;
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
     const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
-        let isSandbox = [0, 5, 6, 8].includes(currentLevel) && id !== 'vendicatore';
+        // I Livelli 0, 5, 6, 8 (tranne Visto Rinnovato) non influenzano la BACHECA GLOBALE
+        let isSandbox = [0, 5, 6, 8].includes(currentLevel);
+        if (isSandbox && id !== 'vendicatore' && id !== 'highlander' && id !== 'artificiere' && id !== 'sangue_freddo' && id !== 'decollo_fallito') {
+            isSandbox = true; 
+        } else if (id === 'vendicatore' || id === 'highlander' || id === 'artificiere' || id === 'sangue_freddo' || id === 'decollo_fallito') {
+            isSandbox = false; // Questi trofei specifici POSSONO salvare nel globale anche se sono giocati in livelli sandbox
+        }
+        
         let isNewTier = false;
 
         if (!isSandbox) {
             let oldTier = 0;
             let info = BADGE_INFO[id];
-            
             if (!info) return; 
 
             let oldVal = userBadges[id];
@@ -178,8 +193,36 @@ window.checkBadges = function(gameData) {
         else if (debitiSaldati >= 8) assegnaTier('vendicatore', debitiSaldati, 2, "Saldati 8 debiti");
         else if (debitiSaldati >= 4) assegnaTier('vendicatore', debitiSaldati, 1, "Saldati 4 debiti");
     }
+    
+    // Trofei esclusivi L6
+    if (currentLevel === 6) {
+        let bacinoCorrente = (typeof configL6 !== 'undefined') ? configL6.bacino : 'totale';
+        let targetL6 = totaleNazioni || (bacinoCorrente === 'sprint' ? 50 : (bacinoCorrente === 'onu' ? 193 : 253));
+        let pctHighlander = Math.floor((bestStreak / targetL6) * 100);
+        
+        // HIGHLANDER: Progressione per Bacino (Sprint=1, ONU=2, Totale=3)
+        if (pctHighlander >= 75) {
+            if (bacinoCorrente === 'totale' || bacinoCorrente === 'globale') {
+                assegnaTier('highlander', 3, 3, "Sopravvissuto al 75% del database Globale");
+            } else if (bacinoCorrente === 'onu') {
+                assegnaTier('highlander', 2, 2, "Sopravvissuto al 75% del database ONU");
+            } else if (bacinoCorrente === 'sprint') {
+                assegnaTier('highlander', 1, 1, "Sopravvissuto al 75% dello Sprint");
+            }
+        }
+        
+        if (sprintBombaExtremis >= 12) assegnaTier('artificiere', sprintBombaExtremis, 3, "12 disinneschi a meno di 2 sec");
+        else if (sprintBombaExtremis >= 7) assegnaTier('artificiere', sprintBombaExtremis, 2, "7 disinneschi a meno di 2 sec");
+        else if (sprintBombaExtremis >= 3) assegnaTier('artificiere', sprintBombaExtremis, 1, "3 disinneschi a meno di 2 sec");
+        
+        if (maxSerieFulminea >= 35) assegnaTier('sangue_freddo', maxSerieFulminea, 3, "35 risposte di fila sotto i 5s");
+        else if (maxSerieFulminea >= 20) assegnaTier('sangue_freddo', maxSerieFulminea, 2, "20 risposte di fila sotto i 5s");
+        else if (maxSerieFulminea >= 10) assegnaTier('sangue_freddo', maxSerieFulminea, 1, "10 risposte di fila sotto i 5s");
+        
+        if (!isVictory && domandeTotali <= 10) assegnaTier('decollo_fallito', 1, 4, "Sconfitto nei primi 10 turni");
+    }
 
-    if (currentLevel !== 8) {
+    if (currentLevel !== 8 && currentLevel !== 6) {
         let perfectCombosCount = 0;
         if (typeof debugGameLog !== 'undefined') {
             let matches = debugGameLog.match(/\[(400|500)pti\]:\s*✅\s*SUPERATA/g);
@@ -193,6 +236,12 @@ window.checkBadges = function(gameData) {
         if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
         else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
         else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
+        
+        if ((currentLevel === 1 || currentLevel === 2) && risposteEsotiche) {
+            if (risposteEsotiche >= 20) assegnaTier('esploratore_esotico', risposteEsotiche, 3, "Inserite 20 nazioni di Livello superiore");
+            else if (risposteEsotiche >= 15) assegnaTier('esploratore_esotico', risposteEsotiche, 2, "Inserite 15 nazioni di Livello superiore");
+            else if (risposteEsotiche >= 10) assegnaTier('esploratore_esotico', risposteEsotiche, 1, "Inserite 10 nazioni di Livello superiore");
+        }
 
         if (esatte >= 10) {
             if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
@@ -312,12 +361,11 @@ window.checkBadges = function(gameData) {
 window.savedModalState = null;
 
 window.showBadgeDetails = function(badgeId) {
-    // 1. HIJACK DINAMICO: La X ora CHIUDE TUTTO.
     if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal === 'function') {
         window.originalCloseModal = window.closeModal;
         window.closeModal = function() {
-            window.savedModalState = null; // Dimentica lo storico
-            window.originalCloseModal();   // Chiude davvero il modale
+            window.savedModalState = null;
+            window.originalCloseModal();
         };
     }
 
@@ -330,7 +378,16 @@ window.showBadgeDetails = function(badgeId) {
     let tiersHtml = "";
     if (!info.isSpecial) {
         let opText = info.isInverse ? "Massimo" : "Almeno";
-        let formatVal = (val) => badgeId === 'scheggia' ? val + "s" : val;
+        
+        let formatVal = (val) => {
+            if (badgeId === 'scheggia') return val + "s";
+            if (badgeId === 'highlander') {
+                if (val === 1) return "Sprint (75%)";
+                if (val === 2) return "ONU (75%)";
+                if (val === 3) return "Globale (75%)";
+            }
+            return val;
+        };
 
         tiersHtml = `
         <div style="background:#1a1a1a; padding:10px; border-radius:6px; text-align:left; margin-top:15px; font-size:14px; border:1px solid #333;">
@@ -342,7 +399,13 @@ window.showBadgeDetails = function(badgeId) {
     
     let recordHtml = "";
     if (isUnlocked) {
-        let recordVal = (badgeId === 'scheggia') ? count + "s" : count;
+        let recordVal = count;
+        if (badgeId === 'scheggia') recordVal = count + "s";
+        else if (badgeId === 'highlander') {
+            if (count === 1) recordVal = "Sprint (75%)";
+            else if (count === 2) recordVal = "ONU (75%)";
+            else if (count === 3) recordVal = "Globale (75%)";
+        }
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#4caf50; letter-spacing:1px;">RECORD ATTUALE: ${recordVal}</div>`;
     } else {
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#f44336; letter-spacing:1px;">NON ANCORA SBLOCCATO</div>`;
@@ -393,7 +456,6 @@ window.restoreModalState = function() {
         if (modalTitle) modalTitle.innerText = window.savedModalState.title;
         
         if (modalBody) {
-            // 2. TRUCCO OTTICO: Nascondiamo il testo, carichiamo, e poi lo facciamo riapparire!
             modalBody.style.opacity = '0';
             modalBody.innerHTML = window.savedModalState.html;
             let targetId = window.savedModalState.badgeId;
@@ -404,12 +466,11 @@ window.restoreModalState = function() {
                     targetElement.scrollIntoView({ behavior: "instant", block: "center" });
                 }
                 
-                // Riappare morbido con dissolvenza, zero scatti a schermo.
                 modalBody.style.transition = "opacity 0.2s ease-in-out";
                 modalBody.style.opacity = '1';
                 
                 setTimeout(() => { modalBody.style.transition = ""; }, 200);
-            }, 20); // Bastano 20 millisecondi di copertura invisibile
+            }, 20);
         }
         
         window.savedModalState = null; 
@@ -493,6 +554,11 @@ window.renderMedagliere = function() {
         let descColor = hasBadge ? (info.isSpecial ? "#0288d1" : "#333") : "#555";
         
         if (b === 'scheggia' && count !== undefined && count !== 9999) recordText = `Record: ${count}s`;
+        if (b === 'highlander' && count !== undefined && count !== 9999) {
+            if (count === 1) recordText = "Record: Sprint";
+            else if (count === 2) recordText = "Record: ONU";
+            else if (count === 3) recordText = "Record: Globale";
+        }
         
         html += `<div class="medagliere-item" onclick="window.showBadgeDetails('${b}')" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity}; cursor:pointer; transition:transform 0.1s;">
                     <div class="medagliere-icon" style="color:${color};">${SVG_ICONS[b]}</div>
