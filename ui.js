@@ -625,10 +625,9 @@ window.switchLevelTab = function(lvl) {
         // --- INIEZIONE STEMMI LIVELLO STORICO IN FONDO ---
         let badgeHtml = "";
         
-        // SCUDO: Verifica che il file dei badge sia stato caricato correttamente senza errori
         if (typeof BADGE_INFO !== 'undefined' && typeof SVG_ICONS !== 'undefined') {
             
-            // 1. Badge Serie Max (Inarrestabile)
+            // 1. Badge Serie Max (Senza Scalo)
             let inarInfo = BADGE_INFO.inarrestabile;
             if (inarInfo && s.bestStreak >= inarInfo.tiers[0]) {
                 let tierS = s.bestStreak >= inarInfo.tiers[2] ? 3 : (s.bestStreak >= inarInfo.tiers[1] ? 2 : 1);
@@ -637,14 +636,14 @@ window.switchLevelTab = function(lvl) {
                                 <div class="level-badge-inner" style="border-left:3px solid ${colorS};">
                                     <div class="level-badge-left">
                                         <div class="level-badge-icon" style="color:${colorS};">${SVG_ICONS.inarrestabile}</div>
-                                        <span class="level-badge-title" style="color:${colorS};">INARRESTABILE</span>
+                                        <span class="level-badge-title" style="color:${colorS};">${inarInfo.title.toUpperCase()}</span>
                                     </div>
                                     <span class="level-badge-record">Record: ${s.bestStreak}</span>
                                  </div>
                               </div>`;
             }
 
-            // 2. Badge Tempo Medio (Scheggia)
+            // 2. Badge Tempo Medio (Teletrasporto)
             let scheInfo = BADGE_INFO.scheggia;
             if (scheInfo && s.bestAvgTime > 0 && s.bestAvgTime <= scheInfo.tiers[0]) {
                 let tierT = s.bestAvgTime <= scheInfo.tiers[2] ? 3 : (s.bestAvgTime <= scheInfo.tiers[1] ? 2 : 1);
@@ -653,7 +652,7 @@ window.switchLevelTab = function(lvl) {
                                 <div class="level-badge-inner" style="border-left:3px solid ${colorT};">
                                     <div class="level-badge-left">
                                         <div class="level-badge-icon" style="color:${colorT};">${SVG_ICONS.scheggia}</div>
-                                        <span class="level-badge-title" style="color:${colorT};">SCHEGGIA</span>
+                                        <span class="level-badge-title" style="color:${colorT};">${scheInfo.title.toUpperCase()}</span>
                                     </div>
                                     <span class="level-badge-record">Record: ${s.bestAvgTime}s</span>
                                  </div>

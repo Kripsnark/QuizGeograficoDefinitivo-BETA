@@ -15,7 +15,7 @@ const SVG_ICONS = {
     fenice: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5 3.5-5 9 0 4.5 3 6.5 5 11 2-4.5 5-6.5 5-11 0-5.5-5-9-5-9z"></path></svg>`,
     cyborg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>`,
     sestosenso: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
-    vololinea: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 3.5 3.5 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>`,
+    secondacasa: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 3.5 3.5 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>`,
     blacklist: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`,
     hub: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
     rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l4-4-4-4"></path><path d="M20 12H11"></path><path d="M7 12h.01"></path><path d="M3 12h.01"></path></svg>`,
@@ -26,28 +26,28 @@ const SVG_ICONS = {
 };
 
 const BADGE_INFO = {
-    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti nella modalità Recupero.", tiers: [4, 8, 14] },
-    conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
-    maratoneta: { title: "Millemiglia", flavor: "Viaggi in continuazione senza stancarti.", req: "Raggiungi un alto numero di risposte esatte in una singola partita.", tiers: [16, 31, 61] },
-    inarrestabile: { title: "Senza Scalo", flavor: "Un volo diretto lunghissimo.", req: "Mantieni una lunga serie di risposte esatte consecutive.", tiers: [15, 30, 50] },
-    scheggia: { title: "Teletrasporto", flavor: "Non usi l'aereo, ti teletrasporti.", req: "Mantieni un tempo medio di risposta bassissimo a fine partita.", tiers: [15, 10, 5], isInverse: true },
-    fotofinish: { title: "Scatto al Gate", flavor: "Passi i controlli all'ultimo secondo.", req: "Salvati dallo scadere del timer negli ultimi istanti per più volte.", tiers: [1, 3, 5] },
-    grazia: { title: "Viaggio in Solitaria", flavor: "Fai a meno della guida turistica.", req: "Supera i turni combo senza ricevere Grazie dal sistema.", tiers: [2, 1, 0], isInverse: true },
-    infermiere: { title: "Assicurazione di Viaggio", flavor: "Copertura perfetta per gli imprevisti.", req: "Accumula cuori extra totalizzando punti a scaglioni di 750.", tiers: [3, 5, 10] },
-    veterano: { title: "Passaporto Pieno", flavor: "Riempi il passaporto di timbri.", req: "Gioca un altissimo numero di domande totali in una partita.", tiers: [36, 80, 150] },
-    lucido: { title: "GPS Umano", flavor: "Non passi mai due volte dalla stessa strada.", req: "Gioca almeno 50 domande senza mai subire la penalità pigrizia (Déjà vu).", tiers: [1, 1, 1], isSpecial: true },
+    veterano: { title: "Passaporto Pieno", flavor: "Riempi il passaporto di timbri.", req: "Gioca un alto numero di domande totali in una partita.", tiers: [36, 80, 150] },
+    maratoneta: { title: "Millemiglia", flavor: "Viaggi in continuazione senza stancarti.", req: "Accumula risposte esatte in una singola partita.", tiers: [16, 31, 61] },
+    inarrestabile: { title: "Senza Scalo", flavor: "Un volo diretto lunghissimo.", req: "Mantieni una lunga serie di risposte esatte consecutive in una partita.", tiers: [15, 30, 50] },
+    scheggia: { title: "Teletrasporto", flavor: "Non usi l'aereo, ti teletrasporti.", req: "Mantieni un tempo medio di risposta fulmineo a fine partita.", tiers: [15, 10, 5], isInverse: true },
+    infermiere: { title: "Assicurazione di Viaggio", flavor: "Copertura perfetta per gli imprevisti.", req: "Accumula cuori extra totalizzando punti in una partita.", tiers: [3, 5, 10] },
+    fenice: { title: "Sopravvissuto", flavor: "Perso nel nulla ma continui ad andare.", req: "Costruisci una serie di risposte esatte avendo un solo cuore rimasto in una partita.", tiers: [3, 5, 10] },
+    grazia: { title: "Viaggio in Solitaria", flavor: "Fai a meno della guida turistica.", req: "Supera i turni combo senza ricevere Grazie dal sistema in una partita.", tiers: [2, 1, 0], isInverse: true },
+    fotofinish: { title: "Scatto al Gate", flavor: "Passi i controlli all'ultimo secondo.", req: "Salvati dallo scadere del timer negli ultimi istanti in una partita.", tiers: [1, 3, 5] },
+    cecchino: { title: "Sestante d'Oro", flavor: "Navighi tra le opzioni con precisione assoluta.", req: "Ottieni punteggio pieno in domande combo da almeno 4 risposte in una partita.", tiers: [2, 5, 10] },
+    lucido: { title: "GPS Umano", flavor: "Non passi mai due volte dalla stessa strada.", req: "Gioca almeno 50 domande senza mai subire la penalità pigrizia (Déjà vu) in una partita.", tiers: [1, 1, 1], isSpecial: true },
+    secondacasa: { title: "Seconda Casa", flavor: "Torni in quel posto in continuazione.", req: "Usa la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
+    blacklist: { title: "Blacklist Doganale", flavor: "Ti rifiutano il visto.", req: "Ignora la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
+    hub: { title: "Hub Principale", flavor: "Tutti i tuoi voli passano da qui.", req: "La nazione più usata in partita deve doppiare la più ignorata (min. 5 usi).", tiers: [1, 1, 1], isSpecial: true },
     infallibile: { title: "Rotta Perfetta", flavor: "Itinerario calcolato al millimetro.", req: "Vinci una partita senza commettere nessun errore.", tiers: [1, 1, 1], isSpecial: true },
-    fenice: { title: "Sopravvissuto", flavor: "Perso nel nulla ma continui ad andare.", req: "Costruisci una serie di risposte esatte avendo un solo cuore rimasto.", tiers: [3, 5, 10] },
+    conquistatore: { title: "Esploratore", flavor: "Hai mappato una nuova area.", req: "Vinci una partita superando il punteggio target.", tiers: [1, 3, 10] },
     cyborg: { title: "Autopilota", flavor: "La macchina da quiz perfetta.", req: "Ottieni contemporaneamente l'Oro in Senza Scalo e l'Oro in Teletrasporto.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
     sestosenso: { title: "Volo alla Cieca", flavor: "Navighi a intuito senza guardare.", req: "Ottieni la Vittoria Leggendaria (10.000 pt) nel Livello 7.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },	
-    vololinea: { title: "Volo di Linea", flavor: "Prendi sempre la stessa tratta.", req: "Usa la stessa nazione ripetutamente nella stessa partita.", tiers: [4, 7, 10] },
-    blacklist: { title: "Blacklist Doganale", flavor: "Ti rifiutano il visto in continuazione.", req: "Ignora la stessa nazione ripetutamente in una singola partita.", tiers: [4, 7, 10] },
-    hub: { title: "Hub Principale", flavor: "Tutti i tuoi voli passano da qui.", req: "La nazione più usata in partita deve doppiare la più ignorata (min. 5 usi).", tiers: [1, 1, 1], isSpecial: true },
-    rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive (Storico).", tiers: [1, 1, 1], isSpecial: true },
-    pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive (Storico).", tiers: [3, 7, 20] },
-    magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco (Statistica Globale).", tiers: [1, 4, 10] },
-    ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },
-    cecchino: { title: "Sestante d'Oro", flavor: "Navighi tra le opzioni con precisione assoluta.", req: "Ottieni punteggio pieno in domande combo da almeno 4 risposte.", tiers: [2, 5, 10] }
+    magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco nel corso della tua carriera.", tiers: [1, 4, 10] },
+    pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive.", tiers: [3, 7, 20] },
+    rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive.", tiers: [1, 1, 1], isSpecial: true },
+    vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti all'interno di una singola sessione di Recupero.", tiers: [4, 8, 14] },
+    ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true }
 };
 
 // --- MAPPATURA TROFEI REGIONALI SEGRETI ---
@@ -108,7 +108,6 @@ window.checkBadges = function(gameData) {
             let oldTier = 0;
             let info = BADGE_INFO[id];
             
-            // IL PARACADUTE: Se ti scordi di aggiungere un badge al dizionario, non crasha più!
             if (!info) return; 
 
             let oldVal = userBadges[id];
@@ -144,9 +143,6 @@ window.checkBadges = function(gameData) {
         sessionEarned.push({ id, tier, motivo, isNewTier }); 
     };
 
-    // ==========================================
-    // 1. TROFEI UNIVERSALI
-    // ==========================================
     if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
     else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
     else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
@@ -176,9 +172,6 @@ window.checkBadges = function(gameData) {
         }
     }
 
-    // ==========================================
-    // 2. TROFEO ESCLUSIVO LIVELLO 8
-    // ==========================================
     if (currentLevel === 8) {
         let debitiSaldati = debitiIniziali - debitiRimasti;
         if (debitiSaldati >= 14) assegnaTier('vendicatore', debitiSaldati, 3, "Saldati 14 debiti");
@@ -186,9 +179,6 @@ window.checkBadges = function(gameData) {
         else if (debitiSaldati >= 4) assegnaTier('vendicatore', debitiSaldati, 1, "Saldati 4 debiti");
     }
 
-    // ==========================================
-    // 3. TROFEI STANDARD E COMBO
-    // ==========================================
     if (currentLevel !== 8) {
         let perfectCombosCount = 0;
         if (typeof debugGameLog !== 'undefined') {
@@ -228,9 +218,9 @@ window.checkBadges = function(gameData) {
             else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
         }
 
-        if (maxVoloDiLinea >= 10) assegnaTier('vololinea', maxVoloDiLinea, 3, "Nazione usata 10 volte");
-        else if (maxVoloDiLinea >= 7) assegnaTier('vololinea', maxVoloDiLinea, 2, "Nazione usata 7 volte");
-        else if (maxVoloDiLinea >= 4) assegnaTier('vololinea', maxVoloDiLinea, 1, "Nazione usata 4 volte");
+        if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte");
+        else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte");
+        else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte");
 
         if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
         else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
@@ -292,9 +282,6 @@ window.checkBadges = function(gameData) {
         }
     } 
 
-    // ==========================================
-    // 4. GIRO DEL MONDO
-    // ==========================================
     let globalNations = typeof allTimeNazioniCount !== 'undefined' ? { ...allTimeNazioniCount } : {};
     
     if (gameData.nazioniDigitateCount) {
@@ -322,10 +309,18 @@ window.checkBadges = function(gameData) {
     return sessionEarned; 
 };
 
-// Variabile globale per salvare lo stato del modale
 window.savedModalState = null;
 
 window.showBadgeDetails = function(badgeId) {
+    // 1. HIJACK DINAMICO: La X ora CHIUDE TUTTO.
+    if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal === 'function') {
+        window.originalCloseModal = window.closeModal;
+        window.closeModal = function() {
+            window.savedModalState = null; // Dimentica lo storico
+            window.originalCloseModal();   // Chiude davvero il modale
+        };
+    }
+
     let info = BADGE_INFO[badgeId];
     let count = userBadges[badgeId];
     let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
@@ -353,7 +348,7 @@ window.showBadgeDetails = function(badgeId) {
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#f44336; letter-spacing:1px;">NON ANCORA SBLOCCATO</div>`;
     }
 
-    let backBtnHtml = `<button onclick="window.restoreModalState()" style="margin-top:20px; width:100%; padding:12px; background:#333; color:#fff; border:none; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer;">⬅️ TORNA ALLO STORICO</button>`;
+    let backBtnHtml = `<button type="button" onclick="window.restoreModalState()" style="margin-top:20px; width:100%; padding:12px; background:#333; color:#fff; border:none; border-radius:4px; font-weight:bold; font-size:14px; cursor:pointer;">⬅️ TORNA ALLO STORICO</button>`;
 
     let html = `
     <div style="text-align:center;">
@@ -370,16 +365,21 @@ window.showBadgeDetails = function(badgeId) {
     
     let modalBody = document.getElementById('modal-body');
     let modalTitle = document.getElementById('modal-title');
+    let overlay = document.getElementById('modal-overlay');
     
     if (modalBody && modalTitle) {
         if (!window.savedModalState) {
             window.savedModalState = {
                 title: modalTitle.innerText,
-                html: modalBody.innerHTML
+                html: modalBody.innerHTML,
+                badgeId: badgeId 
             };
         }
         modalTitle.innerText = info.title.toUpperCase();
         modalBody.innerHTML = html;
+        
+        modalBody.scrollTop = 0;
+        if (overlay) overlay.scrollTop = 0;
     } else {
         openModal(info.title.toUpperCase(), html);
     }
@@ -389,29 +389,39 @@ window.restoreModalState = function() {
     if (window.savedModalState) {
         let modalBody = document.getElementById('modal-body');
         let modalTitle = document.getElementById('modal-title');
+        
         if (modalTitle) modalTitle.innerText = window.savedModalState.title;
-        if (modalBody) modalBody.innerHTML = window.savedModalState.html;
+        
+        if (modalBody) {
+            // 2. TRUCCO OTTICO: Nascondiamo il testo, carichiamo, e poi lo facciamo riapparire!
+            modalBody.style.opacity = '0';
+            modalBody.innerHTML = window.savedModalState.html;
+            let targetId = window.savedModalState.badgeId;
+            
+            setTimeout(() => {
+                let targetElement = document.querySelector(`[onclick*="showBadgeDetails('${targetId}')"]`);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: "instant", block: "center" });
+                }
+                
+                // Riappare morbido con dissolvenza, zero scatti a schermo.
+                modalBody.style.transition = "opacity 0.2s ease-in-out";
+                modalBody.style.opacity = '1';
+                
+                setTimeout(() => { modalBody.style.transition = ""; }, 200);
+            }, 20); // Bastano 20 millisecondi di copertura invisibile
+        }
+        
         window.savedModalState = null; 
     } else {
-        if (typeof closeModal === 'function') closeModal();
+        if (typeof window.originalCloseModal === 'function') window.originalCloseModal();
+        else if (typeof closeModal === 'function') closeModal();
     }
 };
-
-if (typeof window.originalCloseModal === 'undefined' && typeof window.closeModal === 'function') {
-    window.originalCloseModal = window.closeModal;
-    window.closeModal = function() {
-        if (window.savedModalState) {
-            window.restoreModalState();
-        } else {
-            window.originalCloseModal();
-        }
-    };
-}
 
 window.renderBadgeNotification = function(earnedArray) {
     if (!earnedArray || earnedArray.length === 0) return "";
     
-    // Filtro vitale: previene i crash grafici se un badge è assente
     let validEarned = earnedArray.filter(b => BADGE_INFO[b.id]);
     if (validEarned.length === 0) return "";
     
