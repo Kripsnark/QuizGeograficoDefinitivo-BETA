@@ -9,7 +9,7 @@ AG	Antigua e Barbuda	Antigua, Barbuda		Saint John's	St John's, Saint Johns, St J
 SA	Arabia Saudita	Saudi Arabia, Arabia		Riyad	Riad	Rii Ad	giordania, iraq, kuwait, qatar, emirati arabi uniti, oman, yemen, Bahrein, mare	Asia, Medio Oriente, Penisola Arabica	verde	bianco	scritta, arma, spada		lenzuolo verde	1
 AR	Argentina			Buenos Aires			uruguay, brasile, paraguay, bolivia, cile, mare	Sud America, Ande	azzurro, bianco	giallo	sole		strisce orizzontali	1
 AM	Armenia	Menia		Erevan			georgia, azerbaigian, iran, turchia	Asia, Caucaso	rosso, blu, arancione				strisce orizzontali	2
-AW	Aruba			Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant, brani estate			Nord America, caraibi	azzurro, giallo, rosso		stella	x	stella rossa	3
+AW	Aruba			Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant, brani estate, ora einstein			Nord America, caraibi	azzurro, giallo, rosso		stella	x	stella rossa	3
 AH	Ascensione	Isola di Ascensione		Georgetown				Africa, Africa Occidentale	blu		emblema nazionale, tartaruga, animale, union jack	x		3
 AU	Australia			Canberra				Oceania	blu	bianco	union jack,croce del sud, stella		stella bianca	1
 AT	Austria			Vienna			cechia, slovacchia, ungheria, slovenia, italia, liechtenstein, svizzera, germania	Europa	rosso, bianco				strisce orizzontali	1
@@ -62,7 +62,7 @@ SV	El Salvador	Salvador		San Salvador	s salvador		honduras, guatemala, mare	Nord
 AE	Emirati Arabi Uniti	Emirati Arabi, Emirati, mercati arabi uniti, mercati arabi		Abu Dhabi	Abu Dabi		arabia saudita, oman, mare	Asia, Medio Oriente, Penisola Arabica	rosso, verde, bianco, nero				Banda verticale a lato	1
 ER	Eritrea			Asmara			sudan, gibuti, etiopia, mare	africa, africa orientale, Corno d'Africa	rosso, verde, azzurro	giallo	emblema nazionale			2
 EE	Estonia	Tonia		Tallinn			lettonia, russia, mare	Europa, Europa Settentrionale, Paesi Baltici	azzurro, nero, bianco				strisce orizzontali	1
-SZ	eSwatini	*Swaziland, e suatini, swatini, eduatini, e swattini		Mbabane	Babbane, un babbane, banane		sudafrica, mozambico	africa, africa meridionale	azzurro, giallo, rosso, nero, bianco		lancia, arma, scudo		strisce orizzontali	2
+SZ	eSwatini	*Swaziland, e suatini, swatini, eduatini, e swattini, sguattini		Mbabane	Babbane, un babbane, banane		sudafrica, mozambico	africa, africa meridionale	azzurro, giallo, rosso, nero, bianco		lancia, arma, scudo		strisce orizzontali	2
 ET	Etiopia			Addis Abeba	Sapeva		somalia, kenya, sudan del sud, sudan, eritrea, gibuti	africa, africa orientale, Corno d'Africa	verde, giallo, rosso	blu, giallo	emblema nazionale, stella		strisce orizzontali, stella gialla	1
 FJ	Figi	Gigi, Fiji, Luigi, Pigi, sigi		Suva				Oceania	azzurro		emblema nazionale, union jack, albero, palma			2
 PH	Filippine			Manila				Asia, Sud-Est Asiatico	bianco, rosso, blu	giallo	emblema nazionale, stella, sole		triangolo a sinistra bianco, stella gialla	1
@@ -207,7 +207,7 @@ RS	Serbia			Belgrado	Grado		kosovo, montenegro, bosnia ed erzegovina, croazia, u
 SC	Seychelles	Seiscel		Victoria				africa, africa orientale	blu, giallo, rosso, bianco, verde				taglio diagonale	2
 SL	Sierra Leone			Freetown			guinea, liberia, mare	africa, africa occidentale	verde, bianco, azzurro				strisce orizzontali	2
 SG	Singapore			Singapore			malaysia, mare	Asia, Sud-Est Asiatico	rosso, bianco		mezzaluna, stella		strisce orizzontali, mezzaluna bianca, stella bianca	1
-STE	Sint Eustatius	S eustatius, sintestatius, sintastatius, sinteu status, interstatius, Status, sinteu status		Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant, brani estate			Nord America, caraibi	rosso, blu, bianco	verde, bianco	stella	x	stella gialla	3
+STE	Sint Eustatius	S eustatius, sintestatius, sintastatius, sinteu status, interstatius, Status, sinteu status		Oranjestad	oranistad, oranistadt, orangestar, Orari estad, Orangestadt, oranistag, orari estate, orari istant, brani estate, ora einstein			Nord America, caraibi	rosso, blu, bianco	verde, bianco	stella	x	stella gialla	3
 SX	Sint Maarten	S Maarten, Sint Marten, synth martin, sean marten		Philipsburg	Philips burger, flixbus		saint-martin, mare	Nord America, caraibi	bianco, rosso, blu		emblema nazionale	x	triangolo a sinistra bianco	3
 SY	Siria			Damasco			turchia, iraq, giordania, israele, libano, mare	Asia, medio oriente	verde, bianco, nero	rosso	stella		strisce orizzontali, stella rossa	1
 SK	Slovacchia			Bratislava			cechia, polonia, ucraina, ungheria, austria	europa	bianco, blu, rosso		emblema nazionale		strisce orizzontali	1
@@ -233,7 +233,7 @@ TL	Timor Est			Dili			indonesia, mare	Asia, Sud-Est Asiatico	nero, giallo, rosso
 TG	Togo	Dogo, tg		Lomé	Lume, elome		ghana, burkina faso, benin, mare	africa, africa occidentale, Golfo di Guinea	rosso, verde, giallo	bianco	stella		stella bianca, Riquadro in alto a sinistra	2
 TK	Tokelau	ho detto che lau, togelao		Fakaofo	Faco, Vaccarofo, acaofo, fuckofo			Oceania	blu, giallo	bianco	stella, croce del sud	x	stella bianca, lenzuolo blu	3
 TO	Tonga			Nuku'Alofa	Nuku alofa, Mutualopa, Nukolov, nucu alofa, nuco a lo fa, nupualofa, nucu a lofa			Oceania	rosso, bianco	rosso	croce simmetrica		Riquadro in alto a sinistra	2
-TT	Trinidad e Tobago	Trinidad, Tobago, trinida de tobago		Port of Spain	Work of spain			Nord America, caraibi	rosso, bianco, nero				taglio diagonale	2
+TT	Trinidad e Tobago	Trinidad, Tobago, trinida de tobago, treni da detobago		Port of Spain	Work of spain			Nord America, caraibi	rosso, bianco, nero				taglio diagonale	2
 TA	Tristan da Cunha	Tristan	Trìstan da Cùgna	Edinburgh of the Seven Seas	Edimburgh	Èdinbrha of de Sèven Sìis		africa, Africa occidentale	blu		emblema nazionale, animale, union jack	x	strisce orizzontali	3
 TN	Tunisia			Tunisi			algeria, libia, mare	Africa, Africa settentrionale, Mediterraneo	rosso, bianco	rosso, bianco	mezzaluna, stella, cerchio		cerchio bianco, mezzaluna rossa, stella rossa, lenzuolo rosso	1
 TR	Turchia			Ankara			azerbaigian, grecia, bulgaria, georgia, armenia, iran, iraq, siria, mare	Asia, Mediterraneo	rosso, bianco	bianco	mezzaluna, stella		mezzaluna bianca, stella bianca, lenzuolo rosso	1
