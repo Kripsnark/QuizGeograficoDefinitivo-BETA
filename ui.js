@@ -637,40 +637,46 @@ window.switchLevelTab = function(lvl) {
                 isSandboxBadge = false; 
             }
 
-            let count = isSandboxBadge ? sandboxUserB[badgeId] : globalUserB[badgeId];
-            let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
-            
-            // SE NON È SBLOCCATO, SALTA E NON LO DISEGNA
-            if (!isUnlocked) return;
+// Estrazione intelligente del valore
+                let recordItem = isSandboxBadge ? sandboxUserB[badgeId] : globalUserB[badgeId];
+                let count = typeof recordItem === 'object' && recordItem !== null ? recordItem.valore : recordItem;
+                let extra = typeof recordItem === 'object' && recordItem !== null ? recordItem.extra : null;
+                
+                let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
+                
+                if (!isUnlocked) return;
 
-            let tier = 0;
-            let color = "#333"; 
-            let bgColor = "transparent";
-            let borderColor = "#333";
-            
-            if (info.isSpecial) {
-                tier = 4;
-                color = "#4fc3f7"; borderColor = "#4fc3f7"; bgColor = "rgba(79, 195, 247, 0.08)";
-            } else if (info.isInverse) {
-                if (count <= info.tiers[2]) { tier = 3; color = "#ffd700"; borderColor = "#ffd700"; bgColor = "rgba(255, 215, 0, 0.08)"; }
-                else if (count <= info.tiers[1]) { tier = 2; color = "#c0c0c0"; borderColor = "#c0c0c0"; bgColor = "rgba(192, 192, 192, 0.08)"; }
-                else if (count <= info.tiers[0]) { tier = 1; color = "#cd7f32"; borderColor = "#cd7f32"; bgColor = "rgba(205, 127, 50, 0.08)"; }
-            } else {
-                if (count >= info.tiers[2]) { tier = 3; color = "#ffd700"; borderColor = "#ffd700"; bgColor = "rgba(255, 215, 0, 0.08)"; }
-                else if (count >= info.tiers[1]) { tier = 2; color = "#c0c0c0"; borderColor = "#c0c0c0"; bgColor = "rgba(192, 192, 192, 0.08)"; }
-                else if (count >= info.tiers[0]) { tier = 1; color = "#cd7f32"; borderColor = "#cd7f32"; bgColor = "rgba(205, 127, 50, 0.08)"; }
-            }
+                let tier = 0;
+                let color = "#333"; 
+                let bgColor = "transparent";
+                let borderColor = "#333";
+                
+                if (info.isSpecial) {
+                    tier = 4;
+                    color = "#4fc3f7"; borderColor = "#4fc3f7"; bgColor = "rgba(79, 195, 247, 0.08)";
+                } else if (info.isInverse) {
+                    if (count <= info.tiers[2]) { tier = 3; color = "#ffd700"; borderColor = "#ffd700"; bgColor = "rgba(255, 215, 0, 0.08)"; }
+                    else if (count <= info.tiers[1]) { tier = 2; color = "#c0c0c0"; borderColor = "#c0c0c0"; bgColor = "rgba(192, 192, 192, 0.08)"; }
+                    else if (count <= info.tiers[0]) { tier = 1; color = "#cd7f32"; borderColor = "#cd7f32"; bgColor = "rgba(205, 127, 50, 0.08)"; }
+                } else {
+                    if (count >= info.tiers[2]) { tier = 3; color = "#ffd700"; borderColor = "#ffd700"; bgColor = "rgba(255, 215, 0, 0.08)"; }
+                    else if (count >= info.tiers[1]) { tier = 2; color = "#c0c0c0"; borderColor = "#c0c0c0"; bgColor = "rgba(192, 192, 192, 0.08)"; }
+                    else if (count >= info.tiers[0]) { tier = 1; color = "#cd7f32"; borderColor = "#cd7f32"; bgColor = "rgba(205, 127, 50, 0.08)"; }
+                }
 
-            let recordText = "SBLOCCATO";
-            if (info.isSpecial) recordText = "SBLOCCATO";
-            else if (badgeId === 'scheggia') recordText = `RECORD: ${count}s`;
-            else if (badgeId === 'highlander') {
-                if (count === 1) recordText = "RECORD: SPRINT";
-                else if (count === 2) recordText = "RECORD: ONU";
-                else if (count === 3) recordText = "RECORD: GLOBALE";
-            }
-            else recordText = `RECORD: ${count}`;
-
+                // FORMATTAZIONE RECORD CON IL NOME DELLA NAZIONE
+                let recordText = "SBLOCCATO";
+                if (info.isSpecial) {
+                    recordText = extra ? `(${extra})` : "SBLOCCATO";
+                } else if (badgeId === 'scheggia') {
+                    recordText = `RECORD: ${count}s`;
+                } else if (badgeId === 'highlander') {
+                    if (count === 1) recordText = "RECORD: SPRINT";
+                    else if (count === 2) recordText = "RECORD: ONU";
+                    else if (count === 3) recordText = "RECORD: GLOBALE";
+                } else {
+                    recordText = extra ? `${count} (${extra})` : `RECORD: ${count}`;
+                }
             badgeHtml += `
             <div style="margin-top:6px;">
                 <div style="border-left:4px solid ${borderColor}; background-color: ${bgColor}; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; border-radius:4px; border:1px solid #333;">

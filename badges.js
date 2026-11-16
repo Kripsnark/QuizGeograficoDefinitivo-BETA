@@ -109,9 +109,9 @@ window.checkBadges = function(gameData) {
     let sessionEarned = []; 
     let storicoAggiornato = false;
 
-    const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, isCumulative = false) => {
+    // Aggiunto parametro "extraData" per salvare il nome della nazione
+    const assegnaTier = (id, rawValue, tier, motivo, isInverse = false, extraData = null) => {
         let isSandbox = [0, 5, 6, 8].includes(currentLevel);
-        // I trofei esclusivi L6 e Vendicatore si salvano nel Globale, anche se nascono nei Sandbox
         if (isSandbox && ['vendicatore', 'highlander', 'artificiere', 'sangue_freddo', 'decollo_fallito'].includes(id)) {
             isSandbox = false; 
         }
@@ -119,16 +119,16 @@ window.checkBadges = function(gameData) {
         let info = BADGE_INFO[id];
         if (!info) return; 
 
-        // Scegliamo dove leggere/salvare il trofeo: Globale o Isolato per Livello
         let targetCache = isSandbox ? (JSON.parse(localStorage.getItem('geoQuizBadges_L' + currentLevel)) || {}) : userBadges;
 
+        // Estrazione del vecchio valore (che ora potrebbe essere un oggetto)
+        let oldRecord = targetCache[id];
+        let oldVal = typeof oldRecord === 'object' && oldRecord !== null ? oldRecord.valore : oldRecord;
         let oldTier = 0;
-        let oldVal = targetCache[id];
 
         if (oldVal !== undefined && oldVal !== 9999 && oldVal !== 0) {
-            if (info.isSpecial) {
-                oldTier = 4;
-            } else if (isInverse) {
+            if (info.isSpecial) oldTier = 4;
+            else if (isInverse) {
                 if (oldVal <= info.tiers[2]) oldTier = 3;
                 else if (oldVal <= info.tiers[1]) oldTier = 2;
                 else if (oldVal <= info.tiers[0]) oldTier = 1;
@@ -140,54 +140,51 @@ window.checkBadges = function(gameData) {
         }
 
         let isNewTier = false;
-        if (tier > oldTier) {
-            isNewTier = true; // Questo fa finalmente apparire la targhetta "NUOVO"!
-        }
+        if (tier > oldTier) isNewTier = true;
 
         let currentBest = oldVal !== undefined ? oldVal : (isInverse ? 9999 : 0);
         let updated = false;
         
-        if (isCumulative) {
-            targetCache[id] = currentBest + rawValue;
-            updated = true;
-        } else if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
-            targetCache[id] = rawValue;
+        if ((!isInverse && rawValue > currentBest) || (isInverse && rawValue < currentBest)) {
+            // Se c'è un extraData (es. il nome della nazione), salva l'oggetto completo
+            if (extraData) {
+                targetCache[id] = { valore: rawValue, extra: extraData };
+            } else {
+                targetCache[id] = rawValue;
+            }
             updated = true;
         }
 
         if (updated) {
-            if (isSandbox) {
-                localStorage.setItem('geoQuizBadges_L' + currentLevel, JSON.stringify(targetCache));
-            } else {
-                storicoAggiornato = true;
-            }
+            if (isSandbox) localStorage.setItem('geoQuizBadges_L' + currentLevel, JSON.stringify(targetCache));
+            else storicoAggiornato = true;
         }
         
         sessionEarned.push({ id, tier, motivo, isNewTier }); 
     };
 
-    // VETERANO (Passaporto Pieno): L1, L2, L3, L4, L7
+    // VETERANO
     if ([1, 2, 3, 4, 7].includes(currentLevel)) {
         if (domandeTotali >= 150) assegnaTier('veterano', domandeTotali, 3, "Giocate 150 domande");
         else if (domandeTotali >= 80) assegnaTier('veterano', domandeTotali, 2, "Giocate 80 domande");
         else if (domandeTotali > 35) assegnaTier('veterano', domandeTotali, 1, "Giocate almeno 35 domande");
     }
 
-    // MARATONETA (Millemiglia): L1, L2, L3, L4, L5, L7
+    // MARATONETA
     if ([1, 2, 3, 4, 5, 7].includes(currentLevel)) {
         if (esatte >= 60) assegnaTier('maratoneta', esatte, 3, "Superate le 60 risposte");
         else if (esatte >= 30) assegnaTier('maratoneta', esatte, 2, "Superate le 30 risposte");
         else if (esatte >= 15) assegnaTier('maratoneta', esatte, 1, "Superate le 15 risposte");
     }
 
-    // INARRESTABILE (Senza Scalo): L0, L1, L2, L3, L4, L5, L7
+    // INARRESTABILE
     if ([0, 1, 2, 3, 4, 5, 7].includes(currentLevel)) {
         if (bestStreak >= 50) assegnaTier('inarrestabile', bestStreak, 3, "Serie di 50 risposte");
         else if (bestStreak >= 30) assegnaTier('inarrestabile', bestStreak, 2, "Serie di 30 risposte");
         else if (bestStreak >= 15) assegnaTier('inarrestabile', bestStreak, 1, "Serie di 15 risposte");
     }
 
-    // SCHEGGIA (Teletrasporto): L0, L1, L2, L3, L4, L5, L6, L7
+    // SCHEGGIA
     if ([0, 1, 2, 3, 4, 5, 6, 7].includes(currentLevel) && esatte >= 10 && avgTime > 0) {
         if (currentLevel === 0) {
             if (avgTime <= 1.5) assegnaTier('scheggia', avgTime, 3, "Tempo medio ≤ 1.5s (Lv0)", true);
@@ -200,42 +197,42 @@ window.checkBadges = function(gameData) {
         }
     }
 
-    // INFERMIERE (Assicurazione di Viaggio): L1, L2, L3, L4, L7
+    // INFERMIERE
     if ([1, 2, 3, 4, 7].includes(currentLevel)) {
         if (cuori >= 10) assegnaTier('infermiere', cuori, 3, "Guadagnati 10 cuori extra");
         else if (cuori >= 5) assegnaTier('infermiere', cuori, 2, "Guadagnati 5 cuori extra");
         else if (cuori >= 3) assegnaTier('infermiere', cuori, 1, "Guadagnati 3 cuori extra");
     }
     
-    // FENICE (Sopravvissuto): L0, L1, L2, L3, L4, L7
+    // FENICE
     if ([0, 1, 2, 3, 4, 7].includes(currentLevel)) {
         if (bestStreakOneLife >= 10) assegnaTier('fenice', bestStreakOneLife, 3, "Serie di 10 con 1 sola vita");
         else if (bestStreakOneLife >= 5) assegnaTier('fenice', bestStreakOneLife, 2, "Serie di 5 con 1 sola vita");
         else if (bestStreakOneLife >= 3) assegnaTier('fenice', bestStreakOneLife, 1, "Serie di 3 con 1 sola vita");
     }
 
-    // FOTOFINISH (Scatto al Gate): L4, L5
+    // FOTOFINISH
     if ([4, 5].includes(currentLevel) && esatte >= 10) {
         if (fotofinish >= 5) assegnaTier('fotofinish', fotofinish, 3, "Salvataggi in extremis: 5");
         else if (fotofinish >= 3) assegnaTier('fotofinish', fotofinish, 2, "Salvataggi in extremis: 3");
         else if (fotofinish >= 1) assegnaTier('fotofinish', fotofinish, 1, "Salvataggi in extremis: 1");
     }
 
-    // GRAZIA (Viaggio in Solitaria): L4, L5
+    // GRAZIA
     if ([4, 5].includes(currentLevel) && esatte >= 40) {
         if (grazie <= 0) assegnaTier('grazia', grazie, 3, "Nessuna grazia ricevuta", true);
         else if (grazie <= 1) assegnaTier('grazia', grazie, 2, "Solo 1 grazia ricevuta", true);
         else if (grazie <= 2) assegnaTier('grazia', grazie, 1, "Meno di 3 grazie ricevute", true);
     }
 
-    // ESPLORATORE ESOTICO: L1, L2, L5
+    // ESPLORATORE ESOTICO
     if ([1, 2, 5].includes(currentLevel) && risposteEsotiche) {
         if (risposteEsotiche >= 20) assegnaTier('esploratore_esotico', risposteEsotiche, 3, "Inserite 20 nazioni di Livello superiore");
         else if (risposteEsotiche >= 15) assegnaTier('esploratore_esotico', risposteEsotiche, 2, "Inserite 15 nazioni di Livello superiore");
         else if (risposteEsotiche >= 10) assegnaTier('esploratore_esotico', risposteEsotiche, 1, "Inserite 10 nazioni di Livello superiore");
     }
 
-    // CECCHINO (Sestante d'oro): L4, L5, L7
+    // CECCHINO
     if ([4, 5, 7].includes(currentLevel)) {
         let perfectCombosCount = 0;
         if (typeof debugGameLog !== 'undefined') {
@@ -247,13 +244,15 @@ window.checkBadges = function(gameData) {
         else if (perfectCombosCount >= 2) assegnaTier('cecchino', perfectCombosCount, 1, "2 Combo Perfette (400/500pt)");
     }
 
-    // LUCIDO (GPS Umano): L1, L2, L3, L7
+    // LUCIDO
     if ([1, 2, 3, 7].includes(currentLevel) && !hasDejavu && domandeTotali >= 50) {
         assegnaTier('lucido', 1, 4, "Nessun malus dejavu in 50+ domande");
     }
 
-    // SECONDA CASA, BLACKLIST, HUB, ROTTA, PENDOLARE: L1, L2, L3, L4, L7
+    // SECONDA CASA, BLACKLIST, HUB, ROTTA, PENDOLARE
     if ([1, 2, 3, 4, 7].includes(currentLevel)) {
+        
+        // I trofei di singola partita salvano solo il numero puro (il nome lo leggi nelle Top)
         if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte");
         else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte");
         else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte");
@@ -266,13 +265,28 @@ window.checkBadges = function(gameData) {
             assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
         }
 
-        if (maxRotta >= 10) {
-            assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive");
+        // Estrazione nome SOLO per le serie storiche (Pendolare e Rotta)
+        let nationStreaks = JSON.parse(localStorage.getItem('geoQuizNationStreaks')) || {};
+        let topPendolareNome = null;
+        let topRottaNome = null;
+        for (let s in nationStreaks) {
+            if (nationStreaks[s].inserted === maxPendolare) {
+                let nz = globalDb.find(c => c.sigla === s);
+                topPendolareNome = nz ? nz.nome.replace(/\*/g, '').toUpperCase() : s;
+            }
+            if (nationStreaks[s].ignored === maxRotta) {
+                let nz = globalDb.find(c => c.sigla === s);
+                topRottaNome = nz ? nz.nome.replace(/\*/g, '').toUpperCase() : s;
+            }
         }
 
-        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive");
-        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive");
-        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive");
+        if (maxRotta >= 10) {
+            assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive", false, topRottaNome);
+        }
+
+        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive", false, topPendolareNome);
+        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive", false, topPendolareNome);
+        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive", false, topPendolareNome);
     }
     
     // TROFEI REGIONALI (Aree): L1, L2, L3, L4, L5, L7
@@ -410,7 +424,10 @@ window.showBadgeDetails = function(badgeId) {
     }
 
     let info = BADGE_INFO[badgeId];
-    let count = userBadges[badgeId];
+    let rawRecord = userBadges[badgeId];
+    let count = typeof rawRecord === 'object' && rawRecord !== null ? rawRecord.valore : rawRecord;
+    let extra = typeof rawRecord === 'object' && rawRecord !== null ? rawRecord.extra : null;
+
     let isUnlocked = count !== undefined && count !== 0 && count !== 9999;
     
     if (info.isSecret && !isUnlocked) return; 
@@ -440,12 +457,15 @@ window.showBadgeDetails = function(badgeId) {
     let recordHtml = "";
     if (isUnlocked) {
         let recordVal = count;
-        if (badgeId === 'scheggia') recordVal = count + "s";
+        if (info.isSpecial) recordVal = extra ? `Sbloccato (${extra})` : "Sbloccato";
+        else if (badgeId === 'scheggia') recordVal = count + "s";
         else if (badgeId === 'highlander') {
             if (count === 1) recordVal = "Sprint (75%)";
             else if (count === 2) recordVal = "ONU (75%)";
             else if (count === 3) recordVal = "Globale (75%)";
         }
+        else recordVal = extra ? `${count} (${extra})` : count;
+        
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#4caf50; letter-spacing:1px;">RECORD ATTUALE: ${recordVal}</div>`;
     } else {
         recordHtml = `<div style="margin-top:15px; font-size:16px; font-weight:bold; color:#f44336; letter-spacing:1px;">NON ANCORA SBLOCCATO</div>`;
@@ -564,7 +584,9 @@ window.renderMedagliere = function() {
     
     Object.keys(BADGE_INFO).forEach(b => {
         let info = BADGE_INFO[b];
-        let count = userBadges[b];
+        let rawRecord = userBadges[b];
+        let count = typeof rawRecord === 'object' && rawRecord !== null ? rawRecord.valore : rawRecord;
+        let extra = typeof rawRecord === 'object' && rawRecord !== null ? rawRecord.extra : null;
         
         if (info.isSecret && (count === undefined || count === 0)) return;
         
@@ -577,7 +599,7 @@ window.renderMedagliere = function() {
                 borderColor = "#4fc3f7"; 
                 opacity = "1"; 
                 bg = "#e1f5fe"; 
-                recordText = "Sbloccato"; 
+                recordText = extra ? `Sbloccato (${extra})` : "Sbloccato"; 
             }
         } else if (info.isInverse) {
             if (count !== undefined && count <= info.tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
@@ -593,11 +615,14 @@ window.renderMedagliere = function() {
         let headerColor = hasBadge ? (info.isSpecial ? "#01579b" : "#121212") : "#888";
         let descColor = hasBadge ? (info.isSpecial ? "#0288d1" : "#333") : "#555";
         
-        if (b === 'scheggia' && count !== undefined && count !== 9999) recordText = `Record: ${count}s`;
-        if (b === 'highlander' && count !== undefined && count !== 9999) {
-            if (count === 1) recordText = "Record: Sprint";
-            else if (count === 2) recordText = "Record: ONU";
-            else if (count === 3) recordText = "Record: Globale";
+        if (hasBadge && !info.isSpecial) {
+            if (b === 'scheggia') recordText = `Record: ${count}s`;
+            else if (b === 'highlander') {
+                if (count === 1) recordText = "Record: Sprint";
+                else if (count === 2) recordText = "Record: ONU";
+                else if (count === 3) recordText = "Record: Globale";
+            }
+            else recordText = extra ? `Record: ${count} (${extra})` : `Record: ${count}`;
         }
         
         html += `<div class="medagliere-item" onclick="window.showBadgeDetails('${b}')" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity}; cursor:pointer; transition:transform 0.1s;">
