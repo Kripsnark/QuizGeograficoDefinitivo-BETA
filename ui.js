@@ -609,16 +609,16 @@ window.switchLevelTab = function(lvl) {
     if (typeof BADGE_INFO !== 'undefined' && typeof SVG_ICONS !== 'undefined') {
         
         const badgesByLevel = {
-            0: ['inarrestabile', 'scheggia', 'fenice', 'infallibile', 'conquistatore'],
-            1: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'esploratore_esotico', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'conquistatore', 'magellano', 'pendolare', 'rotta', 'ascensione'],
-            2: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'esploratore_esotico', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'conquistatore', 'magellano', 'pendolare', 'rotta', 'ascensione'],
-            3: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'conquistatore', 'cyborg', 'magellano', 'pendolare', 'rotta', 'ascensione'],
-            4: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'fotofinish', 'grazia', 'cecchino', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'conquistatore', 'cyborg', 'magellano', 'pendolare', 'rotta', 'ascensione'],
-            5: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'fotofinish', 'grazia', 'esploratore_esotico', 'cecchino', 'lucido', 'infallibile'],
-            6: ['scheggia', 'highlander', 'artificiere', 'sangue_freddo', 'decollo_fallito'],
-            7: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'fotofinish', 'cecchino', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'conquistatore', 'cyborg', 'sestosenso', 'magellano', 'pendolare', 'rotta'],
-            8: ['vendicatore']
-        };
+                0: ['inarrestabile', 'scheggia', 'fenice', 'infallibile'],
+                1: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'esploratore_esotico', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile'],
+                2: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'esploratore_esotico', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile'],
+                3: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'cyborg'],
+                4: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'fotofinish', 'grazia', 'cecchino', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'cyborg'],
+                5: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'fotofinish', 'grazia', 'esploratore_esotico', 'cecchino', 'lucido', 'infallibile'],
+                6: ['scheggia', 'highlander', 'artificiere', 'sangue_freddo', 'decollo_fallito'],
+                7: ['veterano', 'maratoneta', 'inarrestabile', 'scheggia', 'infermiere', 'fenice', 'fotofinish', 'cecchino', 'lucido', 'secondacasa', 'blacklist', 'hub', 'infallibile', 'cyborg', 'sestosenso'],
+                8: ['vendicatore']
+            };
 
         // Legge sia i trofei della carriera globale sia quelli isolati del livello
         let globalUserB = JSON.parse(localStorage.getItem('geoQuizBadges')) || {};

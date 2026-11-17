@@ -19,7 +19,7 @@ const SVG_ICONS = {
     blacklist: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`,
     hub: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
     rotta: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle><line x1="4" y1="4" x2="20" y2="20"></line></svg>`,
-    pendolare: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 12 2v4a6 6 0 0 1 6 6h4z"></path><path d="M2 12a10 10 0 0 0 10 10v-4a6 6 0 0 1-6-6H2z"></path><polyline points="2 7 2 12 7 12"></polyline><polyline points="22 17 22 12 17 12"></polyline></svg>`,
+    pendolare: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 0 12 2v4a6 6 0 0 1 6 6h4z"></path><path d="M2 12a10 10 0 0 0 10 10v-4a6 6 0 0 1-6-6H2z"></path><polyline points="2 7 2 12 7 12"></polyline><polyline points="22 17 22 17 22 12 17 12"></polyline></svg>`,
     magellano: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`,
     ascensione: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"></path></svg>`,
     cecchino: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`,
@@ -55,7 +55,7 @@ const BADGE_INFO = {
     sestosenso: { title: "Volo alla Cieca", flavor: "Navighi a intuito senza guardare.", req: "Ottieni la Vittoria Leggendaria (10.000 pt) nel Livello 7.", tiers: [1, 1, 1], isSpecial: true, isSecret: true },	
     magellano: { title: "Giro del Mondo", flavor: "Hai visto ogni angolo del pianeta.", req: "Usa ogni singola nazione del gioco nel corso della tua carriera.", tiers: [1, 4, 10] },
     pendolare: { title: "Pendolare", flavor: "Fai sempre la stessa strada.", req: "Usa la stessa nazione in più partite consecutive.", tiers: [3, 7, 20] },
-    rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 10 partite consecutive.", tiers: [1, 1, 1], isSpecial: true },
+    rotta: { title: "Rotta Abbandonata", flavor: "Quell'aeroporto ha chiuso i battenti.", req: "Ignora la stessa nazione per 15 partite consecutive.", tiers: [1, 1, 1], isSpecial: true },
     vendicatore: { title: "Visto Rinnovato", flavor: "La burocrazia è sistemata.", req: "Azzera i debiti all'interno di una singola sessione di Recupero.", tiers: [4, 8, 14] },
     ascensione: { title: "Ascensione Geografica", flavor: "Hai scalato l'Olimpo della perfezione.", req: "Vinci i Livelli 1, 2, 3 e 4 senza mai commettere un singolo errore.", tiers: [1, 1, 1], isSpecial: true, isSecret: true }
 };
@@ -252,20 +252,34 @@ window.checkBadges = function(gameData) {
     // SECONDA CASA, BLACKLIST, HUB, ROTTA, PENDOLARE
     if ([1, 2, 3, 4, 7].includes(currentLevel)) {
         
-        // I trofei di singola partita salvano solo il numero puro (il nome lo leggi nelle Top)
-        if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte");
-        else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte");
-        else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte");
+        // Funzione per estrarre la sigla e convertirla in Nome Nazione
+        let estraiNome = (nazioniCountObj, maxVal) => {
+            if (!nazioniCountObj || maxVal === 0) return null;
+            let sigla = Object.keys(nazioniCountObj).find(key => nazioniCountObj[key] === maxVal);
+            if (!sigla) return null;
+            let n = globalDb.find(c => c.sigla === sigla || c.nome === sigla);
+            return n ? n.nome.replace(/\*/g, '').toUpperCase() : sigla.toUpperCase();
+        };
 
-        if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte");
-        else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte");
-        else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte");
+        // Estrazione nomi singola partita
+        let topUsataNome = estraiNome(gameData.nazioniDigitateCount, maxVoloDiLinea);
+        let topIgnorataNome = estraiNome(gameData.nazioniIgnorateCount, maxBlacklist);
+        
+        // Passiamo l'ultimo parametro (topUsataNome) a localStorage per la Bacheca Globale, 
+        // ma manteniamo la stringa descrittiva fissa per non sporcare il Game Over
+        if (maxVoloDiLinea >= 10) assegnaTier('secondacasa', maxVoloDiLinea, 3, "Nazione usata 10 volte", false, topUsataNome);
+        else if (maxVoloDiLinea >= 7) assegnaTier('secondacasa', maxVoloDiLinea, 2, "Nazione usata 7 volte", false, topUsataNome);
+        else if (maxVoloDiLinea >= 4) assegnaTier('secondacasa', maxVoloDiLinea, 1, "Nazione usata 4 volte", false, topUsataNome);
+
+        if (maxBlacklist >= 10) assegnaTier('blacklist', maxBlacklist, 3, "Nazione ignorata 10 volte", false, topIgnorataNome);
+        else if (maxBlacklist >= 7) assegnaTier('blacklist', maxBlacklist, 2, "Nazione ignorata 7 volte", false, topIgnorataNome);
+        else if (maxBlacklist >= 4) assegnaTier('blacklist', maxBlacklist, 1, "Nazione ignorata 4 volte", false, topIgnorataNome);
 
         if (top1UsataVal >= 5 && top1UsataVal >= (top1IgnorataVal * 2)) {
-            assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata");
+            assegnaTier('hub', 1, 3, "Top 1 usata DOPPIA rispetto alla Top 1 ignorata", false, topUsataNome);
         }
 
-        // Estrazione nome SOLO per le serie storiche (Pendolare e Rotta)
+        // Estrazione nomi per le serie storiche (Pendolare e Rotta)
         let nationStreaks = JSON.parse(localStorage.getItem('geoQuizNationStreaks')) || {};
         let topPendolareNome = null;
         let topRottaNome = null;
@@ -280,13 +294,18 @@ window.checkBadges = function(gameData) {
             }
         }
 
-        if (maxRotta >= 10) {
-            assegnaTier('rotta', 1, 3, "Nazione ignorata in 10 partite consecutive", false, topRottaNome);
+        let strRotta = topRottaNome ? `Nazione ignorata in 10 partite consecutive (${topRottaNome})` : "Nazione ignorata in 15 partite consecutive";
+        if (maxRotta >= 15) {
+            assegnaTier('rotta', 1, 3, strRotta, false, topRottaNome);
         }
 
-        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, "Nazione usata in 20 partite consecutive", false, topPendolareNome);
-        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, "Nazione usata in 7 partite consecutive", false, topPendolareNome);
-        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, "Nazione usata in 3 partite consecutive", false, topPendolareNome);
+        let strPend20 = topPendolareNome ? `Nazione usata in 20 partite consecutive (${topPendolareNome})` : "Nazione usata in 20 partite consecutive";
+        let strPend7 = topPendolareNome ? `Nazione usata in 7 partite consecutive (${topPendolareNome})` : "Nazione usata in 7 partite consecutive";
+        let strPend3 = topPendolareNome ? `Nazione usata in 3 partite consecutive (${topPendolareNome})` : "Nazione usata in 3 partite consecutive";
+
+        if (maxPendolare >= 20) assegnaTier('pendolare', maxPendolare, 3, strPend20, false, topPendolareNome);
+        else if (maxPendolare >= 7) assegnaTier('pendolare', maxPendolare, 2, strPend7, false, topPendolareNome);
+        else if (maxPendolare >= 3) assegnaTier('pendolare', maxPendolare, 1, strPend3, false, topPendolareNome);
     }
     
     // TROFEI REGIONALI (Aree): L1, L2, L3, L4, L5, L7
@@ -599,7 +618,8 @@ window.renderMedagliere = function() {
                 borderColor = "#4fc3f7"; 
                 opacity = "1"; 
                 bg = "#e1f5fe"; 
-                recordText = extra ? `Sbloccato (${extra})` : "Sbloccato"; 
+                // A capo automatico per le nazioni nei trofei speciali
+                recordText = extra ? `Sbloccato<br><span style="font-size:10px; opacity:0.8;">(${extra})</span>` : "Sbloccato"; 
             }
         } else if (info.isInverse) {
             if (count !== undefined && count <= info.tiers[2]) { color = "#121212"; borderColor = "#ffd700"; opacity = "1"; bg = "#ffd700"; } 
@@ -622,14 +642,21 @@ window.renderMedagliere = function() {
                 else if (count === 2) recordText = "Record: ONU";
                 else if (count === 3) recordText = "Record: Globale";
             }
-            else recordText = extra ? `Record: ${count} (${extra})` : `Record: ${count}`;
+            // A capo automatico per le nazioni nei trofei standard
+            else recordText = extra ? `Record: ${count}<br><span style="font-size:10px; opacity:0.8;">(${extra})</span>` : `Record: ${count}`;
         }
         
-        html += `<div class="medagliere-item" onclick="window.showBadgeDetails('${b}')" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity}; cursor:pointer; transition:transform 0.1s;">
+        // STILE "ANTI-PATACCA"
+        // Colore dinamico fuso con la carta, velatura leggera, nessun box shadow pesante
+        let customRecordStyle = hasBadge 
+            ? `background: rgba(0, 0, 0, 0.06); color: ${headerColor}; padding: 6px; border-radius: 6px; font-weight: 900; font-size: 13px; line-height: 1.2; width: 90%; margin: auto auto 0 auto; box-shadow: none;`
+            : `background: transparent; color: #555; padding: 4px; font-weight: bold; font-size: 12px; margin: auto auto 0 auto; box-shadow: none;`;
+
+        html += `<div class="medagliere-item" onclick="window.showBadgeDetails('${b}')" style="background-color:${bg}; border:2px solid ${borderColor}; opacity:${opacity}; cursor:pointer; transition:transform 0.1s; display: flex; flex-direction: column;">
                     <div class="medagliere-icon" style="color:${color};">${SVG_ICONS[b]}</div>
                     <div class="medagliere-title" style="color:${headerColor};">${info.title}</div>
-                    <div class="medagliere-desc" style="color:${descColor};">${info.flavor}</div>
-                    <div class="medagliere-record">${recordText}</div>
+                    <div class="medagliere-desc" style="color:${descColor}; margin-bottom: 8px;">${info.flavor}</div>
+                    <div style="${customRecordStyle}">${recordText}</div>
                  </div>`;
     });
     

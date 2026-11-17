@@ -111,7 +111,7 @@ KY	Isole Cayman	Cayman, rayman		George Town				Nord America, caraibi	blu		emblem
 CC	Isole Cocos	Cocos, Keeling, the cocos		West Island	West highland			Oceania	verde, giallo	giallo	mezzaluna, croce del sud, albero, palma, cerchio	x	cerchio giallo, mezzaluna gialla, stella gialla	3
 CK	Isole Cook	Cook		Avarua		Ava Rua		Oceania	blu	bianco	stella, union jack	x	stella bianca	3
 FK	Isole Falkland	Falkland		Stanley		Stènli		Sud America	blu		emblema nazionale, animale, union jack	x		3
-FO	Isole Faroe	Faroer		Tórshavn	Dr Shadn, thor charme	Tòrsciaven		Europa, Europa Settentrionale	bianco, rosso, blu		croce scandinava	x		3
+FO	Isole Faroe	Faroer		Tórshavn	Dr Shadn, thor charme, thorschamp	Tòrsciaven		Europa, Europa Settentrionale	bianco, rosso, blu		croce scandinava	x		3
 MP	Isole Marianne Settentrionali	*Marianne Settentrionali, Marianne, Isole Marianne		Saipan	*Capitol Hill, Capitol			Asia	blu, bianco		emblema nazionale, stella	x	stella bianca, lenzuolo blu	3
 MH	Isole Marshall	Marshall		Majuro	Maiuro, Ma giuro, Lavoro	Magiuro		Oceania	blu, bianco, arancione		stella		stella bianca, taglio diagonale	2
 PN	Isole Pitcairn	Pitcairn, isole big cairn, isole pick up, isole fitkair, fitkair, speedcairn, isole bitcoin, bitcoin, isole pitcar, isole pittar, pittar, isole pitbull, pitbull, isole pitburn, pitburn, isole fitker, fitker, isole pitcher, isole fitfire		Adamstown	Adam's Town			Oceania	blu		emblema nazionale, union jack	x		3
@@ -123,7 +123,7 @@ IT	Italia			Roma			san marino, città del vaticano, francia, svizzera, austria, 
 KZ	Kazakistan			Astana			turkmenistan, uzbekistan, kirghizistan, cina, russia	Asia, Asia Centrale	azzurro, giallo		sole, aquila, animale, uccello		lenzuolo azzurro	1
 KE	Kenya			Nairobi			somalia, etiopia, uganda, tanzania, sudan del sud, mare	africa, africa orientale	nero, rosso, verde, bianco		lancia, arma, scudo		strisce orizzontali	1
 KG	Kirghizistan	bergizzistan, ciclista		Biškek	Bishkek, Biscake, Bistecca, bisquet, bis check, bischeck	Bishkek	kazakistan, uzbekistan, tagikistan, cina	Asia, Asia Centrale	rosso, giallo	giallo	sole		lenzuolo rosso	2
-KI	Kiribati			Tarawa Sud	Tarawa, Sud Tarawa, garau a sud, Darauha sud	Tarava Sud		Oceania	rosso, blu, bianco, giallo	giallo	sole, uccello, animale			2
+KI	Kiribati	iribati		Tarawa Sud	Tarawa, Sud Tarawa, garau a sud, Darauha sud	Tarava Sud		Oceania	rosso, blu, bianco, giallo	giallo	sole, uccello, animale			2
 XK	Kosovo			Pristina			serbia, montenegro, albania, macedonia del nord	europa, Balcani	blu, giallo	giallo, bianco	sagoma paese, stella	x	stella bianca, lenzuolo blu	3
 KW	Kuwait	Q8, calculate	Queeit	Madinat al-Kuwait	*Kuwait, Al-Kuwait, Kuwait city, Q8, Madina al Q8, matina talk q8, macchina calculate	Madinat al Queeit	iraq, arabia saudita, mare	Asia, medio oriente	nero, rosso, verde, bianco				triangolo a sinistra nero	2
 LA	Laos			Vientiane	orientana, genziane, anziane		vietnam, cambogia, thailandia, myanmar, cina	Asia, Sud-Est Asiatico, Penisola indocinese	rosso, blu, bianco	bianco	cerchio		strisce orizzontali, cerchio bianco	2
@@ -184,7 +184,7 @@ GB	Regno Unito	*Gran Bretagna, UK, GB		Londra			irlanda, mare	Europa, Europa Set
 CF	Repubblica Centrafricana	Rep Centrafricana		Bangui	Langui, bottega		ciad, sudan, sudan del sud, repubblica democratica del congo, congo, camerun	africa, africa centrale	blu, bianco, verde, giallo, rosso	giallo	stella		stella gialla	2
 CD	Repubblica Democratica del Congo	Rep Dem Congo, Rep democratica Congo, Repubblica democratica Congo		Kinshasa			congo, repubblica centrafricana, sudan del sud, uganda, ruanda, burundi, tanzania, zambia, angola, mare	africa, africa centrale	azzurro, giallo, rosso	giallo	stella		stella gialla, taglio diagonale	1
 SM	Repubblica di San Marino	*San Marino		Città di San Marino	San Marino		Italia	europa	bianco, azzurro		emblema nazionale, corona		strisce orizzontali	2
-DO	Repubblica Dominicana	Rep Dominicana		Santo Domingo			haiti, mare	Nord America, caraibi	blu, bianco, rosso		emblema nazionale			1
+DO	Repubblica Dominicana	Rep Dominicana, dominicana		Santo Domingo			haiti, mare	Nord America, caraibi	blu, bianco, rosso		emblema nazionale			1
 RE	Riunione	Reunion		Saint-Denis	S Denis, Saint Denis, San Denis	Sènt Denì		africa, africa orientale	blu, rosso, giallo			x	Spicchi radiali	3
 RO	Romania			Bucarest			moldavia, ucraina, bulgaria, serbia, ungheria, mare	europa, Balcani	blu, giallo, rosso				strisce verticali	1
 RW	Ruanda			Kigali	Cigali, Cialis, chi gali		uganda, tanzania, burundi, repubblica democratica del congo	africa, africa orientale	azzurro, giallo, verde	giallo	sole		strisce orizzontali	2
