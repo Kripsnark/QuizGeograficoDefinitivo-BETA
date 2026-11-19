@@ -2398,6 +2398,37 @@ function processaRisposta() {
             return; 
         }
         
+// --- BLOCCO "GIÀ USATA, CAMBIA!" PER COMBO LV8 (Regola del doppio) ---
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined) {
+            let deb = debiti[currentTurnData.debitoIndex];
+            if (deb && deb.sigleUsate && deb.sigleUsate.length > 0) {
+                let rimasteLibere = currentTurnData.maxPossible - deb.sigleUsate.length;
+                if (rimasteLibere >= currentTurnData.numReq * 2) {
+                    let resCheck = checkSingleAnswer(inputStr, currentTurnData, currentLevel);
+                    if (resCheck.isCorrect && deb.sigleUsate.includes(resCheck.matchedCountry.sigla)) {
+                        if (voiceModeActive) {
+                            try { assistantRec.stop(); isListening = false; } catch(e) {}
+                            parla("Già usata, cambia.", function() {
+                                if (assistantRec && !isListening) window.innescaMicrofonoConDing();
+                            });
+                        }
+                        inputEl.classList.add("warning-flash", "shake");
+                        setTimeout(() => {
+                            inputEl.classList.remove("warning-flash", "shake");
+                            inputEl.focus();
+                        }, 400);
+                        inputEl.value = "";
+                        let oldPlaceholder = inputEl.placeholder;
+                        inputEl.placeholder = "L'hai già usata, CAMBIA!";
+                        setTimeout(() => {
+                            if (inputEl.placeholder === "L'hai già usata, CAMBIA!") inputEl.placeholder = oldPlaceholder;
+                        }, 1500);
+                        return;
+                    }
+                }
+            }
+        }
+
         comboInserted.push(inputEl.value.trim()); 
         totalAnswersSubmitted++; 
         inputEl.value = "";
@@ -2846,6 +2877,17 @@ function eseguiValidazioneMultipla(isTimeout = false) {
         let isDebitoSaldato = false;
         if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined && debiti[currentTurnData.debitoIndex]) {
             isDebitoSaldato = (debiti[currentTurnData.debitoIndex].progress === 1);
+        }
+
+// --- SALVATAGGIO SIGLE COMBO NELLA MEMORIA DEL DEBITO L8 ---
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined) {
+            let deb = debiti[currentTurnData.debitoIndex];
+            if (deb) {
+                if (!deb.sigleUsate) deb.sigleUsate = [];
+                matchedSiglas.forEach(s => {
+                    if (!deb.sigleUsate.includes(s)) deb.sigleUsate.push(s);
+                });
+            }
         }
 
         if (currentLevel === 8) puntiRound = 0; // Azzera i punti per il Livello 8
@@ -4025,16 +4067,47 @@ if (SpeechRecognition) {
 if (!window.voiceHooksAdded) {
     window.voiceHooksAdded = true;
 
+    // Helper dedicato SOLO al Livello 8: pesca max 3 risposte valide casuali escludendo le sigle vietate/già dette
+    function getL8VoiceAlternatives(excludedSiglas = []) {
+        if (!currentTurnData || !currentTurnData.validAnswersCache) return [];
+        let pool = currentTurnData.validAnswersCache.filter((ans, idx) => {
+            let sigla = currentTurnData.validSiglas ? currentTurnData.validSiglas[idx] : null;
+            return !sigla || !excludedSiglas.includes(sigla);
+        });
+        if (pool.length === 0) return [];
+        return [...pool]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map(ans => ans.split(" (")[0].replace(/\*/g, '').trim());
+    }
+
+    function getL8UsedSiglas() {
+        if (currentLevel === 8 && currentTurnData && currentTurnData.debitoIndex !== undefined) {
+            let deb = debiti[currentTurnData.debitoIndex];
+            if (deb && deb.sigleUsate) return [...deb.sigleUsate];
+        }
+        return [];
+    }
+
     // 0. Intercetta la resa del giocatore ("Mi arrendo")
     const origSurrenderTurn = surrenderTurn;
     surrenderTurn = function() {
         try { assistantRec.stop(); isListening = false; } catch(e) {} 
+        let sigleVietateL8 = getL8UsedSiglas(); // Salvate PRIMA che gestisciDebito(false) le azzeri
         origSurrenderTurn();
         if (voiceModeActive) {
-            let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-            let correctAns = rndAns.split(" (")[0]; 
-            let numValide = currentTurnData.validAnswersCache.length;
-            let incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
+            let incipit = "";
+            if (currentLevel === 8) {
+                let alts = getL8VoiceAlternatives(sigleVietateL8);
+                if (alts.length === 1) incipit = `Ti sei arreso. La risposta era ${alts[0]}.`;
+                else if (alts.length > 1) incipit = `Ti sei arreso. Potevi dire: ${alts.join(", ")}.`;
+                else incipit = "Ti sei arreso.";
+            } else {
+                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+                let correctAns = rndAns.split(" (")[0]; 
+                let numValide = currentTurnData.validAnswersCache.length;
+                incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
+            }
             
             setTimeout(() => {
                 if (window.pendingDefeat) {
@@ -4055,17 +4128,24 @@ if (!window.voiceHooksAdded) {
     const origFailStandard = failStandard;
     failStandard = function(wrongInput) {
         try { assistantRec.stop(); isListening = false; } catch(e) {}
+        let sigleVietateL8 = getL8UsedSiglas(); // Salvate PRIMA del reset
         origFailStandard(wrongInput);
         if (voiceModeActive) {
-            let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
-            let correctAns = rndAns.split(" (")[0]; 
-            
-            if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
-                 correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
+            let incipit = "";
+            if (currentLevel === 8) {
+                let alts = getL8VoiceAlternatives(sigleVietateL8);
+                if (alts.length === 1) incipit = `Sbagliato, era ${alts[0]}.`;
+                else if (alts.length > 1) incipit = `Sbagliato, potevi dire: ${alts.join(", ")}.`;
+                else incipit = "Sbagliato.";
+            } else {
+                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+                let correctAns = rndAns.split(" (")[0]; 
+                if (currentLevel === 0 && currentTurnData.validAnswersCache.length > 0) {
+                    correctAns = currentTurnData.validAnswersCache[0].split(" (")[0];
+                }
+                let numValide = currentTurnData.validAnswersCache.length;
+                incipit = (numValide > 1) ? `Sbagliato, potevi dire: ${correctAns}.` : `Sbagliato, era ${correctAns}.`;
             }
-            
-            let numValide = currentTurnData.validAnswersCache.length;
-            let incipit = (numValide > 1) ? `Sbagliato, potevi dire: ${correctAns}.` : `Sbagliato, era ${correctAns}.`;
             
             setTimeout(() => {
                 if (window.pendingDefeat) {
@@ -4086,6 +4166,7 @@ if (!window.voiceHooksAdded) {
     const origFailMulti = failMulti;
     failMulti = function(reason, wrongInput) {
         try { assistantRec.stop(); isListening = false; } catch(e) {}
+        let sigleVietateL8 = getL8UsedSiglas(); // Salvate PRIMA del reset
         origFailMulti(reason, wrongInput);
         if (voiceModeActive) {
             let sigleIndovinate = [];
@@ -4094,19 +4175,25 @@ if (!window.voiceHooksAdded) {
                 if (res.isCorrect) sigleIndovinate.push(res.matchedCountry.sigla);
             });
 
-            let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
-                let sigla = currentTurnData.validSiglas[index];
-                return !sigleIndovinate.includes(sigla);
-            });
-
-            if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
-
-            let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
-            let correctAns = rndAns.split(" (")[0]; 
-            
-            let numValideRimanenti = risposteNonDette.length;
             let baseText = reason.includes("Tempo scaduto") ? "Tempo scaduto" : "Sbagliato";
-            let incipit = (numValideRimanenti > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
+            let incipit = "";
+
+            if (currentLevel === 8) {
+                let alts = getL8VoiceAlternatives([...sigleVietateL8, ...sigleIndovinate]);
+                if (alts.length === 1) incipit = `${baseText}, era ${alts[0]}.`;
+                else if (alts.length > 1) incipit = `${baseText}, potevi dire: ${alts.join(", ")}.`;
+                else incipit = `${baseText}.`;
+            } else {
+                let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
+                    let sigla = currentTurnData.validSiglas[index];
+                    return !sigleIndovinate.includes(sigla);
+                });
+                if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
+                let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
+                let correctAns = rndAns.split(" (")[0]; 
+                let numValideRimanenti = risposteNonDette.length;
+                incipit = (numValideRimanenti > 1) ? `${baseText}, potevi dire: ${correctAns}.` : `${baseText}, era ${correctAns}.`;
+            }
 
             setTimeout(() => {
                 if (window.pendingDefeat) {
@@ -4132,7 +4219,6 @@ if (!window.voiceHooksAdded) {
         origEseguiValidazioneMultipla(isTimeout);
         
         if (voiceModeActive && !window.pendingVictory && !window.pendingDefeat) {
-            // IL FIX: Blocca l'avanzamento forzato se sei diventato Leggenda
             let btnContinua = document.getElementById("continua-btn");
             if (btnContinua && btnContinua.style.display === "block") {
                 setTimeout(() => parla("Traguardo raggiunto. Scegli se ritirarti o continuare."), 200);
@@ -4158,6 +4244,18 @@ if (!window.voiceHooksAdded) {
                 
                 if (badgeTesto.includes("vita extra")) frasiExtra.push("Hai guadagnato una vita.");
                 if (frasiExtra.length > 0) testoEsatto += " " + frasiExtra.join(" ");
+
+                // SOLO LV 8: Legge fino a 3 alternative valide non inserite
+                if (currentLevel === 8) {
+                    let sigleIndovinate = [];
+                    comboInserted.forEach(ans => {
+                        let res = checkSingleAnswer(ans, currentTurnData, currentLevel);
+                        if (res.isCorrect) sigleIndovinate.push(res.matchedCountry.sigla);
+                    });
+                    let alts = getL8VoiceAlternatives(sigleIndovinate);
+                    if (alts.length === 1) testoEsatto += ` Un'altra risposta valida era ${alts[0]}.`;
+                    else if (alts.length > 1) testoEsatto += ` Altre risposte valide erano: ${alts.join(", ")}.`;
+                }
                 
                 setTimeout(() => {
                     parla(testoEsatto, function() {
@@ -4171,12 +4269,14 @@ if (!window.voiceHooksAdded) {
     // 4. Intercetta le risposte corrette (Singole e accumulo)
     const origProcessaRisposta = processaRisposta;
     processaRisposta = function() {
-        if (window.isTransitioning) return; // LUCCHETTO ATTIVO: Ignora input doppi
+        if (window.isTransitioning) return; 
         
         let esattePrima = esatte;
         let vitePrima = vite; 
         let comboPrima = comboInserted.length;
         let puntiPrima = punteggio; 
+        let rawInputPrima = inputEl ? inputEl.value.trim().toLowerCase() : "";
+        let sigleVietateL8 = getL8UsedSiglas();
         
         origProcessaRisposta(); 
         
@@ -4199,7 +4299,7 @@ if (!window.voiceHooksAdded) {
 
             // CASO 1: Domanda singola superata (NON COMBO)
             if (!isMulti && esatte > esattePrima) {
-                window.isTransitioning = true; // SBLOCCA LUCCHETTO ANTI-DOPPIONI
+                window.isTransitioning = true; 
                 
                 let puntiGuadagnati = punteggio - puntiPrima;
                 let testoEsatto = (currentLevel === 6 || currentLevel === 8 || puntiGuadagnati === 0) ? "Esatto!" : `Esatto! Più ${puntiGuadagnati} punti.`;
@@ -4217,8 +4317,19 @@ if (!window.voiceHooksAdded) {
                 }
                 
                 if (badgeTesto.includes("vita extra")) frasiExtra.push("Hai guadagnato una vita.");
-                
                 if (frasiExtra.length > 0) testoEsatto += " " + frasiExtra.join(" ");
+
+                // SOLO LV 8: Legge fino a 3 alternative valide escludendo quella appena data e le precedenti
+                if (currentLevel === 8) {
+                    let excluded = [...sigleVietateL8];
+                    let resCheck = checkSingleAnswer(rawInputPrima, currentTurnData, currentLevel);
+                    if (resCheck.isCorrect && resCheck.matchedCountry) {
+                        excluded.push(resCheck.matchedCountry.sigla);
+                    }
+                    let alts = getL8VoiceAlternatives(excluded);
+                    if (alts.length === 1) testoEsatto += ` Un'altra risposta valida era ${alts[0]}.`;
+                    else if (alts.length > 1) testoEsatto += ` Altre risposte valide erano: ${alts.join(", ")}.`;
+                }
 
                 setTimeout(() => {
                     parla(testoEsatto, function() {
