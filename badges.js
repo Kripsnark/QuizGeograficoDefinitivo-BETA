@@ -284,17 +284,17 @@ window.checkBadges = function(gameData) {
         let topPendolareNome = null;
         let topRottaNome = null;
         for (let s in nationStreaks) {
-            if (nationStreaks[s].inserted === maxPendolare) {
+            if (maxPendolare > 0 && nationStreaks[s].inserted === maxPendolare && gameData.nazioniDigitateCount && gameData.nazioniDigitateCount[s]) {
                 let nz = globalDb.find(c => c.sigla === s);
                 topPendolareNome = nz ? nz.nome.replace(/\*/g, '').toUpperCase() : s;
             }
-            if (nationStreaks[s].ignored === maxRotta) {
+            if (maxRotta > 0 && nationStreaks[s].ignored === maxRotta && (!gameData.nazioniDigitateCount || !gameData.nazioniDigitateCount[s])) {
                 let nz = globalDb.find(c => c.sigla === s);
                 topRottaNome = nz ? nz.nome.replace(/\*/g, '').toUpperCase() : s;
             }
         }
 
-        let strRotta = topRottaNome ? `Nazione ignorata in 10 partite consecutive (${topRottaNome})` : "Nazione ignorata in 15 partite consecutive";
+        let strRotta = topRottaNome ? `Nazione ignorata in 15 partite consecutive (${topRottaNome})` : "Nazione ignorata in 15 partite consecutive";
         if (maxRotta >= 15) {
             assegnaTier('rotta', 1, 3, strRotta, false, topRottaNome);
         }

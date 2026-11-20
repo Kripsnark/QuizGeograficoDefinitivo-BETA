@@ -2403,7 +2403,7 @@ function processaRisposta() {
             let deb = debiti[currentTurnData.debitoIndex];
             if (deb && deb.sigleUsate && deb.sigleUsate.length > 0) {
                 let rimasteLibere = currentTurnData.maxPossible - deb.sigleUsate.length;
-                if (rimasteLibere >= currentTurnData.numReq * 2) {
+                if (rimasteLibere > currentTurnData.numReq) {
                     let resCheck = checkSingleAnswer(inputStr, currentTurnData, currentLevel);
                     if (resCheck.isCorrect && deb.sigleUsate.includes(resCheck.matchedCountry.sigla)) {
                         if (voiceModeActive) {
@@ -3188,12 +3188,17 @@ gestisciDebito(false);
                 }
             }
 
-            // GESTIONE SERIE CONSECUTIVE GLOBALI (L1-L4)
+            // GESTIONE SERIE CONSECUTIVE GLOBALI (L1-L4, L7)
             let nationStreaks = JSON.parse(localStorage.getItem('geoQuizNationStreaks')) || {};
             let maxPendolare = 0;
             let maxRotta = 0;
 
             if ((currentLevel >= 1 && currentLevel <= 4) || currentLevel === 7) {
+                // Azzera le serie delle nazioni NON usate / NON ignorate in questa partita
+                for (let sigla in nationStreaks) {
+                    if (!nazioniDigitateCount[sigla]) nationStreaks[sigla].inserted = 0;
+                    if (!nazioniIgnorateCount[sigla]) nationStreaks[sigla].ignored = 0;
+                }
                 for (let sigla in nazioniDigitateCount) {
                     if (!nationStreaks[sigla]) nationStreaks[sigla] = { inserted: 0, ignored: 0 };
                     nationStreaks[sigla].inserted++;
@@ -4093,20 +4098,31 @@ if (!window.voiceHooksAdded) {
     const origSurrenderTurn = surrenderTurn;
     surrenderTurn = function() {
         try { assistantRec.stop(); isListening = false; } catch(e) {} 
-        let sigleVietateL8 = getL8UsedSiglas(); // Salvate PRIMA che gestisciDebito(false) le azzeri
+        let sigleVietateL8 = getL8UsedSiglas();
+        let sigleGiaDetteTurno = [];
+        if (comboInserted && comboInserted.length > 0) {
+            comboInserted.forEach(ans => {
+                let res = checkSingleAnswer(ans, currentTurnData, currentLevel);
+                if (res.isCorrect && res.matchedCountry) sigleGiaDetteTurno.push(res.matchedCountry.sigla);
+            });
+        }
         origSurrenderTurn();
         if (voiceModeActive) {
             let incipit = "";
             if (currentLevel === 8) {
-                let alts = getL8VoiceAlternatives(sigleVietateL8);
+                let alts = getL8VoiceAlternatives([...sigleVietateL8, ...sigleGiaDetteTurno]);
                 if (alts.length === 1) incipit = `Ti sei arreso. La risposta era ${alts[0]}.`;
                 else if (alts.length > 1) incipit = `Ti sei arreso. Potevi dire: ${alts.join(", ")}.`;
                 else incipit = "Ti sei arreso.";
             } else {
-                let rndAns = currentTurnData.validAnswersCache[Math.floor(Math.random() * currentTurnData.validAnswersCache.length)];
+                let risposteNonDette = currentTurnData.validAnswersCache.filter((ans, index) => {
+                    let sigla = currentTurnData.validSiglas ? currentTurnData.validSiglas[index] : null;
+                    return !sigla || !sigleGiaDetteTurno.includes(sigla);
+                });
+                if (risposteNonDette.length === 0) risposteNonDette = currentTurnData.validAnswersCache;
+                let rndAns = risposteNonDette[Math.floor(Math.random() * risposteNonDette.length)];
                 let correctAns = rndAns.split(" (")[0]; 
-                let numValide = currentTurnData.validAnswersCache.length;
-                incipit = (numValide > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
+                incipit = (risposteNonDette.length > 1) ? `Ti sei arreso. Una risposta valida era ${correctAns}.` : `Ti sei arreso. La risposta era ${correctAns}.`;
             }
             
             setTimeout(() => {
